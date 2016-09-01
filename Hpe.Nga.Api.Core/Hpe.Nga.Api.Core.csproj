@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{344D2EA6-C3E6-4A67-95C1-51B5E7647E89}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Hpe.Nga.Api.Core</RootNamespace>
+    <AssemblyName>Hpe.Nga.Api.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Connector\ConnectionInfo.cs" />
+    <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
+    <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
+    <Compile Include="Connector\Exceptions\ServerUnavailableException.cs" />
+    <Compile Include="Connector\RequestType.cs" />
+    <Compile Include="Connector\ResponseWrapper.cs" />
+    <Compile Include="Connector\RestConnector.cs" />
+    <Compile Include="Connector\Exceptions\MqmRestException.cs" />
+    <Compile Include="Entities\Tests\ManualTest.cs" />
+    <Compile Include="Entities\Users\WorkspaceRole.cs" />
+    <Compile Include="Entities\Users\Role.cs" />
+    <Compile Include="Entities\Users\SharedspaceUser.cs" />
+    <Compile Include="Entities\Users\BaseUserEntity.cs" />
+    <Compile Include="Entities\WorkItems\Feature.cs" />
+    <Compile Include="Entities\WorkItems\Story.cs" />
+    <Compile Include="Entities\WorkItems\Defect.cs" />
+    <Compile Include="Entities\Base\Phase.cs" />
+    <Compile Include="Entities\Base\Metaphase.cs" />
+    <Compile Include="Entities\Base\ListNode.cs" />
+    <Compile Include="Entities\Releases\Milestone.cs" />
+    <Compile Include="Entities\Base\FieldMetadata.cs" />
+    <Compile Include="Entities\Releases\Release.cs" />
+    <Compile Include="Entities\Base\SharedSpace.cs" />
+    <Compile Include="Entities\WorkItems\Epic.cs" />
+    <Compile Include="Entities\Releases\Sprint.cs" />
+    <Compile Include="Entities\Tests\Test.cs" />
+    <Compile Include="Entities\WorkItems\WorkItemRoot.cs" />
+    <Compile Include="Entities\WorkItems\WorkItem.cs" />
+    <Compile Include="Entities\Base\Workspace.cs" />
+    <Compile Include="Entities\Users\WorkspaceUser.cs" />
+    <Compile Include="Services\Attributes\CustomCollectionPathAttribute.cs" />
+    <Compile Include="Services\EntityList.cs" />
+    <Compile Include="Services\GroupBy\GroupResult.cs" />
+    <Compile Include="Services\GroupBy\Group.cs" />
+    <Compile Include="Services\GroupBy\GroupByValue.cs" />
+    <Compile Include="Services\Queries\ComparisonOperator.cs" />
+    <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
+    <Compile Include="Services\Queries\QueryBuilder.cs" />
+    <Compile Include="Services\Queries\QueryCondition.cs" />
+    <Compile Include="Services\Queries\QueryExpression.cs" />
+    <Compile Include="Services\Queries\QueryPhrase.cs" />
+    <Compile Include="Services\Queries\LogicalQueryPhrase.cs" />
+    <Compile Include="Entities\Base\BaseEntity.cs" />
+    <Compile Include="Services\Core\BaseEntityJsonConverter.cs" />
+    <Compile Include="Services\EntityService.cs" />
+    <Compile Include="Services\RequestContext\IRequestContext.cs" />
+    <Compile Include="Services\RequestContext\SharedSpaceContext.cs" />
+    <Compile Include="Services\RequestContext\SiteAdminContext.cs" />
+    <Compile Include="Services\RequestContext\SiteContext.cs" />
+    <Compile Include="Services\RequestContext\WorkspaceContext.cs" />
+    <Compile Include="Services\Core\DictionaryBasedEntity.cs" />
+    <Compile Include="Services\EntityListResult.cs" />
+    <Compile Include="Services\Core\EntityTypeRegistry.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
