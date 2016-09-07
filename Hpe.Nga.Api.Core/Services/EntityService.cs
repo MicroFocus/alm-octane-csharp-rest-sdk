@@ -159,6 +159,16 @@ namespace Hpe.Nga.Api.Core.Services
             return result;
         }
 
+        public EntityListResult<T> UpdateEntities<T>(IRequestContext context, EntityList<T> entities)
+            where T : BaseEntity
+        {
+            String collectionName = GetCollectionName<T>();
+            string url = context.GetPath() + "/" + collectionName;
+            String data = jsonSerializer.Serialize(entities);
+            ResponseWrapper response = rc.ExecutePut(url, data);
+            EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
+            return result;
+        }
 
         public void DeleteById<T>(IRequestContext context, long entityId)
              where T : BaseEntity

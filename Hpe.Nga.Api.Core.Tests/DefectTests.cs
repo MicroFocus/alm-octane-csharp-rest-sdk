@@ -76,17 +76,29 @@ namespace Hpe.Nga.Api.Core.Tests
         }
 
         [TestMethod]
-        public void GetNotCompletedDefectsAssinedToReleaseTest()
+        public void GetNotDoneDefectsAssinedToReleaseTest()
         {
-            Defect defect = CreateDefect();
+            Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_DEFECT, "Closed");
+
+            Defect defect1 = CreateDefect();
+            Defect defect2 = CreateDefect(PHASE_CLOSED);
+            Defect defect3 = CreateDefect();
             Release release = CreateRelease();
 
             //assign defect to release
-            Defect defectForUpdate = new Defect(defect.Id);
-            defectForUpdate.Release = release;
-            entityService.Update<Defect>(workspaceContext, defectForUpdate);
-            Defect defectAfterUpdate = entityService.GetById<Defect>(workspaceContext, defect.Id, null);
-            Assert.AreEqual<long>(release.Id, defectAfterUpdate.Release.Id);
+            Defect defectForUpdate1 = new Defect(defect1.Id);
+            defectForUpdate1.Release = release;
+            Defect defectForUpdate2 = new Defect(defect2.Id);
+            defectForUpdate2.Release = release;
+            Defect defectForUpdate3 = new Defect(defect3.Id);
+            defectForUpdate3.Release = release;
+            //defectForUpdate3.Phase
+
+            EntityList<Defect> listForUpdate = new EntityList<Defect>();
+            listForUpdate.data.AddRange(new Defect[] { defectForUpdate1, defectForUpdate2, defectForUpdate3 });
+
+            EntityListResult<Defect> updated = entityService.UpdateEntities<Defect>(workspaceContext, listForUpdate);
+            Assert.AreEqual<int?>(3, updated.total_count);
 
             //Fetch all defects that assigned to release and still not done
             //Fetch defects as work-items 
@@ -99,16 +111,19 @@ namespace Hpe.Nga.Api.Core.Tests
             QueryPhrase byReleasePhrase = new CrossQueryPhrase(WorkItem.RELEASE_FIELD, releaseIdPhrase);
             queries.Add(byReleasePhrase);
 
+            //There are several phased in "Done" metaphase - there are we are doing condition on metaphase and not on phase
             //condition by metaphase (parent of phase)
-            LogicalQueryPhrase phaseNamePhrase = new LogicalQueryPhrase(WorkItem.NAME_FIELD, "Done");
-            phaseNamePhrase.NegativeCondition = true;//not Done
-            CrossQueryPhrase phaseIdPhrase = new CrossQueryPhrase("metaphase", phaseNamePhrase);
+            LogicalQueryPhrase donePhaseNamePhrase = new LogicalQueryPhrase(Metaphase.NAME_FIELD, "Done");
+            NegativeQueryPhrase notDonePhrase = new NegativeQueryPhrase(donePhaseNamePhrase);
+            CrossQueryPhrase phaseIdPhrase = new CrossQueryPhrase("metaphase", notDonePhrase);
             CrossQueryPhrase byPhasePhrase = new CrossQueryPhrase(WorkItem.PHASE_FIELD, phaseIdPhrase);
+
             queries.Add(byPhasePhrase);
 
             EntityListResult<WorkItem> entitiesResult = entityService.Get<WorkItem>(workspaceContext, queries, null);
-            Assert.AreEqual<int>(1, entitiesResult.total_count.Value);
-            Assert.AreEqual<long>(defect.Id, entitiesResult.data[0].Id);
+            Assert.AreEqual<int>(2, entitiesResult.total_count.Value);
+            Assert.IsTrue(entitiesResult.data[0].Id == defect1.Id || entitiesResult.data[0].Id == defect3.Id);
+            Assert.IsTrue(entitiesResult.data[1].Id == defect1.Id || entitiesResult.data[1].Id == defect3.Id);
         }
 
         [TestMethod]
@@ -137,10 +152,16 @@ namespace Hpe.Nga.Api.Core.Tests
 
         private static Defect CreateDefect()
         {
+            return CreateDefect(PHASE_NEW);
+
+        }
+
+        private static Defect CreateDefect(Phase phase)
+        {
             String name = "Defect" + Guid.NewGuid();
             Defect defect = new Defect();
             defect.Name = name;
-            defect.Phase = PHASE_NEW;
+            defect.Phase = phase;
             defect.Severity = SEVERITY_HIGH;
             defect.Parent = WORK_ITEM_ROOT;
             Defect created = entityService.Create<Defect>(workspaceContext, defect);

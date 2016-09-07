@@ -32,17 +32,18 @@ namespace Hpe.Nga.Api.Core.Services.Query
                 {
                     output = "(" + output + ")";
                 }
-
-                if (logicalPhrase.NegativeCondition)
-                {
-                    output = "!" + output;
-                }
             }
             else if (phrase is CrossQueryPhrase)
             {
                 //release={id=5002}
                 CrossQueryPhrase crossPhrase = (CrossQueryPhrase)phrase;
                 String expStr = String.Format("{0}={{{1}}}", crossPhrase.FieldName, BuildPhraseString(crossPhrase.QueryPhrase));
+                output = expStr;
+            }
+            else if (phrase is NegativeQueryPhrase)
+            {
+                NegativeQueryPhrase negativePhrase = (NegativeQueryPhrase)phrase;
+                String expStr = String.Format("!{0}", BuildPhraseString(negativePhrase.QueryPhrase));
                 output = expStr;
             }
             else
@@ -171,7 +172,7 @@ namespace Hpe.Nga.Api.Core.Services.Query
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildOrderByString(orderBy));
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildFieldsString(fields));
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildOffsetString(offset));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));            
+            str = ConcateNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));
             return str;
         }
 

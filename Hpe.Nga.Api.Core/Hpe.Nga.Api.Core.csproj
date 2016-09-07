@@ -82,6 +82,7 @@
     <Compile Include="Services\GroupBy\GroupByValue.cs" />
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
+    <Compile Include="Services\Queries\NegativeQueryPhrase.cs" />
     <Compile Include="Services\Queries\QueryBuilder.cs" />
     <Compile Include="Services\Queries\QueryCondition.cs" />
     <Compile Include="Services\Queries\QueryExpression.cs" />
