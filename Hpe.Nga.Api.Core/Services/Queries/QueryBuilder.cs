@@ -124,6 +124,22 @@ namespace Hpe.Nga.Api.Core.Services.Query
             return null;
         }
 
+        private static string BuildServiceArguments(Dictionary<string, string> serviceArguments)
+        {
+            if (serviceArguments == null || serviceArguments.Count == 0)
+            {
+                return null;
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in serviceArguments)
+            {
+                sb.Append(item.Key);
+                sb.Append("=");
+                sb.Append(item.Value);
+            }
+            return sb.ToString();
+        }
+
         private static string BuildGroupByString(string groupBy)
         {
             //group_by=severity
@@ -164,7 +180,8 @@ namespace Hpe.Nga.Api.Core.Services.Query
         /// <param name="offset"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        public static string BuildQueryString(IList<QueryPhrase> queryPhrases, IList<String> fields, String orderBy, int? offset, int? limit, String groupBy)
+        public static string BuildQueryString(IList<QueryPhrase> queryPhrases, IList<String> fields, String orderBy, int? offset, int? limit,
+            String groupBy, Dictionary<String,String> serviceArguments)
         {
             String str = String.Empty;
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildGroupByString(groupBy));
@@ -173,6 +190,7 @@ namespace Hpe.Nga.Api.Core.Services.Query
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildFieldsString(fields));
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildOffsetString(offset));
             str = ConcateNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));
+            str = ConcateNewQueryString(str, QueryStringBuilder.BuildServiceArguments(serviceArguments));
             return str;
         }
 

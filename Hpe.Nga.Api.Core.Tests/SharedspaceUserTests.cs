@@ -30,7 +30,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
 
-            EntityListResult<SharedspaceUser> users = EntityService.GetInstance().Get<SharedspaceUser>(sharedSpaceContext, queries, fields);
+            EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, queries, fields);
             Assert.AreEqual<int>(1, users.total_count.Value);
 
         }
@@ -38,31 +38,36 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void GetAllSharedspaceUsersTest()
         {
-            EntityListResult<SharedspaceUser> users = EntityService.GetInstance().Get<SharedspaceUser>(sharedSpaceContext, null, null);
+            EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, null, null);
             Assert.IsTrue(users.total_count >= 1);
 
         }
 
         [TestMethod]
-        public void GetAllSharedspaceUserByNameTest()
+        public void GetSharedspaceUserByNameTest()
         {
             LogicalQueryPhrase byName = new LogicalQueryPhrase(WorkspaceUser.NAME_FIELD, CurrentUserName);
             List<QueryPhrase> queries = new List<QueryPhrase>();
             queries.Add(byName);
 
-            EntityListResult<SharedspaceUser> users = EntityService.GetInstance().Get<SharedspaceUser>(sharedSpaceContext, queries, null);
+            EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, queries, null);
             Assert.IsTrue(users.total_count == 1);
         }
 
-
         [TestMethod]
-        public void GetWorkspaceRoleForWorkspaceTest()
+        public void GetWorkspaceAdminRoleTest()
         {
-            LogicalQueryPhrase workspaceId = new LogicalQueryPhrase(Workspace.ID_FIELD, workspaceContext.WorkspaceId);
-            CrossQueryPhrase byWorkpace = new CrossQueryPhrase(WorkspaceRole.WORKSPACE_FIELD, workspaceId);
+            LogicalQueryPhrase logicalNamePhrase = new LogicalQueryPhrase(Role.LOGICAL_NAME_FIELD, "role.workspace.admin");
+            CrossQueryPhrase byRole = new CrossQueryPhrase(WorkspaceRole.ROLE_FIELD, logicalNamePhrase);
+
+            LogicalQueryPhrase workspaceIdPhrase = new LogicalQueryPhrase(Workspace.ID_FIELD, workspaceContext.WorkspaceId);
+            CrossQueryPhrase byWorkpace = new CrossQueryPhrase(WorkspaceRole.WORKSPACE_FIELD, workspaceIdPhrase);
+
             List<QueryPhrase> queries = new List<QueryPhrase>();
             queries.Add(byWorkpace);
+            queries.Add(byRole);
             EntityListResult<WorkspaceRole> roles = entityService.Get<WorkspaceRole>(sharedSpaceContext, queries, null);
+            WorkspaceRole workspaceAdminRole = roles.data[0];
         }
 
         [TestMethod]
@@ -89,10 +94,44 @@ namespace Hpe.Nga.Api.Core.Tests
 
             //READ USER
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
-            SharedspaceUser updatedUser = EntityService.GetInstance().GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
+            SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
 
             List<long> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList<long>();
             Assert.IsTrue(assignedWorkspaceRoles.Contains(sharedSpaceAdminRole.Id));
+        }
+
+        [TestMethod]
+        public void AppendSharedSpaceAdminRoleToUserTest()
+        {
+
+            //FIND shared space admin role
+            LogicalQueryPhrase roleLogicalName = new LogicalQueryPhrase(Role.LOGICAL_NAME_FIELD, "role.shared.space.admin");
+            CrossQueryPhrase byRole = new CrossQueryPhrase(WorkspaceRole.ROLE_FIELD, roleLogicalName);
+            List<QueryPhrase> queries = new List<QueryPhrase>();
+            queries.Add(byRole);
+            EntityListResult<WorkspaceRole> roles = entityService.Get<WorkspaceRole>(sharedSpaceContext, queries, null);
+            Assert.AreEqual<int>(1, roles.total_count.Value);
+            WorkspaceRole sharedSpaceAdminRole = roles.data[0];
+
+            //CREATE USER
+            SharedspaceUser createdUser = CreateUser();
+
+            //UPDATE USER by appending shared space admin role
+            SharedspaceUser userForUpdate = new SharedspaceUser(createdUser.Id);
+            userForUpdate.WorkspaceRoles = new EntityList<BaseEntity>();
+            userForUpdate.WorkspaceRoles.data.Add(sharedSpaceAdminRole);
+            Dictionary<String, String> serviceArgs = new Dictionary<string, string>();
+            serviceArgs.Add("reference_update_mode", "append");
+
+            entityService.Update<SharedspaceUser>(sharedSpaceContext, userForUpdate, serviceArgs);
+
+            //READ USER
+            List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
+            SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
+
+            List<long> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList<long>();
+            Assert.IsTrue(assignedWorkspaceRoles.Contains(sharedSpaceAdminRole.Id));
+            Assert.IsTrue(assignedWorkspaceRoles.Count > 1);
         }
 
         private static SharedspaceUser CreateUser()

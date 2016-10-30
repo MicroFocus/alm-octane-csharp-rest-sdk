@@ -16,8 +16,8 @@ namespace Hpe.Nga.Api.Core.Tests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_STORY, "New");
-            WORK_ITEM_ROOT = TestHelper.GetWorkItemRoot(workspaceContext);
+            PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "New");
+            WORK_ITEM_ROOT = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
         }
 
         [TestMethod]

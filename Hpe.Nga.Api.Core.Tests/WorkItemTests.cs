@@ -15,27 +15,36 @@ namespace Hpe.Nga.Api.Core.Tests
     [TestClass]
     public class WorkItemTests : BaseTest
     {
-        private static WorkItemRoot WORK_ITEM_ROOT;
+        private static WorkItemRoot workItemRoot;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
 
-            WORK_ITEM_ROOT = TestHelper.GetWorkItemRoot(workspaceContext);
+           
+        }
+
+        private WorkItemRoot getWorkItemRoot()
+        {
+            if (workItemRoot == null)
+            {
+                workItemRoot = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
+            }
+            return workItemRoot;
         }
 
         [TestMethod]
         public void CrudDefectAsWorkItemTest()
         {
             //CREATE
-            Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
-            ListNode SEVERITY_HIGH = TestHelper.GetSeverityByName(workspaceContext, "High");
+            Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
+            ListNode SEVERITY_HIGH = TestHelper.GetSeverityByName(entityService, workspaceContext, "High");
             String name = "Defect" + Guid.NewGuid();
             WorkItem workItem = new WorkItem();
             workItem.Name = name;
             workItem.Phase = DEFECT_PHASE_NEW;
             workItem.Severity = SEVERITY_HIGH;
-            workItem.Parent = WORK_ITEM_ROOT;
+            workItem.Parent = getWorkItemRoot();
             workItem.SubType = WorkItem.SUBTYPE_DEFECT;//For workItems - SUBTYPE have to be set
             WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem);
 
@@ -57,12 +66,12 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void CrudStoryAsWorkItemTest()
         {
-            Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_STORY, "New");
+            Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "New");
             String name = "Story" + Guid.NewGuid();
             WorkItem workItem = new WorkItem();
             workItem.Name = name;
             workItem.Phase = STORY_PHASE_NEW;
-            workItem.Parent = WORK_ITEM_ROOT;
+            workItem.Parent = getWorkItemRoot();
             workItem.SubType = WorkItem.SUBTYPE_STORY;//For workItems - SUBTYPE have to be set
 
             WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem);
@@ -85,12 +94,12 @@ namespace Hpe.Nga.Api.Core.Tests
         public void CreateEpicAndFeatureAsWorkItemsTest()
         {
             //create epic
-            Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_EPIC, "New");
+            Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_EPIC, "New");
             String epicName = "Epic" + Guid.NewGuid();
             WorkItem epicToCreate = new WorkItem();
             epicToCreate.Name = epicName;
             epicToCreate.Phase = EPIC_PHASE_NEW;
-            epicToCreate.Parent = WORK_ITEM_ROOT;
+            epicToCreate.Parent = getWorkItemRoot();
             epicToCreate.SubType = WorkItem.SUBTYPE_EPIC;//For workItems - SUBTYPE have to be set
 
             WorkItem createdEpic = entityService.Create<WorkItem>(workspaceContext, epicToCreate);
@@ -99,7 +108,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
 
             //parent of feature can be only epic, workItemRoot cannot be parent of feature
-            Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_FEATURE, "New");
+            Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_FEATURE, "New");
             String featureName = "Feature" + Guid.NewGuid();
             WorkItem featureToCreate = new WorkItem();
             featureToCreate.Name = featureName;

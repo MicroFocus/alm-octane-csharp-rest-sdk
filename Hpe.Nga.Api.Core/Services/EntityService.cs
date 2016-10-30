@@ -17,26 +17,18 @@ namespace Hpe.Nga.Api.Core.Services
     /// </summary>
     public class EntityService
     {
-        private RestConnector rc = RestConnector.GetInstance();
+        private RestConnector rc;
         private JavaScriptSerializer jsonSerializer;
 
 
-        #region Singelton
 
-        private static EntityService instance = new EntityService();
 
-        private EntityService()
+        public EntityService(RestConnector rc)
         {
-            jsonSerializer = new JavaScriptSerializer();
+            this.rc = rc;
+            this.jsonSerializer = new JavaScriptSerializer();
             jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new BaseEntityJsonConverter() });
         }
-
-        public static EntityService GetInstance()
-        {
-            return instance;
-        }
-
-        #endregion
 
         public EntityListResult<T> Get<T>(IRequestContext context)
             where T : BaseEntity
@@ -56,7 +48,7 @@ namespace Hpe.Nga.Api.Core.Services
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName;
 
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null);
+            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
             if (!String.IsNullOrEmpty(queryString))
             {
                 url = url + "?" + queryString;
@@ -97,7 +89,7 @@ namespace Hpe.Nga.Api.Core.Services
             string url = context.GetPath() + "/" + collectionName + "/groups";
 
 
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy);
+            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, null);
             if (!String.IsNullOrEmpty(queryString))
             {
                 url = url + "?" + queryString;
@@ -118,7 +110,7 @@ namespace Hpe.Nga.Api.Core.Services
         {
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName + "/" + id;
-            String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null);
+            String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null, null);
             if (!String.IsNullOrEmpty(queryString))
             {
                 url = url + "?" + queryString;
@@ -151,8 +143,18 @@ namespace Hpe.Nga.Api.Core.Services
         public T Update<T>(IRequestContext context, T entity)
              where T : BaseEntity
         {
+
+            return Update<T>(context, entity, null);
+        }
+
+        public T Update<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments)
+             where T : BaseEntity
+        {
             String collectionName = GetCollectionName<T>();
-            string url = context.GetPath() + "/" + collectionName + "/" + entity.Id;
+            String queryString = QueryStringBuilder.BuildQueryString(null, null, null, null, null, null, serviceArguments);
+
+
+            string url = context.GetPath() + "/" + collectionName + "/" + entity.Id + "?" + queryString;
             String data = jsonSerializer.Serialize(entity);
             ResponseWrapper response = rc.ExecutePut(url, data);
             T result = jsonSerializer.Deserialize<T>(response.Data);
@@ -170,6 +172,8 @@ namespace Hpe.Nga.Api.Core.Services
             return result;
         }
 
+
+
         public void DeleteById<T>(IRequestContext context, long entityId)
              where T : BaseEntity
         {
@@ -182,11 +186,10 @@ namespace Hpe.Nga.Api.Core.Services
             where T : BaseEntity
         {
             String collectionName = GetCollectionName<T>();
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null);
+            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
             ResponseWrapper response = rc.ExecuteDelete(url);
         }
-
 
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="DefectTests.cs" />
     <Compile Include="ReleaseTests.cs" />
     <Compile Include="TestHelper.cs" />
+    <Compile Include="WorkspaceTests.cs" />
     <Compile Include="WorkspaceUserTests.cs" />
     <Compile Include="SharedspaceUserTests.cs" />
     <Compile Include="StoryTests.cs" />

@@ -39,21 +39,9 @@ namespace Hpe.Nga.Api.Core.Connector
         private string host;
         private string loginName;
 
-        #region Singelton
-
-
-        private RestConnector() { }
-
-        private static RestConnector instance = new RestConnector();
         private String lwssoToken = null;
         private String csrfToken = Guid.NewGuid().ToString();
 
-        public static RestConnector GetInstance()
-        {
-            return instance;
-        }
-
-        #endregion
 
         public String ConnectedUser
         {
@@ -218,7 +206,9 @@ namespace Hpe.Nga.Api.Core.Connector
                 throw new NotConnectedException();
             }
 
+            //Console.WriteLine(requestType + " : " + restRelativeUri);
             HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
+            request.Timeout = 200000;//default 100000
             ResponseWrapper responseWrapper = new ResponseWrapper();
 
             try

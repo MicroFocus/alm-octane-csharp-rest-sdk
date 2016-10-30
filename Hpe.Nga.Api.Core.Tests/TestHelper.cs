@@ -10,9 +10,8 @@ namespace Hpe.Nga.Api.Core.Tests
 {
     public static class TestHelper
     {
-        private static EntityService entityService = EntityService.GetInstance();
 
-        public static Phase GetPhaseForEntityByName(WorkspaceContext workspaceContext, String entityTypeName, String name)
+        public static Phase GetPhaseForEntityByName(EntityService entityService, WorkspaceContext workspaceContext, String entityTypeName, String name)
         {
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
             LogicalQueryPhrase byEntityPhrase = new LogicalQueryPhrase(Phase.ENTITY_FIELD, entityTypeName);
@@ -27,7 +26,7 @@ namespace Hpe.Nga.Api.Core.Tests
             return phase;
         }
 
-        public static WorkItemRoot GetWorkItemRoot(WorkspaceContext workspaceContext)
+        public static WorkItemRoot GetWorkItemRoot(EntityService entityService, WorkspaceContext workspaceContext)
         {
             List<String> fields = new List<String>() { Phase.NAME_FIELD };
             EntityListResult<WorkItemRoot> result = entityService.Get<WorkItemRoot>(workspaceContext, null, fields);
@@ -36,14 +35,16 @@ namespace Hpe.Nga.Api.Core.Tests
             return root;
         }
 
-        public static ListNode GetSeverityByName(WorkspaceContext workspaceContext, String name)
+        public static ListNode GetSeverityByName(EntityService entityService, WorkspaceContext workspaceContext, String name)
         {
+            String suffix = name.ToLower().Replace(" ", "_");
+            String logicalName = "list_node.severity." + suffix;
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
-            LogicalQueryPhrase byLogicalName = new LogicalQueryPhrase(ListNode.LOGICAL_NAME_FIELD, "list_node.severity.*");
+            LogicalQueryPhrase byLogicalName = new LogicalQueryPhrase(ListNode.LOGICAL_NAME_FIELD, logicalName);
             queryPhrases.Add(byLogicalName);
 
-            LogicalQueryPhrase byName = new LogicalQueryPhrase(ListNode.NAME_FIELD, name);
-            queryPhrases.Add(byName);
+           // LogicalQueryPhrase byName = new LogicalQueryPhrase(ListNode.NAME_FIELD, name);
+            //queryPhrases.Add(byName);
 
             List<String> fields = new List<String>() { Phase.NAME_FIELD, Phase.LOGICAL_NAME_FIELD };
 

@@ -18,6 +18,11 @@ namespace Hpe.Nga.Api.Core.Services.RequestContext
             SharedSpaceId = sharedSpaceId;
         }
 
+        public static SharedSpaceContext Create(long sharedSpaceId)
+        {
+            return new SharedSpaceContext(sharedSpaceId);
+        }
+
         public virtual string GetPath()
         {
             return String.Format("/api/shared_spaces/{0}", SharedSpaceId);

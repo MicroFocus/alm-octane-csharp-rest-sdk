@@ -17,7 +17,7 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void GetAllWorkspaceUsers()
         {
-            EntityListResult<WorkspaceUser> users = EntityService.GetInstance().Get<WorkspaceUser>(workspaceContext, null, null);
+            EntityListResult<WorkspaceUser> users = entityService.Get<WorkspaceUser>(workspaceContext, null, null);
             Assert.IsTrue(users.total_count >= 1);
 
         }
@@ -29,7 +29,7 @@ namespace Hpe.Nga.Api.Core.Tests
             List<QueryPhrase> queries = new List<QueryPhrase>();
             queries.Add(byName);
 
-            EntityListResult<WorkspaceUser> users = EntityService.GetInstance().Get<WorkspaceUser>(workspaceContext, queries, null);
+            EntityListResult<WorkspaceUser> users = entityService.Get<WorkspaceUser>(workspaceContext, queries, null);
             Assert.IsTrue(users.total_count == 1);
 
         }

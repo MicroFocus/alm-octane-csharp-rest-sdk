@@ -11,17 +11,37 @@ namespace Hpe.Nga.Api.Core.Tests
     [TestClass]
     public class DefectTests : BaseTest
     {
-        private static Phase PHASE_NEW;
-        private static ListNode SEVERITY_HIGH;
-        private static WorkItemRoot WORK_ITEM_ROOT;
+        private static Phase phaseNew;
+        private static ListNode severityHigh;
+        private static WorkItemRoot workItemRoot;
 
-        [ClassInitialize()]
-        public static void ClassInit(TestContext context)
+        private static ListNode getSeverityHigh()
         {
-            PHASE_NEW = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
-            SEVERITY_HIGH = TestHelper.GetSeverityByName(workspaceContext, "High");
-            WORK_ITEM_ROOT = TestHelper.GetWorkItemRoot(workspaceContext);
+            if (severityHigh == null)
+            {
+                severityHigh = TestHelper.GetSeverityByName(entityService, workspaceContext, "High");
+            }
+            return severityHigh;
         }
+
+        private static Phase getPhaseNew()
+        {
+            if (phaseNew == null)
+            {
+                phaseNew = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
+            }
+            return phaseNew;
+        }
+
+        private static WorkItemRoot getWorkItemRoot()
+        {
+            if (workItemRoot == null)
+            {
+                workItemRoot = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
+            }
+            return workItemRoot;
+        }
+
 
         [TestMethod]
         public void GetDefectFieldMetadataTest()
@@ -78,7 +98,7 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void GetNotDoneDefectsAssinedToReleaseTest()
         {
-            Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByName(workspaceContext, WorkItem.SUBTYPE_DEFECT, "Closed");
+            Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "Closed");
 
             Defect defect1 = CreateDefect();
             Defect defect2 = CreateDefect(PHASE_CLOSED);
@@ -152,7 +172,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
         private static Defect CreateDefect()
         {
-            return CreateDefect(PHASE_NEW);
+            return CreateDefect(getPhaseNew());
 
         }
 
@@ -162,8 +182,8 @@ namespace Hpe.Nga.Api.Core.Tests
             Defect defect = new Defect();
             defect.Name = name;
             defect.Phase = phase;
-            defect.Severity = SEVERITY_HIGH;
-            defect.Parent = WORK_ITEM_ROOT;
+            defect.Severity = getSeverityHigh();
+            defect.Parent = getWorkItemRoot();
             Defect created = entityService.Create<Defect>(workspaceContext, defect);
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(created.Id > 0);
