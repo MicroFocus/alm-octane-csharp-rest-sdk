@@ -44,9 +44,17 @@ namespace Hpe.Nga.Api.Core.Tests
             if (!restConnector.IsConnected())
             {
                 string host = ConfigurationManager.AppSettings["webAppUrl"];
-                string password = ConfigurationManager.AppSettings["password"];
-                userName = ConfigurationManager.AppSettings["userName"];
-                restConnector.Connect(host, userName, password);
+                ConnectionInfo connectionInfo;
+                string clientId = ConfigurationManager.AppSettings["clientId"];
+                if (clientId != null)
+                {
+                    connectionInfo = new APIKeyConnectionInfo(clientId, ConfigurationManager.AppSettings["clientSecret"]);
+                } else
+                {
+                    connectionInfo = new UserPassConnectionInfo(ConfigurationManager.AppSettings["userName"], ConfigurationManager.AppSettings["password"]);
+                }
+                
+                restConnector.Connect(host, connectionInfo);
 
 
                 sharedSpaceId = int.Parse(ConfigurationManager.AppSettings["sharedSpaceId"]);

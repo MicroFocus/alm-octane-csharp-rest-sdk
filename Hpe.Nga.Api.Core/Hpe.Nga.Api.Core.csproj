@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connector\APIKeyConnectionInfo.cs" />
     <Compile Include="Connector\ConnectionInfo.cs" />
     <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
     <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Connector\ResponseWrapper.cs" />
     <Compile Include="Connector\RestConnector.cs" />
     <Compile Include="Connector\Exceptions\MqmRestException.cs" />
+    <Compile Include="Connector\UserPassConnectionInfo.cs" />
     <Compile Include="Entities\Tests\ManualTest.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
     <Compile Include="Entities\Users\Role.cs" />

@@ -49,19 +49,9 @@ namespace Hpe.Nga.Api.Core.Connector
         private static string METHOD_DELETE = "DELETE";
 
         private string host;
-        private string loginName;
 
         private String lwssoToken = null;
         private String csrfToken = Guid.NewGuid().ToString();
-
-
-        public String ConnectedUser
-        {
-            get
-            {
-                return loginName;
-            }
-        }
 
         public String Host
         {
@@ -71,22 +61,20 @@ namespace Hpe.Nga.Api.Core.Connector
             }
         }
 
-        public bool Connect(string host, string loginName, string password)
+        public bool Connect(string host, ConnectionInfo connectionInfo)
         {
             if (host == null)
             {
                 throw new ArgumentNullException("host");
             }
 
-            if (loginName == null)
+            if (connectionInfo == null)
             {
-                throw new ArgumentNullException("loginName");
+                throw new ArgumentNullException("connectionInfo");
             }
 
 
             this.host = host.TrimEnd('/');
-            this.loginName = loginName;
-
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
 
@@ -97,9 +85,8 @@ namespace Hpe.Nga.Api.Core.Connector
 
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                ConnectionInfo auth = new ConnectionInfo(loginName, password);
                 JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                String json = jsSerializer.Serialize(auth);
+                String json = jsSerializer.Serialize(connectionInfo);
                 streamWriter.Write(json);
             }
 

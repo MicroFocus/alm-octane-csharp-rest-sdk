@@ -20,6 +20,7 @@ namespace Hpe.Nga.Api.Core.Connector
 {
     /// <summary>
     /// POCO class for connection data that is sent to NGA server during calling to <see cref="Connect"/> method.
+    /// Uses the user/password method
     /// </summary>
     public class UserPassConnectionInfo : ConnectionInfo
     {
