@@ -27,7 +27,7 @@ namespace Hpe.Nga.Api.Core.Tests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, Test.SUBTYPE_MANUAL_TEST, "New");
+            PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, Test.SUBTYPE_MANUAL_TEST, "phase.test_manual.new");
         }
 
 

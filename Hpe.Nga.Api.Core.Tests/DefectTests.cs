@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
 using Hpe.Nga.Api.Core.Entities;
 using Hpe.Nga.Api.Core.Services;
+using Hpe.Nga.Api.Core.Services.GroupBy;
 using Hpe.Nga.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,7 +25,7 @@ namespace Hpe.Nga.Api.Core.Tests
     public class DefectTests : BaseTest
     {
         private static Phase phaseNew;
-        private static ListNode severityHigh;
+        private static ListNode severityHigh, severityCritical;
         private static WorkItemRoot workItemRoot;
 
         private static ListNode getSeverityHigh()
@@ -36,11 +37,20 @@ namespace Hpe.Nga.Api.Core.Tests
             return severityHigh;
         }
 
+        private static ListNode getSeverityCritical()
+        {
+            if (severityCritical == null)
+            {
+                severityCritical = TestHelper.GetSeverityByName(entityService, workspaceContext, "Urgent");
+            }
+            return severityCritical;
+        }
+
         private static Phase getPhaseNew()
         {
             if (phaseNew == null)
             {
-                phaseNew = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
+                phaseNew = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.new");
             }
             return phaseNew;
         }
@@ -110,11 +120,12 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void GetNotDoneDefectsAssinedToReleaseTest()
         {
-            Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "Closed");
+            Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.closed");
 
             Defect defect1 = CreateDefect();
             Defect defect2 = CreateDefect(PHASE_CLOSED);
             Defect defect3 = CreateDefect();
+            Defect defect4 = CreateDefect();
             Release release = CreateRelease();
 
             //assign defect to release
@@ -124,13 +135,17 @@ namespace Hpe.Nga.Api.Core.Tests
             defectForUpdate2.Release = release;
             Defect defectForUpdate3 = new Defect(defect3.Id);
             defectForUpdate3.Release = release;
-            //defectForUpdate3.Phase
+            defectForUpdate3.Severity = getSeverityCritical();
+
+            Defect defectForUpdate4 = new Defect(defect4.Id);
+            defectForUpdate4.Release = release;
+
 
             EntityList<Defect> listForUpdate = new EntityList<Defect>();
-            listForUpdate.data.AddRange(new Defect[] { defectForUpdate1, defectForUpdate2, defectForUpdate3 });
+            listForUpdate.data.AddRange(new Defect[] { defectForUpdate1, defectForUpdate2, defectForUpdate3, defectForUpdate4 });
 
             EntityListResult<Defect> updated = entityService.UpdateEntities<Defect>(workspaceContext, listForUpdate);
-            Assert.AreEqual<int?>(3, updated.total_count);
+            Assert.AreEqual<int?>(4, updated.total_count);
 
             //Fetch all defects that assigned to release and still not done
             //Fetch defects as work-items 
@@ -145,7 +160,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
             //There are several phased in "Done" metaphase - there are we are doing condition on metaphase and not on phase
             //condition by metaphase (parent of phase)
-            LogicalQueryPhrase donePhaseNamePhrase = new LogicalQueryPhrase(Metaphase.NAME_FIELD, "Done");
+            LogicalQueryPhrase donePhaseNamePhrase = new LogicalQueryPhrase(Metaphase.LOGICAL_NAME_FIELD, "metaphase.work_item.done");
             NegativeQueryPhrase notDonePhrase = new NegativeQueryPhrase(donePhaseNamePhrase);
             CrossQueryPhrase phaseIdPhrase = new CrossQueryPhrase("metaphase", notDonePhrase);
             CrossQueryPhrase byPhasePhrase = new CrossQueryPhrase(WorkItem.PHASE_FIELD, phaseIdPhrase);
@@ -153,9 +168,28 @@ namespace Hpe.Nga.Api.Core.Tests
             queries.Add(byPhasePhrase);
 
             EntityListResult<WorkItem> entitiesResult = entityService.Get<WorkItem>(workspaceContext, queries, null);
-            Assert.AreEqual<int>(2, entitiesResult.total_count.Value);
-            Assert.IsTrue(entitiesResult.data[0].Id == defect1.Id || entitiesResult.data[0].Id == defect3.Id);
-            Assert.IsTrue(entitiesResult.data[1].Id == defect1.Id || entitiesResult.data[1].Id == defect3.Id);
+            Assert.AreEqual<int>(3, entitiesResult.total_count.Value);
+            Assert.IsTrue(entitiesResult.data[0].Id == defect1.Id || entitiesResult.data[0].Id == defect3.Id || entitiesResult.data[0].Id == defect4.Id);
+            Assert.IsTrue(entitiesResult.data[1].Id == defect1.Id || entitiesResult.data[1].Id == defect3.Id || entitiesResult.data[1].Id == defect4.Id);
+            Assert.IsTrue(entitiesResult.data[2].Id == defect1.Id || entitiesResult.data[2].Id == defect3.Id || entitiesResult.data[2].Id == defect4.Id);
+
+
+            //check group by
+            GroupResult groupResult = entityService.GetWithGroupBy<WorkItem>(workspaceContext, queries, "severity");
+            Assert.AreEqual(2, groupResult.groupsTotalCount);
+            Group group1 = groupResult.groups[0];
+            Group group2 = groupResult.groups[1];
+            if (group1.count == 1)
+            {
+                Group temp = group1;
+                group1 = group2;
+                group2 = temp;
+            }
+
+            Assert.AreEqual<int>(2, group1.count);
+            Assert.AreEqual<String>("list_node.severity.high", group1.value.logical_name);
+            Assert.AreEqual<int>(1, group2.count);
+            Assert.AreEqual<String>("list_node.severity.urgent", group2.value.logical_name);
         }
 
         [TestMethod]

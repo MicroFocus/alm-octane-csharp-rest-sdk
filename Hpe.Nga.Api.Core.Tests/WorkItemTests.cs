@@ -49,7 +49,7 @@ namespace Hpe.Nga.Api.Core.Tests
         public void CrudDefectAsWorkItemTest()
         {
             //CREATE
-            Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "New");
+            Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.new");
             ListNode SEVERITY_HIGH = TestHelper.GetSeverityByName(entityService, workspaceContext, "High");
             String name = "Defect" + Guid.NewGuid();
             WorkItem workItem = new WorkItem();
@@ -78,7 +78,7 @@ namespace Hpe.Nga.Api.Core.Tests
         [TestMethod]
         public void CrudStoryAsWorkItemTest()
         {
-            Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "New");
+            Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
             String name = "Story" + Guid.NewGuid();
             WorkItem workItem = new WorkItem();
             workItem.Name = name;
@@ -106,7 +106,7 @@ namespace Hpe.Nga.Api.Core.Tests
         public void CreateEpicAndFeatureAsWorkItemsTest()
         {
             //create epic
-            Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_EPIC, "New");
+            Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_EPIC, "phase.epic.new");
             String epicName = "Epic" + Guid.NewGuid();
             WorkItem epicToCreate = new WorkItem();
             epicToCreate.Name = epicName;
@@ -120,7 +120,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
 
             //parent of feature can be only epic, workItemRoot cannot be parent of feature
-            Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByName(entityService, workspaceContext, WorkItem.SUBTYPE_FEATURE, "New");
+            Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_FEATURE, "phase.feature.new");
             String featureName = "Feature" + Guid.NewGuid();
             WorkItem featureToCreate = new WorkItem();
             featureToCreate.Name = featureName;
