@@ -30,6 +30,7 @@ namespace Hpe.Nga.Api.Core.Entities
         public static string PHASE_FIELD = "phase";
         public static string SEVERITY_FIELD = "severity";
         public static string PARENT_FIELD = "parent";
+        public static string DESCRIPTION_FIELD = "description";
 
 
 
@@ -40,11 +41,13 @@ namespace Hpe.Nga.Api.Core.Entities
 
         public WorkItem()
         {
+            AggregateType = "work_item";
         }
 
         public WorkItem(long id)
             : base(id)
         {
+            AggregateType = "work_item";
         }
 
         public string SubType
@@ -106,6 +109,17 @@ namespace Hpe.Nga.Api.Core.Entities
             set
             {
                 SetValue(RELEASE_FIELD, value);
+            }
+        }
+        public string Description
+        {
+            get
+            {
+                return GetStringValue(DESCRIPTION_FIELD);
+            }
+            set
+            {
+                SetValue(DESCRIPTION_FIELD, value);
             }
         }
     }

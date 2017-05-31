@@ -18,5 +18,5 @@ using System.Threading.Tasks;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
-    public enum RequestType { Get, Post, PostOctet, Update, Delete };
+    public enum RequestType { Get, Post, PostOctet, MultiPart, Update, Delete };
 }

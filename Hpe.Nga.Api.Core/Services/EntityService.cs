@@ -20,6 +20,8 @@ using Hpe.Nga.Api.Core.Services.Core;
 using Hpe.Nga.Api.Core.Services.GroupBy;
 using Hpe.Nga.Api.Core.Services.Query;
 using Hpe.Nga.Api.Core.Services.RequestContext;
+using System.IO;
+using Hpe.Nga.Api.Core.Entities.Base;
 
 namespace Hpe.Nga.Api.Core.Services
 {
@@ -201,6 +203,16 @@ namespace Hpe.Nga.Api.Core.Services
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
             ResponseWrapper response = rc.ExecuteDelete(url);
+        }
+
+        public Attachment AttachToEntity(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType)
+        {
+            string url = context.GetPath() + "/attachments";
+            string attachmentEntity = string.Format("{0}\"name\":\"{2}\",\"owner_{3}\":{0}\"type\":\"{3}\",\"id\":\"{4}\"{1}{1}",
+                "{", "}", fileName, entity.AggregateType, entity.Id.ToString());
+            ResponseWrapper response = rc.SendMultiPart(url, content, contentType, fileName, attachmentEntity);
+            EntityListResult<Attachment> result = jsonSerializer.Deserialize<EntityListResult<Attachment>>(response.Data);
+            return (Attachment)result.data[0];
         }
 
     }
