@@ -99,7 +99,7 @@ namespace Hpe.Nga.Api.Core.Tests
             Release release = new Release(created.Id);
             release.Name = name;
 
-            Release updated = entityService.Update<Release>(workspaceContext, release);
+            Release updated = entityService.Update<Release>(workspaceContext, release, TestHelper.NameFields);
             Assert.AreEqual<String>(updated.Name, name);
         }
 
@@ -182,7 +182,7 @@ namespace Hpe.Nga.Api.Core.Tests
             release.SprintDuration = 7;
 
 
-            Release created = entityService.Create<Release>(workspaceContext, release);
+            Release created = entityService.Create<Release>(workspaceContext, release, TestHelper.NameFields);
             Assert.AreEqual<String>(name, created.Name);
             return created;
         }
@@ -196,7 +196,7 @@ namespace Hpe.Nga.Api.Core.Tests
             milestone.SetRelease(new EntityList<Release>(release));
 
 
-            Milestone created = entityService.Create<Milestone>(workspaceContext, milestone);
+            Milestone created = entityService.Create<Milestone>(workspaceContext, milestone, TestHelper.NameFields);
             Assert.AreEqual<String>(name, created.Name);
             return created;
         }

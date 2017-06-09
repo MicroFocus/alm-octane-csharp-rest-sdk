@@ -67,11 +67,12 @@ namespace Hpe.Nga.Api.Core.Tests
             byte[] fileContentsBytes = Encoding.UTF8.GetBytes(fileContents);
             
             Defect createdDefect = CreateDefect();
-            Attachment attachment = entityService.AttachToEntity(workspaceContext, createdDefect, fileName, fileContentsBytes, "text/plain");
+            Attachment attachment = entityService.CreateAttachment(workspaceContext, createdDefect, fileName, fileContentsBytes, "text/plain", new string[] { "owner_work_item" });
             Assert.IsNotNull(attachment.Id);
-            Assert.AreEqual(attachment.owner_work_item.TypeName, "work_item");
+            Assert.AreEqual(attachment.owner_work_item.TypeName, "defect");
             Assert.AreEqual(attachment.owner_work_item.Id, createdDefect.Id);
         }
+
 
         private static Defect CreateDefect()
         {
@@ -87,7 +88,7 @@ namespace Hpe.Nga.Api.Core.Tests
             defect.Phase = phase;
             defect.Severity = getSeverityHigh();
             defect.Parent = getWorkItemRoot();
-            Defect created = entityService.Create<Defect>(workspaceContext, defect);
+            Defect created = entityService.Create<Defect>(workspaceContext, defect, TestHelper.NameFields);
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(created.Id > 0);
             return created;

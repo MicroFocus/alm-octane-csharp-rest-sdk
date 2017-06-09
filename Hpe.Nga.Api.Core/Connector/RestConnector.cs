@@ -123,7 +123,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         public void Disconnect()
         {
-            ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null);
+            ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
             lwssoToken = null;
         }
 
@@ -146,13 +146,8 @@ namespace Hpe.Nga.Api.Core.Connector
             Cookie lwssoCookie = new Cookie(LWSSO_COOKIE_NAME, lwssoToken, cookiePath, cookieDomain);
             request.CookieContainer.Add(lwssoCookie);
 
-            //add csrf token
-            Cookie csrfCookie = new Cookie(CSRF_COOKIE_NAME, csrfToken, cookiePath, cookieDomain);
-            request.CookieContainer.Add(csrfCookie);
-            request.Headers.Add(CSRF_HEADER_NAME, csrfToken);
-
             //add internal API token
-            request.Headers.Add("HPECLIENTTYPE", "HPE_MQM_UI");
+            request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
 
 
 
@@ -199,24 +194,24 @@ namespace Hpe.Nga.Api.Core.Connector
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams)
         {
-            return Send(restRelativeUri, RequestType.Get, null);
+            return Send(restRelativeUri, queryParams, RequestType.Get, null);
         }
 
-        public ResponseWrapper ExecutePost(string restRelativeUri, string data)
+        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, RequestType.Post, data);
+            return Send(restRelativeUri, queryParams, RequestType.Post, data);
         }
 
-        public ResponseWrapper ExecutePut(string restRelativeUri, string data)
+        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, RequestType.Update, data);
+            return Send(restRelativeUri, queryParams, RequestType.Update, data);
         }
 
         public ResponseWrapper ExecuteDelete(string restRelativeUri)
         {
-            return Send(restRelativeUri, RequestType.Delete, null);
+            return Send(restRelativeUri, null, RequestType.Delete, null);
         }
 
         private ResponseWrapper DoSend(HttpWebRequest request)
@@ -260,7 +255,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return responseWrapper;
         }
 
-        public ResponseWrapper Send(string restRelativeUri, RequestType requestType, string data)
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data)
         {
             if (!IsConnected())
             {
@@ -268,6 +263,7 @@ namespace Hpe.Nga.Api.Core.Connector
             }
 
             //Console.WriteLine(requestType + " : " + restRelativeUri);
+            restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
             HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
             request.Timeout = 200000;//default 100000
 
@@ -304,7 +300,7 @@ namespace Hpe.Nga.Api.Core.Connector
             string formItem = string.Format(formdataTemplate, "entity", entityData);
             byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formItem);
             rs.Write(formitembytes, 0, formitembytes.Length);
-            
+
             rs.Write(boundarybytes, 0, boundarybytes.Length);
 
             string headerTemplate = "Content-Disposition: form-data; name=\"content\"; filename=\"{0}\"\r\nContent-Type: {1}\r\n\r\n";

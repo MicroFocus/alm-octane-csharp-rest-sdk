@@ -32,7 +32,7 @@ namespace Hpe.Nga.Api.Core.Tests
             Workspace workspace = new Workspace();
             workspace.Name = "WS_" + Guid.NewGuid();
 
-            Workspace created = entityService.Create<Workspace>(sharedSpaceContext, workspace);
+            Workspace created = entityService.Create<Workspace>(sharedSpaceContext, workspace, TestHelper.NameFields);
 
             Assert.AreEqual<String>(workspace.Name, created.Name);
 

@@ -135,7 +135,7 @@ namespace Hpe.Nga.Api.Core.Tests
             Dictionary<String, String> serviceArgs = new Dictionary<string, string>();
             serviceArgs.Add("reference_update_mode", "append");
 
-            entityService.Update<SharedspaceUser>(sharedSpaceContext, userForUpdate, serviceArgs);
+            entityService.Update<SharedspaceUser>(sharedSpaceContext, userForUpdate, serviceArgs, null);
 
             //READ USER
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
@@ -156,7 +156,9 @@ namespace Hpe.Nga.Api.Core.Tests
             user.Email = user.Name;
             user.Phone1 = "123-123-123";
 
-            SharedspaceUser createdUser = entityService.Create<SharedspaceUser>(sharedSpaceContext, user);
+            var fields = new string[] { "name", "workspace_roles" };
+
+            SharedspaceUser createdUser = entityService.Create<SharedspaceUser>(sharedSpaceContext, user, fields);
             Assert.AreEqual<string>(user.Name, createdUser.Name);
             return createdUser;
         }
