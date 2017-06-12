@@ -23,16 +23,14 @@ namespace Hpe.Nga.Api.Core.Tests
     public static class TestHelper
     {
 
-        public static Phase GetPhaseForEntityByName(EntityService entityService, WorkspaceContext workspaceContext, String entityTypeName, String name)
+        public static Phase GetPhaseForEntityByLogicalName(EntityService entityService, WorkspaceContext workspaceContext, String entityTypeName, String logicalName)
         {
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
             LogicalQueryPhrase byEntityPhrase = new LogicalQueryPhrase(Phase.ENTITY_FIELD, entityTypeName);
-            LogicalQueryPhrase byNamePhrase = new LogicalQueryPhrase(Phase.NAME_FIELD, name);
+            LogicalQueryPhrase byNamePhrase = new LogicalQueryPhrase(Phase.LOGICAL_NAME_FIELD, logicalName);
             queryPhrases.Add(byEntityPhrase);
             queryPhrases.Add(byNamePhrase);
-
-            List<String> fields = new List<String>() { Phase.NAME_FIELD, Phase.LOGICAL_NAME_FIELD };
-            EntityListResult<Phase> result = entityService.Get<Phase>(workspaceContext, queryPhrases, fields);
+            EntityListResult<Phase> result = entityService.Get<Phase>(workspaceContext, queryPhrases, null);
             Assert.AreEqual(1, result.total_count);
             Phase phase = result.data[0];
             return phase;
