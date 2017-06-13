@@ -230,7 +230,7 @@ namespace Hpe.Nga.Api.Core.Tests
             defect.Phase = phase;
             defect.Severity = getSeverityHigh();
             defect.Parent = getWorkItemRoot();
-            Defect created = entityService.Create<Defect>(workspaceContext, defect);
+            Defect created = entityService.Create<Defect>(workspaceContext, defect, new string[] { "name" });
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(created.Id > 0);
             return created;
@@ -247,7 +247,7 @@ namespace Hpe.Nga.Api.Core.Tests
             release.SprintDuration = 7;
 
 
-            Release created = entityService.Create<Release>(workspaceContext, release);
+            Release created = entityService.Create<Release>(workspaceContext, release, TestHelper.NameFields);
             Assert.AreEqual<String>(name, created.Name);
             return created;
         }

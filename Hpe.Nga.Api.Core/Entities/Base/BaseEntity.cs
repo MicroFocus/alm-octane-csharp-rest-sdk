@@ -89,6 +89,11 @@ namespace Hpe.Nga.Api.Core.Entities
 
         }
 
+        public string AggregateType
+        {
+            get; protected set;
+        }
+
         #endregion
 
         #region Types handling Properties

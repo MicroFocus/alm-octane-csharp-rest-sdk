@@ -196,17 +196,17 @@ namespace Hpe.Nga.Api.Core.Services.Query
             String groupBy, Dictionary<String,String> serviceArguments)
         {
             String str = String.Empty;
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildGroupByString(groupBy));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildQueryString(queryPhrases));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildOrderByString(orderBy));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildFieldsString(fields));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildOffsetString(offset));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));
-            str = ConcateNewQueryString(str, QueryStringBuilder.BuildServiceArguments(serviceArguments));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildGroupByString(groupBy));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildQueryString(queryPhrases));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildOrderByString(orderBy));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildFieldsString(fields));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildOffsetString(offset));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));
+            str = ConcatNewQueryString(str, QueryStringBuilder.BuildServiceArguments(serviceArguments));
             return str;
         }
 
-        private static String ConcateNewQueryString(String baseString, String newString)
+        private static String ConcatNewQueryString(String baseString, String newString)
         {
             if (!String.IsNullOrEmpty(newString))
             {

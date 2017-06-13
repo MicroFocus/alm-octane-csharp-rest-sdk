@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
+using System.Collections.Specialized;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
@@ -37,6 +38,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
+        private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
 
         public static string AUTHENTICATION_URL = "/authentication/sign_in";
@@ -121,7 +123,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         public void Disconnect()
         {
-            ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null);
+            ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
             lwssoToken = null;
         }
 
@@ -144,13 +146,8 @@ namespace Hpe.Nga.Api.Core.Connector
             Cookie lwssoCookie = new Cookie(LWSSO_COOKIE_NAME, lwssoToken, cookiePath, cookieDomain);
             request.CookieContainer.Add(lwssoCookie);
 
-            //add csrf token
-            Cookie csrfCookie = new Cookie(CSRF_COOKIE_NAME, csrfToken, cookiePath, cookieDomain);
-            request.CookieContainer.Add(csrfCookie);
-            request.Headers.Add(CSRF_HEADER_NAME, csrfToken);
-
             //add internal API token
-            request.Headers.Add("HPECLIENTTYPE", "HPE_MQM_UI");
+            request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
 
 
 
@@ -183,6 +180,12 @@ namespace Hpe.Nga.Api.Core.Connector
                     request.Method = METHOD_PUT;
                     break;
 
+                case RequestType.MultiPart:
+                    request.ContentType = CONTENT_TYPE_MULTIPART;
+                    request.Accept = CONTENT_TYPE_JSON;
+                    request.Method = METHOD_POST;
+                    break;
+
                 default:
                     break;
             }
@@ -191,50 +194,32 @@ namespace Hpe.Nga.Api.Core.Connector
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams)
         {
-            return Send(restRelativeUri, RequestType.Get, null);
+            return Send(restRelativeUri, queryParams, RequestType.Get, null);
         }
 
-        public ResponseWrapper ExecutePost(string restRelativeUri, string data)
+        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, RequestType.Post, data);
+            return Send(restRelativeUri, queryParams, RequestType.Post, data);
         }
 
-        public ResponseWrapper ExecutePut(string restRelativeUri, string data)
+        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, RequestType.Update, data);
+            return Send(restRelativeUri, queryParams, RequestType.Update, data);
         }
 
         public ResponseWrapper ExecuteDelete(string restRelativeUri)
         {
-            return Send(restRelativeUri, RequestType.Delete, null);
+            return Send(restRelativeUri, null, RequestType.Delete, null);
         }
 
-        public ResponseWrapper Send(string restRelativeUri, RequestType requestType, string data)
+        private ResponseWrapper DoSend(HttpWebRequest request)
         {
-            if (!IsConnected())
-            {
-                throw new NotConnectedException();
-            }
-
-            //Console.WriteLine(requestType + " : " + restRelativeUri);
-            HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
-            request.Timeout = 200000;//default 100000
             ResponseWrapper responseWrapper = new ResponseWrapper();
 
             try
             {
-                if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
-                {
-                    byte[] byteData = Encoding.UTF8.GetBytes(data);
-                    request.ContentLength = byteData.Length;
-                    using (Stream postStream = request.GetRequestStream())
-                    {
-                        postStream.Write(byteData, 0, byteData.Length);
-                    }
-                }
-
 
                 var response = (HttpWebResponse)request.GetResponse();
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
@@ -268,7 +253,76 @@ namespace Hpe.Nga.Api.Core.Connector
             }
 
             return responseWrapper;
+        }
 
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        {
+            if (!IsConnected())
+            {
+                throw new NotConnectedException();
+            }
+
+            //Console.WriteLine(requestType + " : " + restRelativeUri);
+            restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
+            HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
+            request.Timeout = 200000;//default 100000
+
+
+
+            if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
+            {
+                byte[] byteData = Encoding.UTF8.GetBytes(data);
+                request.ContentLength = byteData.Length;
+                using (Stream postStream = request.GetRequestStream())
+                {
+                    postStream.Write(byteData, 0, byteData.Length);
+                }
+            }
+
+            return DoSend(request);
+            
+
+        }
+
+        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        {
+            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+
+            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart);
+            wr.ContentType += boundary;
+            
+            Stream rs = wr.GetRequestStream();
+
+            string formdataTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"blob\"\r\nContent-Type: application/json\r\n\r\n{1}";
+
+            rs.Write(boundarybytes, 0, boundarybytes.Length);
+            string formItem = string.Format(formdataTemplate, "entity", entityData);
+            byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formItem);
+            rs.Write(formitembytes, 0, formitembytes.Length);
+
+            rs.Write(boundarybytes, 0, boundarybytes.Length);
+
+            string headerTemplate = "Content-Disposition: form-data; name=\"content\"; filename=\"{0}\"\r\nContent-Type: {1}\r\n\r\n";
+            string header = string.Format(headerTemplate,  fileName, binaryContentType);
+            byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
+            rs.Write(headerbytes, 0, headerbytes.Length);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead = 0;
+            using (MemoryStream ms = new MemoryStream(binaryContent))
+            {
+                while ((bytesRead = ms.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    rs.Write(buffer, 0, bytesRead);
+                }
+            }
+
+            byte[] trailer = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+            rs.Write(trailer, 0, trailer.Length);
+            rs.Close();
+
+            return DoSend(wr);
         }
 
         private void UpdateLwssoTokenFromResponse(HttpWebResponse httpResponse)

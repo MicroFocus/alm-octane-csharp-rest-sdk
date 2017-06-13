@@ -63,5 +63,8 @@ namespace Hpe.Nga.Api.Core.Tests
             ListNode listNode = result.data[0];
             return listNode;
         }
+
+        public static string[] NameFields = new string[] { "name" };
+        public static string[] NameSubtypeFields = new string[] { "name", "subtype" };
     }
 }
