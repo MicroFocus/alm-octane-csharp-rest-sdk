@@ -20,6 +20,8 @@ using Hpe.Nga.Api.Core.Services.Core;
 using Hpe.Nga.Api.Core.Services.GroupBy;
 using Hpe.Nga.Api.Core.Services.Query;
 using Hpe.Nga.Api.Core.Services.RequestContext;
+using System.IO;
+using Hpe.Nga.Api.Core.Entities.Base;
 
 namespace Hpe.Nga.Api.Core.Services
 {
@@ -61,12 +63,8 @@ namespace Hpe.Nga.Api.Core.Services
             string url = context.GetPath() + "/" + collectionName;
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
-            if (!String.IsNullOrEmpty(queryString))
-            {
-                url = url + "?" + queryString;
-            }
 
-            ResponseWrapper response = rc.ExecuteGet(url);
+            ResponseWrapper response = rc.ExecuteGet(url, queryString);
             if (response.Data != null)
             {
                 EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
@@ -102,12 +100,8 @@ namespace Hpe.Nga.Api.Core.Services
 
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, null);
-            if (!String.IsNullOrEmpty(queryString))
-            {
-                url = url + "?" + queryString;
-            }
 
-            ResponseWrapper response = rc.ExecuteGet(url);
+            ResponseWrapper response = rc.ExecuteGet(url, queryString);
             if (response.Data != null)
             {
                 GroupResult result = jsonSerializer.Deserialize<GroupResult>(response.Data);
@@ -123,52 +117,56 @@ namespace Hpe.Nga.Api.Core.Services
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName + "/" + id;
             String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null, null);
-            if (!String.IsNullOrEmpty(queryString))
-            {
-                url = url + "?" + queryString;
-            }
 
-            ResponseWrapper response = rc.ExecuteGet(url);
+            ResponseWrapper response = rc.ExecuteGet(url, queryString);
             T result = jsonSerializer.Deserialize<T>(response.Data);
             return result;
         }
 
-        public EntityListResult<T> Create<T>(IRequestContext context, EntityList<T> entityList)
+        public EntityListResult<T> Create<T>(IRequestContext context, EntityList<T> entityList, IList<string> fieldsToReturn = null)
              where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            string collectionName = GetCollectionName<T>();
+
+            string queryParams = "";
+
+            if (fieldsToReturn != null && fieldsToReturn.Count > 0)
+            {
+                queryParams += "fields=" + string.Join(",", fieldsToReturn);
+            }
+
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entityList);
-            ResponseWrapper response = rc.ExecutePost(url, data);
+            ResponseWrapper response = rc.ExecutePost(url, queryParams, data);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
         }
 
-        public T Create<T>(IRequestContext context, T entity)
+        public T Create<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null)
             where T : BaseEntity
         {
 
-            EntityListResult<T> result = Create<T>(context, EntityList<T>.Create(entity));
+            EntityListResult<T> result = Create<T>(context, EntityList<T>.Create(entity), fieldsToReturn);
             return result.data[0];
         }
 
-        public T Update<T>(IRequestContext context, T entity)
+        public T Update<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null)
              where T : BaseEntity
         {
 
-            return Update<T>(context, entity, null);
+            return Update<T>(context, entity, null, fieldsToReturn);
         }
 
-        public T Update<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments)
+        public T Update<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
              where T : BaseEntity
         {
             String collectionName = GetCollectionName<T>();
-            String queryString = QueryStringBuilder.BuildQueryString(null, null, null, null, null, null, serviceArguments);
+            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, serviceArguments);
 
 
-            string url = context.GetPath() + "/" + collectionName + "/" + entity.Id + "?" + queryString;
+            string url = context.GetPath() + "/" + collectionName + "/" + entity.Id;
             String data = jsonSerializer.Serialize(entity);
-            ResponseWrapper response = rc.ExecutePut(url, data);
+            ResponseWrapper response = rc.ExecutePut(url, queryString, data);
             T result = jsonSerializer.Deserialize<T>(response.Data);
             return result;
         }
@@ -179,7 +177,7 @@ namespace Hpe.Nga.Api.Core.Services
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entities);
-            ResponseWrapper response = rc.ExecutePut(url, data);
+            ResponseWrapper response = rc.ExecutePut(url, null, data);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
         }
@@ -201,6 +199,22 @@ namespace Hpe.Nga.Api.Core.Services
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
             ResponseWrapper response = rc.ExecuteDelete(url);
+        }
+
+
+        public Attachment AttachToEntity(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType, string[] fieldsToReturn)
+        {
+            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, null);
+            string url = context.GetPath() + "/attachments?" + queryString;
+            string attachmentEntity = null;
+            if (entity != null)
+            {
+                attachmentEntity = string.Format("{0}\"name\":\"{2}\",\"owner_{3}\":{0}\"type\":\"{3}\",\"id\":\"{4}\"{1}{1}",
+                    "{", "}", fileName, entity.AggregateType, entity.Id.ToString());
+            }
+            ResponseWrapper response = rc.SendMultiPart(url, content, contentType, fileName, attachmentEntity);
+            EntityListResult<Attachment> result = jsonSerializer.Deserialize<EntityListResult<Attachment>>(response.Data);
+            return (Attachment)result.data[0];
         }
 
     }

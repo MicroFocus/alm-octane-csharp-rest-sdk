@@ -58,7 +58,7 @@ namespace Hpe.Nga.Api.Core.Tests
             workItem.Severity = SEVERITY_HIGH;
             workItem.Parent = getWorkItemRoot();
             workItem.SubType = WorkItem.SUBTYPE_DEFECT;//For workItems - SUBTYPE have to be set
-            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem);
+            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
 
             Assert.AreEqual<String>(WorkItem.SUBTYPE_DEFECT, created.SubType);
             Assert.AreEqual<String>(name, created.Name);
@@ -66,7 +66,7 @@ namespace Hpe.Nga.Api.Core.Tests
             //UPDATE
             WorkItem workItemForUpdate = new WorkItem(created.Id);
             workItemForUpdate.Name = created.Name + "_updated";
-            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate);
+            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
             Assert.AreEqual<String>(workItemForUpdate.Name, updated.Name);
 
 
@@ -86,7 +86,7 @@ namespace Hpe.Nga.Api.Core.Tests
             workItem.Parent = getWorkItemRoot();
             workItem.SubType = WorkItem.SUBTYPE_STORY;//For workItems - SUBTYPE have to be set
 
-            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem);
+            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(WorkItem.SUBTYPE_STORY, created.SubType);
             Assert.AreEqual<String>(name, created.Name);
 
@@ -94,7 +94,7 @@ namespace Hpe.Nga.Api.Core.Tests
             //UPDATE
             WorkItem workItemForUpdate = new WorkItem(created.Id);
             workItemForUpdate.Name = created.Name + "_updated";
-            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate);
+            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
             Assert.AreEqual<String>(workItemForUpdate.Name, updated.Name);
 
 
@@ -113,8 +113,9 @@ namespace Hpe.Nga.Api.Core.Tests
             epicToCreate.Phase = EPIC_PHASE_NEW;
             epicToCreate.Parent = getWorkItemRoot();
             epicToCreate.SubType = WorkItem.SUBTYPE_EPIC;//For workItems - SUBTYPE have to be set
+            string[] fields = new string[] { "subtype", "name" };
 
-            WorkItem createdEpic = entityService.Create<WorkItem>(workspaceContext, epicToCreate);
+            WorkItem createdEpic = entityService.Create<WorkItem>(workspaceContext, epicToCreate, fields);
             Assert.AreEqual<String>(WorkItem.SUBTYPE_EPIC, createdEpic.SubType);
             Assert.AreEqual<String>(epicName, createdEpic.Name);
 
@@ -128,7 +129,7 @@ namespace Hpe.Nga.Api.Core.Tests
             featureToCreate.Parent = createdEpic;
             featureToCreate.SubType = WorkItem.SUBTYPE_FEATURE; //For workItems - SUBTYPE have to be set
 
-            WorkItem createdFeature = entityService.Create<WorkItem>(workspaceContext, featureToCreate);
+            WorkItem createdFeature = entityService.Create<WorkItem>(workspaceContext, featureToCreate, fields);
             Assert.AreEqual<String>(WorkItem.SUBTYPE_FEATURE, createdFeature.SubType);
             Assert.AreEqual<String>(featureName, createdFeature.Name);
         }

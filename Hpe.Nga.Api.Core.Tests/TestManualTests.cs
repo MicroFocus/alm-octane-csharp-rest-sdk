@@ -87,7 +87,7 @@ namespace Hpe.Nga.Api.Core.Tests
             test.Phase = PHASE_NEW;
 
 
-            ManualTest created = entityService.Create<ManualTest>(workspaceContext, test);
+            ManualTest created = entityService.Create<ManualTest>(workspaceContext, test, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(created.Id > 0);
             return created;

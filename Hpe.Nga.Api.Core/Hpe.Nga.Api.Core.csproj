@@ -55,6 +55,8 @@
     <Compile Include="Connector\RestConnector.cs" />
     <Compile Include="Connector\Exceptions\MqmRestException.cs" />
     <Compile Include="Connector\UserPassConnectionInfo.cs" />
+    <Compile Include="Entities\Base\Attachment.cs" />
+    <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Tests\ManualTest.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
     <Compile Include="Entities\Users\Role.cs" />
