@@ -18,8 +18,32 @@ using System.Threading.Tasks;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
-    public interface ConnectionInfo
+    /// <summary>
+    /// POCO class for connection data that is sent to NGA server during calling to <see cref="Connect"/> method.
+    /// Uses the user/password method
+    /// </summary>
+    public class UserPassConnectionInfo : ConnectionInfo
     {
-        
+        public string user { get; set; }
+        public string password { get; set; }
+
+       /* public string enable_csrf
+        {
+            get
+            {
+                return "true";
+            }
+        }*/
+
+
+        public UserPassConnectionInfo()
+        {
+        }
+
+        public UserPassConnectionInfo(String user, string password)
+        {
+            this.user = user;
+            this.password = password;
+        }
     }
 }

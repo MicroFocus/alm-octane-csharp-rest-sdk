@@ -18,8 +18,32 @@ using System.Threading.Tasks;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
-    public interface ConnectionInfo
+    /// <summary>
+    /// POCO class for connection data that is sent to NGA server during calling to <see cref="Connect"/> method.
+    /// Uses the client_id/client_secret method
+    /// </summary>
+    public class APIKeyConnectionInfo : ConnectionInfo
     {
-        
+        public string client_id { get; set; }
+        public string client_secret { get; set; }
+
+       /* public string enable_csrf
+        {
+            get
+            {
+                return "true";
+            }
+        }*/
+
+
+        public APIKeyConnectionInfo()
+        {
+        }
+
+        public APIKeyConnectionInfo(String client_id, string client_secret)
+        {
+            this.client_id = client_id;
+            this.client_secret = client_secret;
+        }
     }
 }
