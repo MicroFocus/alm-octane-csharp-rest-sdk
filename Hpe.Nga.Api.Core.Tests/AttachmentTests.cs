@@ -67,7 +67,7 @@ namespace Hpe.Nga.Api.Core.Tests
             byte[] fileContentsBytes = Encoding.UTF8.GetBytes(fileContents);
             
             Defect createdDefect = CreateDefect();
-            Attachment attachment = entityService.CreateAttachment(workspaceContext, createdDefect, fileName, fileContentsBytes, "text/plain", new string[] { "owner_work_item" });
+            Attachment attachment = entityService.AttachToEntity(workspaceContext, createdDefect, fileName, fileContentsBytes, "text/plain", new string[] { "owner_work_item" });
             Assert.IsNotNull(attachment.Id);
             Assert.AreEqual(attachment.owner_work_item.TypeName, "defect");
             Assert.AreEqual(attachment.owner_work_item.Id, createdDefect.Id);
