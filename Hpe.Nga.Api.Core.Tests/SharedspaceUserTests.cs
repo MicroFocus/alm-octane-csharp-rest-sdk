@@ -34,36 +34,11 @@ namespace Hpe.Nga.Api.Core.Tests
         }
 
         [TestMethod]
-        public void GetCurrentUser()
-        {
-            LogicalQueryPhrase byName = new LogicalQueryPhrase(SharedspaceUser.NAME_FIELD, CurrentUserName);
-            List<QueryPhrase> queries = new List<QueryPhrase>();
-            queries.Add(byName);
-
-            List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
-
-            EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, queries, fields);
-            Assert.AreEqual<int>(1, users.total_count.Value);
-
-        }
-
-        [TestMethod]
         public void GetAllSharedspaceUsersTest()
         {
             EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, null, null);
             Assert.IsTrue(users.total_count >= 1);
 
-        }
-
-        [TestMethod]
-        public void GetSharedspaceUserByNameTest()
-        {
-            LogicalQueryPhrase byName = new LogicalQueryPhrase(WorkspaceUser.NAME_FIELD, CurrentUserName);
-            List<QueryPhrase> queries = new List<QueryPhrase>();
-            queries.Add(byName);
-
-            EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, queries, null);
-            Assert.IsTrue(users.total_count == 1);
         }
 
         [TestMethod]

@@ -33,18 +33,5 @@ namespace Hpe.Nga.Api.Core.Tests
             Assert.IsTrue(users.total_count >= 1);
 
         }
-
-        [TestMethod]
-        public void GetWorkspaceUserByName()
-        {
-            LogicalQueryPhrase byName = new LogicalQueryPhrase(WorkspaceUser.NAME_FIELD, CurrentUserName);
-            List<QueryPhrase> queries = new List<QueryPhrase>();
-            queries.Add(byName);
-
-            EntityListResult<WorkspaceUser> users = entityService.Get<WorkspaceUser>(workspaceContext, queries, null);
-            Assert.IsTrue(users.total_count == 1);
-
-        }
-
     }
 }

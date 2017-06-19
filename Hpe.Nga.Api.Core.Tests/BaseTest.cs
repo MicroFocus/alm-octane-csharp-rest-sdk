@@ -48,6 +48,7 @@ namespace Hpe.Nga.Api.Core.Tests
                 string clientId = ConfigurationManager.AppSettings["clientId"];
                 if (clientId != null)
                 {
+                    userName = clientId;
                     connectionInfo = new APIKeyConnectionInfo(clientId, ConfigurationManager.AppSettings["clientSecret"]);
                 } else
                 {
