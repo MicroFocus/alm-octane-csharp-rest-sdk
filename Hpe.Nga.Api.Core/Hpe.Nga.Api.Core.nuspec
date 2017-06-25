@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/HPSoftware/alm-octane-csharp-rest-sdk/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/HPSoftware/alm-octane-csharp-rest-sdk</projectUrl>
+    <description>This SDK enables the the ALM Octane REST API to be manipulated using native C# code</description>
+    <copyright>$copyright$</copyright>
+    <tags>SDK Octane HPE REST</tags>
+  </metadata>
+</package>
