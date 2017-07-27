@@ -18,7 +18,15 @@ using System.Threading.Tasks;
 
 namespace Hpe.Nga.Api.Core.Connector.Exceptions
 {
+
+    [Serializable]
     public class ServerUnavailableException : Exception
     {
+        public ServerUnavailableException() { }
+        public ServerUnavailableException(string message) : base(message) { }
+        public ServerUnavailableException(string message, Exception inner) : base(message, inner) { }
+        protected ServerUnavailableException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

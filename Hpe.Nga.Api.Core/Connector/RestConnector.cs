@@ -223,18 +223,28 @@ namespace Hpe.Nga.Api.Core.Connector
                 var response = (HttpWebResponse)ex.Response;
                 if (response == null)
                 {
-                    throw new ServerUnavailableException();
+                    throw new ServerUnavailableException("Server is unavailable", ex);
                 }
                 else
                 {
-                    String body = null;
-                    using (var streamReader = new StreamReader(response.GetResponseStream()))
+                    RestExceptionInfo exceptionInfo;
+                    try
                     {
-                        body = streamReader.ReadToEnd();
+                        String body = null;
+                        using (var streamReader = new StreamReader(response.GetResponseStream()))
+                        {
+                            body = streamReader.ReadToEnd();
+                        }
+                        JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+                        exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
                     }
-                    JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                    RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
-                    throw new MqmRestException(exceptionInfo, response.StatusCode);
+                    catch
+                    {
+                        // If anything goes wrong in the parsing of the server response we still want to throw
+                        // an exception with the original exception as inner.
+                        throw new ServerUnavailableException("Server is unavailable", ex);
+                    }
+                    throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
                 }
 
             }
