@@ -44,6 +44,10 @@ namespace Hpe.Nga.Api.Core.Tests
             if (!restConnector.IsConnected())
             {
                 string host = ConfigurationManager.AppSettings["webAppUrl"];
+
+                // If webAppUrl is empty we do not try to connect.
+                if (string.IsNullOrWhiteSpace(host)) return;
+
                 ConnectionInfo connectionInfo;
                 string clientId = ConfigurationManager.AppSettings["clientId"];
                 if (clientId != null)

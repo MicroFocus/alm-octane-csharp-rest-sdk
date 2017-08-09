@@ -57,6 +57,7 @@
     <Compile Include="Connector\UserPassConnectionInfo.cs" />
     <Compile Include="Entities\Base\Attachment.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
+    <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Tests\ManualTest.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
     <Compile Include="Services\Queries\NegativeQueryPhrase.cs" />
+    <Compile Include="Services\Queries\NullQueryPhrase.cs" />
     <Compile Include="Services\Queries\QueryBuilder.cs" />
     <Compile Include="Services\Queries\QueryCondition.cs" />
     <Compile Include="Services\Queries\QueryExpression.cs" />
