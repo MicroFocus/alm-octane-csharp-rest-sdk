@@ -85,7 +85,7 @@ namespace Hpe.Nga.Api.Core.Connector
             httpWebRequest.CookieContainer = new CookieContainer();
 
 
-            Stream stream = httpWebRequest.GetRequestStream();
+            Stream stream = await httpWebRequest.GetRequestStreamAsync();
             using (var streamWriter = new StreamWriter(stream))
             {
                 JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
