@@ -96,5 +96,17 @@ namespace Hpe.Nga.Api.Core.Entities
                 SetValue(REQUIREMENT_REFERENCE, value);
             }
         }
+
+        public BaseEntity Task
+        {
+            get
+            {
+                return (BaseEntity)GetValue(TASK_REFERENCE);
+            }
+            set
+            {
+                SetValue(TASK_REFERENCE, value);
+            }
+        }
     }
 }

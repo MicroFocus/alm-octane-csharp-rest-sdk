@@ -20,9 +20,10 @@ using Hpe.Nga.Api.Core.Services.Core;
 using Hpe.Nga.Api.Core.Services.GroupBy;
 using Hpe.Nga.Api.Core.Services.Query;
 using Hpe.Nga.Api.Core.Services.RequestContext;
-using System.IO;
 using Hpe.Nga.Api.Core.Entities.Base;
 using System.Threading.Tasks;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace Hpe.Nga.Api.Core.Services
 {

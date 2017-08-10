@@ -59,6 +59,7 @@
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
+    <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Tests\TestGherkin.cs" />
     <Compile Include="Entities\Tests\TestManual.cs" />
