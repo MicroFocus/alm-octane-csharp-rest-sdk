@@ -10,29 +10,24 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hpe.Nga.Api.Core.Entities;
 
-
-namespace Hpe.Nga.Api.Core.Services
+namespace Hpe.Nga.Api.Core.Entities
 {
     /// <summary>
-    /// List that returned by response
+    /// Wrapper for Requirement Document entity.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> where T : BaseEntity
+    public class RequirementDocument : Requirement
     {
-        public List<T> data { get; set; }
 
-        public int? total_count { get; set; }
-
-        public EntityListResult()
+        public RequirementDocument()
+            : base()
         {
-            data = new List<T>();
-            total_count = 0;
         }
+
+        public RequirementDocument(long id)
+            : base(id)
+        {
+        }
+
     }
 }

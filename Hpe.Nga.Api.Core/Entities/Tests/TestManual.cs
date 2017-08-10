@@ -22,15 +22,15 @@ namespace Hpe.Nga.Api.Core.Entities
     /// <summary>
     /// Wrapper for ManualTest entity. Acutally Feature is subtype of work_item.
     /// </summary>
-    public class ManualTest : Test
+    public class TestManual : Test
     {
 
-        public ManualTest()
+        public TestManual()
             : base()
         {
         }
 
-        public ManualTest(long id)
+        public TestManual(long id)
             : base(id)
         {
         }

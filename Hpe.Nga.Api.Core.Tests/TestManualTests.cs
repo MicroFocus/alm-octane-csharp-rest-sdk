@@ -65,7 +65,7 @@ namespace Hpe.Nga.Api.Core.Tests
             CreateManualTest();
 
             //get as testManual
-            EntityListResult<ManualTest> testManuals = entityService.Get<ManualTest>(workspaceContext, null, null);
+            EntityListResult<TestManual> testManuals = entityService.Get<TestManual>(workspaceContext, null, null);
             Assert.IsTrue(testManuals.total_count > 0);
 
 
@@ -79,15 +79,15 @@ namespace Hpe.Nga.Api.Core.Tests
 
         }
 
-        private static ManualTest CreateManualTest()
+        private static TestManual CreateManualTest()
         {
             String name = "Test" + Guid.NewGuid();
-            ManualTest test = new ManualTest();
+            TestManual test = new TestManual();
             test.Name = name;
             test.Phase = PHASE_NEW;
 
 
-            ManualTest created = entityService.Create<ManualTest>(workspaceContext, test, TestHelper.NameSubtypeFields);
+            TestManual created = entityService.Create<TestManual>(workspaceContext, test, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(created.Id > 0);
             return created;

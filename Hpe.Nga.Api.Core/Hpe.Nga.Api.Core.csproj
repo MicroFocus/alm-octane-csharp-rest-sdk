@@ -58,8 +58,11 @@
     <Compile Include="Entities\Base\Attachment.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
-    <Compile Include="Entities\Tests\ManualTest.cs" />
+    <Compile Include="Entities\Requirements\RequirementDocument.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
+    <Compile Include="Entities\Tests\TestGherkin.cs" />
+    <Compile Include="Entities\Tests\TestManual.cs" />
+    <Compile Include="Entities\UserItems\UserItem.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
     <Compile Include="Entities\Users\Role.cs" />
     <Compile Include="Entities\Users\SharedspaceUser.cs" />
