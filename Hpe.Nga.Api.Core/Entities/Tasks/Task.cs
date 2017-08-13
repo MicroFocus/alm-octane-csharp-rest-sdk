@@ -18,10 +18,12 @@ namespace Hpe.Nga.Api.Core.Entities
     public class Task : BaseEntity
     {
         public const string OWNER_FIELD = "owner";
-        public const string AUTHOR = "author";
-        public const string INVESTED_HOURS = "invested_hours";
-        public const string REMAINING_HOURS = "remaining_hours";
-        public const string ESTIMATED_HOURS = "estimated_hours";
+        public const string AUTHOR_FIELD = "author";
+        public const string PHASE_FIELD = "phase";
+        public const string INVESTED_HOURS_FIELD = "invested_hours";
+        public const string REMAINING_HOURS_FIELD = "remaining_hours";
+        public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
+        public const string STORY_FIELD = "story";
 
         public Task()
         {
