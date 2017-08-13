@@ -23,7 +23,7 @@ namespace Hpe.Nga.Api.Core.Services
     /// List that returned by response
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> where T : BaseEntity
+    public class EntityListResult<T> : GenericEntityListResult where T : BaseEntity
     {
         public List<T> data { get; set; }
 
@@ -34,5 +34,7 @@ namespace Hpe.Nga.Api.Core.Services
             data = new List<T>();
             total_count = 0;
         }
+
+        public IEnumerable<BaseEntity> BaseEntities => data;
     }
 }

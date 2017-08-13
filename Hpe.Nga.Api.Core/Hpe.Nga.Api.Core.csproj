@@ -87,6 +87,7 @@
     <Compile Include="Entities\Users\WorkspaceUser.cs" />
     <Compile Include="Services\Attributes\CustomCollectionPathAttribute.cs" />
     <Compile Include="Services\EntityList.cs" />
+    <Compile Include="Services\GenericEntityListResult.cs" />
     <Compile Include="Services\GroupBy\GroupResult.cs" />
     <Compile Include="Services\GroupBy\Group.cs" />
     <Compile Include="Services\GroupBy\GroupByValue.cs" />
