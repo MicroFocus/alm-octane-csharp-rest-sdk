@@ -126,6 +126,15 @@ namespace Hpe.Nga.Api.Core.Services
             return null;
         }
 
+        public async Task<TestScript> GetTestScriptAsync(IRequestContext context, long id)
+        {
+            string url = string.Format("{0}/tests/{1}/script", context.GetPath(), id);
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, string.Empty);
+
+            TestScript result = jsonSerializer.Deserialize<TestScript>(response.Data);
+            return result;
+        }
+
         public T GetById<T>(IRequestContext context, long id, IList<String> fields) where T : BaseEntity
         {
             return GetByIdAsync<T>(context, id, fields).Result;

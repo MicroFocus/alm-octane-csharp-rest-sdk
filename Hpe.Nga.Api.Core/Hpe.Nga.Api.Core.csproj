@@ -63,6 +63,7 @@
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Tests\TestGherkin.cs" />
     <Compile Include="Entities\Tests\TestManual.cs" />
+    <Compile Include="Entities\Tests\TestScript.cs" />
     <Compile Include="Entities\UserItems\UserItem.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
     <Compile Include="Entities\Users\Role.cs" />
