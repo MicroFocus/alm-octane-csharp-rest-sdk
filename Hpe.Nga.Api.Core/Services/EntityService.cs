@@ -48,7 +48,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public EntityListResult<T> Get<T>(IRequestContext context) where T : BaseEntity
         {
-            return GetAsync<T>(context).Result;
+            return GetResultOrThrowInnerException(GetAsync<T>(context));
         }
 
         public Task<EntityListResult<T>> GetAsync<T>(IRequestContext context) where T : BaseEntity
@@ -58,7 +58,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields) where T : BaseEntity
         {
-            return GetAsync<T>(context, queryPhrases, fields).Result;
+            return GetResultOrThrowInnerException(GetAsync<T>(context, queryPhrases, fields));
         }
 
         public Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields) where T : BaseEntity
@@ -68,7 +68,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit) where T : BaseEntity
         {
-            return GetAsync<T>(context, queryPhrases, fields, limit).Result;
+            return GetResultOrThrowInnerException(GetAsync<T>(context, queryPhrases, fields, limit));
         }
 
         public async Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit) where T : BaseEntity
@@ -107,7 +107,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public GroupResult GetWithGroupBy<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
         {
-            return GetWithGroupByAsync<T>(context, queryPhrases, groupBy).Result;
+            return GetResultOrThrowInnerException(GetWithGroupByAsync<T>(context, queryPhrases, groupBy));
         }
 
         public async Task<GroupResult> GetWithGroupByAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
@@ -115,7 +115,12 @@ namespace Hpe.Nga.Api.Core.Services
             string collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName + "/groups";
 
-            string queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, null);
+            // Octane group API now return logical name by default as ID field,
+            // this parameter change this to return numeric ID.
+            var serviceArgs = new Dictionary<string, string>();
+            serviceArgs.Add("use_numeric_id", "true");
+
+            string queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, serviceArgs);
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString);
             if (response.Data != null)
@@ -137,7 +142,19 @@ namespace Hpe.Nga.Api.Core.Services
 
         public T GetById<T>(IRequestContext context, long id, IList<String> fields) where T : BaseEntity
         {
-            return GetByIdAsync<T>(context, id, fields).Result;
+            return GetResultOrThrowInnerException(GetByIdAsync<T>(context, id, fields));
+        }
+
+        private T GetResultOrThrowInnerException<T>(Task<T> task)
+        {
+            try
+            {
+                return task.Result;
+            }
+            catch (AggregateException aggrEx)
+            {
+                throw aggrEx.InnerException;
+            }
         }
 
         public async Task<T> GetByIdAsync<T>(IRequestContext context, long id, IList<String> fields) where T : BaseEntity
@@ -153,7 +170,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public EntityListResult<T> Create<T>(IRequestContext context, EntityList<T> entityList, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            return CreateAsync<T>(context, entityList, fieldsToReturn).Result;
+            return GetResultOrThrowInnerException(CreateAsync<T>(context, entityList, fieldsToReturn));
         }
 
         public async Task<EntityListResult<T>> CreateAsync<T>(IRequestContext context, EntityList<T> entityList, IList<string> fieldsToReturn = null) where T : BaseEntity
@@ -176,7 +193,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public T Create<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            return CreateAsync<T>(context, entity, fieldsToReturn).Result;
+            return GetResultOrThrowInnerException(CreateAsync<T>(context, entity, fieldsToReturn));
         }
 
         public async Task<T> CreateAsync<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity
@@ -187,7 +204,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public T Update<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            return UpdateAsync<T>(context, entity, fieldsToReturn).Result;
+            return GetResultOrThrowInnerException(UpdateAsync<T>(context, entity, fieldsToReturn));
         }
 
         public Task<T> UpdateAsync<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity
@@ -198,7 +215,7 @@ namespace Hpe.Nga.Api.Core.Services
         public T Update<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
             where T : BaseEntity
         {
-            return UpdateAsync<T>(context, entity, serviceArguments, fieldsToReturn).Result;
+            return GetResultOrThrowInnerException(UpdateAsync<T>(context, entity, serviceArguments, fieldsToReturn));
         }
 
         public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
@@ -218,7 +235,7 @@ namespace Hpe.Nga.Api.Core.Services
         public EntityListResult<T> UpdateEntities<T>(IRequestContext context, EntityList<T> entities)
             where T : BaseEntity
         {
-            return UpdateEntitiesAsync<T>(context, entities).Result;
+            return GetResultOrThrowInnerException(UpdateEntitiesAsync<T>(context, entities));
         }
 
         public async Task<EntityListResult<T>> UpdateEntitiesAsync<T>(IRequestContext context, EntityList<T> entities)
@@ -235,7 +252,7 @@ namespace Hpe.Nga.Api.Core.Services
         public void DeleteById<T>(IRequestContext context, long entityId)
              where T : BaseEntity
         {
-            DeleteByIdAsync<T>(context, entityId).RunSynchronously();
+            DeleteByIdAsync<T>(context, entityId).Wait();
         }
 
         public async Task DeleteByIdAsync<T>(IRequestContext context, long entityId)
@@ -249,7 +266,7 @@ namespace Hpe.Nga.Api.Core.Services
         public void DeleteByFilter<T>(IRequestContext context, IList<QueryPhrase> queryPhrases)
             where T : BaseEntity
         {
-            DeleteByFilterAsync<T>(context, queryPhrases).RunSynchronously();
+            DeleteByFilterAsync<T>(context, queryPhrases).Wait();
         }
 
         public async Task DeleteByFilterAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases)
@@ -263,7 +280,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public Attachment AttachToEntity(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType, string[] fieldsToReturn)
         {
-            return AttachToEntityAsync(context, entity, fileName, content, contentType, fieldsToReturn).Result;
+            return GetResultOrThrowInnerException(AttachToEntityAsync(context, entity, fileName, content, contentType, fieldsToReturn));
         }
 
         public async Task<Attachment> AttachToEntityAsync(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType, string[] fieldsToReturn)
