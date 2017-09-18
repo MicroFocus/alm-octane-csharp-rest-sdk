@@ -24,6 +24,7 @@ using Hpe.Nga.Api.Core.Entities.Base;
 using System.Threading.Tasks;
 
 using Task = System.Threading.Tasks.Task;
+using System.Runtime.ExceptionServices;
 
 namespace Hpe.Nga.Api.Core.Services
 {
@@ -153,7 +154,14 @@ namespace Hpe.Nga.Api.Core.Services
             }
             catch (AggregateException aggrEx)
             {
-                throw aggrEx.InnerException;
+                // This capture the inner exception stack trace and rethrow it without
+                // resetting the stack trace to this line as would have happen if
+                // we'll just use `throw aggrEx.InnerException`.
+                ExceptionDispatchInfo.Capture(aggrEx.InnerException).Throw();
+
+                // This return never actually happens but it is required to satisfy
+                // the compiler check that all code path return a value.
+                return default(T);
             }
         }
 
