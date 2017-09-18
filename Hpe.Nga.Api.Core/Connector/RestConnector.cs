@@ -29,8 +29,6 @@ namespace Hpe.Nga.Api.Core.Connector
     public class RestConnector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string CSRF_COOKIE_NAME = "HPSSO_COOKIE_CSRF";
-        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
@@ -48,9 +46,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private string host;
 
-        private String lwssoToken = null;
-        private String csrfToken = Guid.NewGuid().ToString();
-        private string octaneUser;
+        private CookieContainer cookiesContainer = new CookieContainer();
 
         public String Host
         {
@@ -84,7 +80,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             httpWebRequest.Method = METHOD_POST;
             httpWebRequest.ContentType = CONTENT_TYPE_JSON;
-            httpWebRequest.CookieContainer = new CookieContainer();
+            httpWebRequest.CookieContainer = cookiesContainer;
 
 
             Stream stream = await httpWebRequest.GetRequestStreamAsync();
@@ -97,34 +93,35 @@ namespace Hpe.Nga.Api.Core.Connector
 
             var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
 
-            if (httpResponse.Cookies[LWSSO_COOKIE_NAME] != null)
-            {
-                lwssoToken = httpResponse.Cookies[LWSSO_COOKIE_NAME].Value;
-            }
+            SaveCookies(httpResponse);
 
-            if (httpResponse.Cookies[CSRF_COOKIE_NAME] != null)
-            {
-                csrfToken = httpResponse.Cookies[CSRF_COOKIE_NAME].Value;
-            }
+            return IsConnected();
+        }
 
-            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NAME] != null)
-            {
-                octaneUser = httpResponse.Cookies[OCTANE_USER_COOKIE_NAME].Value;
-            }
+        private string GetLwSsoToken()
+        {
+            if (cookiesContainer.Count == 0) return null;
+            CookieCollection cookeisCollection = cookiesContainer.GetCookies(new Uri(host));
+            Cookie lwSsoCookie = cookeisCollection[LWSSO_COOKIE_NAME];
+            return lwSsoCookie == null ? null : lwSsoCookie.Value;
+        }
 
-
-            return lwssoToken != null;
+        private void SaveCookies(HttpWebResponse httpResponse)
+        {
+            cookiesContainer.Add(httpResponse.Cookies);
         }
 
         public void Disconnect()
         {
             ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
-            lwssoToken = null;
+
+            // Reset cookies container to erase any existing cookies of the previous session.
+            cookiesContainer = new CookieContainer();
         }
 
         public bool IsConnected()
         {
-            return lwssoToken != null;
+            return GetLwSsoToken() != null;
         }
 
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType)
@@ -133,15 +130,7 @@ namespace Hpe.Nga.Api.Core.Connector
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 
             //add cookies
-            request.CookieContainer = new CookieContainer();
-            String cookieDomain = request.Address.Host;
-            String cookiePath = "/";
-
-            //add lwsso token
-            Cookie lwssoCookie = new Cookie(LWSSO_COOKIE_NAME, lwssoToken, cookiePath, cookieDomain);
-            request.CookieContainer.Add(lwssoCookie);
-
-            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUser, cookiePath, cookieDomain));
+            request.CookieContainer = cookiesContainer;
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
@@ -250,7 +239,8 @@ namespace Hpe.Nga.Api.Core.Connector
                 }
 
                 responseWrapper.StatusCode = response.StatusCode;
-                UpdateLwssoTokenFromResponse(response);
+                SaveCookies(response);
+                //UpdateLwssoTokenFromResponse(response);
 
             }
             catch (WebException ex)
@@ -365,22 +355,6 @@ namespace Hpe.Nga.Api.Core.Connector
             rs.Close();
 
             return DoSendAsync(wr);
-        }
-
-        private void UpdateLwssoTokenFromResponse(HttpWebResponse httpResponse)
-        {
-            //update security token if it was modified
-            String setCookieAll = httpResponse.GetResponseHeader("Set-Cookie");
-            String[] setCookies = setCookieAll.Split(';');
-            foreach (String setCookie in setCookies)
-            {
-                if (setCookie.StartsWith(LWSSO_COOKIE_NAME))
-                {
-                    String[] setCookiesParts = setCookie.Split('=');
-                    lwssoToken = setCookiesParts[1];
-
-                }
-            }
         }
 
     }
