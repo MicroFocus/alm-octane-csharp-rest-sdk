@@ -35,6 +35,9 @@ namespace Hpe.Nga.Api.Core.Services
             total_count = 0;
         }
 
-        public IEnumerable<BaseEntity> BaseEntities => data;
+        public IEnumerable<BaseEntity> BaseEntities
+        {
+            get { return data; }
+        }
     }
 }
