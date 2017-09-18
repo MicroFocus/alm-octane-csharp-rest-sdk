@@ -11,15 +11,12 @@
 // See the License for the specific language governing permissions and limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
-using System.Collections.Specialized;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
@@ -32,9 +29,6 @@ namespace Hpe.Nga.Api.Core.Connector
     public class RestConnector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string CSRF_COOKIE_NAME = "HPSSO_COOKIE_CSRF";
-        private static string CSRF_HEADER_NAME = "HPSSO-HEADER-CSRF";
-
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
@@ -52,8 +46,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private string host;
 
-        private String lwssoToken = null;
-        private String csrfToken = Guid.NewGuid().ToString();
+        private CookieContainer cookiesContainer = new CookieContainer();
 
         public String Host
         {
@@ -64,6 +57,11 @@ namespace Hpe.Nga.Api.Core.Connector
         }
 
         public bool Connect(string host, ConnectionInfo connectionInfo)
+        {
+            return ConnectAsync(host, connectionInfo).Result;
+        }
+
+        public async Task<bool> ConnectAsync(string host, ConnectionInfo connectionInfo)
         {
             if (host == null)
             {
@@ -82,41 +80,48 @@ namespace Hpe.Nga.Api.Core.Connector
 
             httpWebRequest.Method = METHOD_POST;
             httpWebRequest.ContentType = CONTENT_TYPE_JSON;
-            httpWebRequest.CookieContainer = new CookieContainer();
+            httpWebRequest.CookieContainer = cookiesContainer;
 
 
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            Stream stream = await httpWebRequest.GetRequestStreamAsync();
+            using (var streamWriter = new StreamWriter(stream))
             {
                 JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
                 String json = jsSerializer.Serialize(connectionInfo);
                 streamWriter.Write(json);
             }
 
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
 
-            if (httpResponse.Cookies[LWSSO_COOKIE_NAME] != null)
-            {
-                lwssoToken = httpResponse.Cookies[LWSSO_COOKIE_NAME].Value;
-            }
+            SaveCookies(httpResponse);
 
-            if (httpResponse.Cookies[CSRF_COOKIE_NAME] != null)
-            {
-                csrfToken = httpResponse.Cookies[CSRF_COOKIE_NAME].Value;
-            }
+            return IsConnected();
+        }
 
+        private string GetLwSsoToken()
+        {
+            if (cookiesContainer.Count == 0) return null;
+            CookieCollection cookeisCollection = cookiesContainer.GetCookies(new Uri(host));
+            Cookie lwSsoCookie = cookeisCollection[LWSSO_COOKIE_NAME];
+            return lwSsoCookie == null ? null : lwSsoCookie.Value;
+        }
 
-            return lwssoToken != null;
+        private void SaveCookies(HttpWebResponse httpResponse)
+        {
+            cookiesContainer.Add(httpResponse.Cookies);
         }
 
         public void Disconnect()
         {
             ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
-            lwssoToken = null;
+
+            // Reset cookies container to erase any existing cookies of the previous session.
+            cookiesContainer = new CookieContainer();
         }
 
         public bool IsConnected()
         {
-            return lwssoToken != null;
+            return GetLwSsoToken() != null;
         }
 
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType)
@@ -125,13 +130,7 @@ namespace Hpe.Nga.Api.Core.Connector
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 
             //add cookies
-            request.CookieContainer = new CookieContainer();
-            String cookieDomain = request.Address.Host;
-            String cookiePath = "/";
-
-            //add lwsso token
-            Cookie lwssoCookie = new Cookie(LWSSO_COOKIE_NAME, lwssoToken, cookiePath, cookieDomain);
-            request.CookieContainer.Add(lwssoCookie);
+            request.CookieContainer = cookiesContainer;
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
@@ -183,39 +182,65 @@ namespace Hpe.Nga.Api.Core.Connector
 
         public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams)
         {
-            return Send(restRelativeUri, queryParams, RequestType.Get, null);
+            return ExecuteGetAsync(restRelativeUri, queryParams).Result;
+        }
+
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams)
+        {
+            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null);
         }
 
         public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, queryParams, RequestType.Post, data);
+            return ExecutePostAsync(restRelativeUri, queryParams, data).Result;
+        }
+
+        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data)
+        {
+            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data);
         }
 
         public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
         {
-            return Send(restRelativeUri, queryParams, RequestType.Update, data);
+            return ExecutePutAsync(restRelativeUri, queryParams, data).Result;
+        }
+
+        public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data)
+        {
+            return SendAsync(restRelativeUri, queryParams, RequestType.Update, data);
         }
 
         public ResponseWrapper ExecuteDelete(string restRelativeUri)
         {
-            return Send(restRelativeUri, null, RequestType.Delete, null);
+            return ExecuteDeleteAsync(restRelativeUri).Result;
+        }
+
+        public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri)
+        {
+            return SendAsync(restRelativeUri, null, RequestType.Delete, null);
         }
 
         private ResponseWrapper DoSend(HttpWebRequest request)
+        {
+            return DoSendAsync(request).Result;
+        }
+
+        private async Task<ResponseWrapper> DoSendAsync(HttpWebRequest request)
         {
             ResponseWrapper responseWrapper = new ResponseWrapper();
 
             try
             {
 
-                var response = (HttpWebResponse)request.GetResponse();
+                var response = (HttpWebResponse)await request.GetResponseAsync();
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     responseWrapper.Data = streamReader.ReadToEnd();
                 }
 
                 responseWrapper.StatusCode = response.StatusCode;
-                UpdateLwssoTokenFromResponse(response);
+                SaveCookies(response);
+                //UpdateLwssoTokenFromResponse(response);
 
             }
             catch (WebException ex)
@@ -254,6 +279,11 @@ namespace Hpe.Nga.Api.Core.Connector
 
         public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data)
         {
+            return SendAsync(restRelativeUri, queryParams, requestType, data).Result;
+        }
+
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        {
             if (!IsConnected())
             {
                 throw new NotConnectedException();
@@ -276,19 +306,24 @@ namespace Hpe.Nga.Api.Core.Connector
                 }
             }
 
-            return DoSend(request);
-            
+            return await DoSendAsync(request);
+
 
         }
 
         public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        {
+            return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData).Result;
+        }
+
+        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
             HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart);
             wr.ContentType += boundary;
-            
+
             Stream rs = wr.GetRequestStream();
 
             string formdataTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"blob\"\r\nContent-Type: application/json\r\n\r\n{1}";
@@ -301,7 +336,7 @@ namespace Hpe.Nga.Api.Core.Connector
             rs.Write(boundarybytes, 0, boundarybytes.Length);
 
             string headerTemplate = "Content-Disposition: form-data; name=\"content\"; filename=\"{0}\"\r\nContent-Type: {1}\r\n\r\n";
-            string header = string.Format(headerTemplate,  fileName, binaryContentType);
+            string header = string.Format(headerTemplate, fileName, binaryContentType);
             byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
             rs.Write(headerbytes, 0, headerbytes.Length);
 
@@ -319,23 +354,7 @@ namespace Hpe.Nga.Api.Core.Connector
             rs.Write(trailer, 0, trailer.Length);
             rs.Close();
 
-            return DoSend(wr);
-        }
-
-        private void UpdateLwssoTokenFromResponse(HttpWebResponse httpResponse)
-        {
-            //update security token if it was modified
-            String setCookieAll = httpResponse.GetResponseHeader("Set-Cookie");
-            String[] setCookies = setCookieAll.Split(';');
-            foreach (String setCookie in setCookies)
-            {
-                if (setCookie.StartsWith(LWSSO_COOKIE_NAME))
-                {
-                    String[] setCookiesParts = setCookie.Split('=');
-                    lwssoToken = setCookiesParts[1];
-
-                }
-            }
+            return DoSendAsync(wr);
         }
 
     }

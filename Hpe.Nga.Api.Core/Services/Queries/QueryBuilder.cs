@@ -58,6 +58,10 @@ namespace Hpe.Nga.Api.Core.Services.Query
                 String expStr = String.Format("!{0}", BuildPhraseString(negativePhrase.QueryPhrase));
                 output = expStr;
             }
+            else if (phrase is NullQueryPhrase)
+            {
+                output = "null";
+            }
             else
             {
                 throw new NotImplementedException();
@@ -73,7 +77,7 @@ namespace Hpe.Nga.Api.Core.Services.Query
             }
             else
             {
-                String str = value.ToString();
+                String str = value == null ? "null" : value.ToString();
                 str = str.Replace("\'", "*").Replace("\"", "\\\"");
                 str = "'" + str + "'";
                 return str;
@@ -162,7 +166,7 @@ namespace Hpe.Nga.Api.Core.Services.Query
             return null;
         }
 
-        private static string BuildQueryString(IList<QueryPhrase> phrases)
+        internal static string BuildQueryString(IList<QueryPhrase> phrases)
         {
             if (phrases == null || phrases.Count == 0)
             {

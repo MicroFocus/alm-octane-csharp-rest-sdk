@@ -10,31 +10,23 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Hpe.Nga.Api.Core.Services.Query;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hpe.Nga.Api.Core.Entities;
 
-
-namespace Hpe.Nga.Api.Core.Services
+namespace Hpe.Nga.Api.Core.Tests
 {
-    /// <summary>
-    /// List that returned by response
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> : GenericEntityListResult where T : BaseEntity
+    [TestClass]
+    public class QueryBuilderTests
     {
-        public List<T> data { get; set; }
-
-        public int? total_count { get; set; }
-
-        public EntityListResult()
+        [TestMethod]
+        public void BuildCrossFieldNullPhrase()
         {
-            data = new List<T>();
-            total_count = 0;
-        }
+            var phrase = new CrossQueryPhrase("parent_suite", NullQueryPhrase.Null);
+            var phrases = new List<QueryPhrase>(new[] { phrase });
+            string raw = QueryStringBuilder.BuildQueryString(phrases);
 
-        public IEnumerable<BaseEntity> BaseEntities => data;
+            Assert.AreEqual("query=\"parent_suite={null}\"", raw);
+        }
     }
 }

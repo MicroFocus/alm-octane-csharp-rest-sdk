@@ -14,27 +14,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Hpe.Nga.Api.Core.Entities;
+using System.Threading.Tasks;
+using Hpe.Nga.Api.Core.Services;
+using Hpe.Nga.Api.Core.Services.Attributes;
 
-
-namespace Hpe.Nga.Api.Core.Services
+namespace Hpe.Nga.Api.Core.Entities
 {
     /// <summary>
-    /// List that returned by response
+    /// Wrapper for ManualTest entity. Acutally Feature is subtype of work_item.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> : GenericEntityListResult where T : BaseEntity
+    [CustomCollectionPath("manual_tests")]
+    public class TestManual : Test
     {
-        public List<T> data { get; set; }
 
-        public int? total_count { get; set; }
-
-        public EntityListResult()
+        public TestManual()
+            : base()
         {
-            data = new List<T>();
-            total_count = 0;
         }
 
-        public IEnumerable<BaseEntity> BaseEntities => data;
+        public TestManual(long id)
+            : base(id)
+        {
+        }
+
     }
 }

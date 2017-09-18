@@ -10,30 +10,28 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hpe.Nga.Api.Core.Services;
-
 namespace Hpe.Nga.Api.Core.Entities
 {
     /// <summary>
-    /// Wrapper for ManualTest entity. Acutally Feature is subtype of work_item.
+    /// Wrapper for Task entity.
     /// </summary>
-    public class ManualTest : Test
+    public class Task : BaseEntity
     {
+        public const string OWNER_FIELD = "owner";
+        public const string AUTHOR_FIELD = "author";
+        public const string PHASE_FIELD = "phase";
+        public const string INVESTED_HOURS_FIELD = "invested_hours";
+        public const string REMAINING_HOURS_FIELD = "remaining_hours";
+        public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
+        public const string STORY_FIELD = "story";
 
-        public ManualTest()
-            : base()
+        public Task()
         {
         }
 
-        public ManualTest(long id)
+        public Task(long id)
             : base(id)
         {
         }
-
     }
 }

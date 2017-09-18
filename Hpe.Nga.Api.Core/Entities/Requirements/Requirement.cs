@@ -10,31 +10,38 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hpe.Nga.Api.Core.Entities;
-
-
-namespace Hpe.Nga.Api.Core.Services
+namespace Hpe.Nga.Api.Core.Entities
 {
     /// <summary>
-    /// List that returned by response
+    /// Wrapper for Run entity
+    /// More fields might be supported by entity that still are not exposed in the class
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> : GenericEntityListResult where T : BaseEntity
+    public class Requirement : BaseEntity
     {
-        public List<T> data { get; set; }
+        public static string SUBTYPE_FIELD = "subtype";
+        public static string SUBTYPE_DOCUMENT = "requirement_document";
 
-        public int? total_count { get; set; }
-
-        public EntityListResult()
+        public Requirement()
         {
-            data = new List<T>();
-            total_count = 0;
         }
 
-        public IEnumerable<BaseEntity> BaseEntities => data;
+        public Requirement(long id)
+            : base(id)
+        {
+        }
+
+        public string SubType
+        {
+            get
+            {
+                return GetStringValue(SUBTYPE_FIELD);
+            }
+            set
+            {
+                SetValue(SUBTYPE_FIELD, value);
+            }
+
+        }
+
     }
 }

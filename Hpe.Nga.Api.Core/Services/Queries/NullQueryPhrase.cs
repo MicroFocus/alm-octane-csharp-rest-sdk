@@ -10,31 +10,16 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Hpe.Nga.Api.Core.Entities;
-
-
-namespace Hpe.Nga.Api.Core.Services
+namespace Hpe.Nga.Api.Core.Services.Query
 {
     /// <summary>
-    /// List that returned by response
+    /// Represents a null value in query phrase.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> : GenericEntityListResult where T : BaseEntity
+    public class NullQueryPhrase : QueryPhrase
     {
-        public List<T> data { get; set; }
-
-        public int? total_count { get; set; }
-
-        public EntityListResult()
+        public static NullQueryPhrase Null
         {
-            data = new List<T>();
-            total_count = 0;
+            get { return new NullQueryPhrase(); }
         }
-
-        public IEnumerable<BaseEntity> BaseEntities => data;
     }
 }

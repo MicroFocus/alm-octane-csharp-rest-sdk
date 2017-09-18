@@ -36,6 +36,7 @@ namespace Hpe.Nga.Api.Core.Entities
 
         public static string SUBTYPE_DEFECT = "defect";
         public static string SUBTYPE_STORY = "story";
+        public static string SUBTYPE_QUALITY_STORY = "quality_story";
         public static string SUBTYPE_FEATURE = "feature";
         public static string SUBTYPE_EPIC = "epic";
 
