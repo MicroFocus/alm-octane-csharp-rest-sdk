@@ -30,6 +30,7 @@ namespace Hpe.Nga.Api.Core.Connector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
         private static string CSRF_COOKIE_NAME = "HPSSO_COOKIE_CSRF";
+        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
@@ -49,6 +50,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private String lwssoToken = null;
         private String csrfToken = Guid.NewGuid().ToString();
+        private string octaneUser;
 
         public String Host
         {
@@ -105,6 +107,11 @@ namespace Hpe.Nga.Api.Core.Connector
                 csrfToken = httpResponse.Cookies[CSRF_COOKIE_NAME].Value;
             }
 
+            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NAME] != null)
+            {
+                octaneUser = httpResponse.Cookies[OCTANE_USER_COOKIE_NAME].Value;
+            }
+
 
             return lwssoToken != null;
         }
@@ -133,6 +140,8 @@ namespace Hpe.Nga.Api.Core.Connector
             //add lwsso token
             Cookie lwssoCookie = new Cookie(LWSSO_COOKIE_NAME, lwssoToken, cookiePath, cookieDomain);
             request.CookieContainer.Add(lwssoCookie);
+
+            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUser, cookiePath, cookieDomain));
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
