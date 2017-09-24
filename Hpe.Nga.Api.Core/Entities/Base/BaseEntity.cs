@@ -37,7 +37,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public BaseEntity(long id)
+        public BaseEntity(EntityId id)
             : base()
         {
             Id = id;
@@ -54,15 +54,23 @@ namespace Hpe.Nga.Api.Core.Entities
 
         #region Base Properties
 
-        public long Id
+        public EntityId Id
         {
             get
             {
-                return GetLongValue(ID_FIELD, 0);
+                object id = GetValue(ID_FIELD);
+                if (id is EntityId)
+                {
+                    return (EntityId)id;
+                }
+                else
+                {
+                    return new EntityId(id.ToString());
+                }
             }
             set
             {
-                SetLongValue(ID_FIELD, value);
+                SetValue(ID_FIELD, value);
             }
 
         }

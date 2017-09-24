@@ -31,7 +31,7 @@ namespace Hpe.Nga.Api.Core.Entities
 
         }
 
-        public Epic(long id)
+        public Epic(EntityId id)
             : base(id)
         {
         }

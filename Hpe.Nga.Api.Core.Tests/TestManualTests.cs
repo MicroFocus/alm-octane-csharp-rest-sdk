@@ -89,7 +89,7 @@ namespace Hpe.Nga.Api.Core.Tests
 
             TestManual created = entityService.Create<TestManual>(workspaceContext, test, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(name, created.Name);
-            Assert.IsTrue(created.Id > 0);
+            Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
         }
     }

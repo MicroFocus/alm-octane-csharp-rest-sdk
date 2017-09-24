@@ -25,7 +25,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Requirement(long id)
+        public Requirement(EntityId id)
             : base(id)
         {
         }

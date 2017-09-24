@@ -35,7 +35,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Test(long id)
+        public Test(EntityId id)
             : base(id)
         {
         }

@@ -44,7 +44,7 @@ namespace Hpe.Nga.Api.Core.Services
         {
             this.rc = rc;
             this.jsonSerializer = new JavaScriptSerializer();
-            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new BaseEntityJsonConverter() });
+            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new BaseEntityJsonConverter(), new EntityIdJsonConverter() });
         }
 
         public EntityListResult<T> Get<T>(IRequestContext context) where T : BaseEntity
@@ -132,7 +132,7 @@ namespace Hpe.Nga.Api.Core.Services
             return null;
         }
 
-        public async Task<TestScript> GetTestScriptAsync(IRequestContext context, long id)
+        public async Task<TestScript> GetTestScriptAsync(IRequestContext context, EntityId id)
         {
             string url = string.Format("{0}/tests/{1}/script", context.GetPath(), id);
             ResponseWrapper response = await rc.ExecuteGetAsync(url, string.Empty);
@@ -141,7 +141,7 @@ namespace Hpe.Nga.Api.Core.Services
             return result;
         }
 
-        public T GetById<T>(IRequestContext context, long id, IList<String> fields) where T : BaseEntity
+        public T GetById<T>(IRequestContext context, EntityId id, IList<String> fields) where T : BaseEntity
         {
             return GetResultOrThrowInnerException(GetByIdAsync<T>(context, id, fields));
         }
@@ -165,7 +165,7 @@ namespace Hpe.Nga.Api.Core.Services
             }
         }
 
-        public async Task<T> GetByIdAsync<T>(IRequestContext context, long id, IList<String> fields) where T : BaseEntity
+        public async Task<T> GetByIdAsync<T>(IRequestContext context, EntityId id, IList<String> fields) where T : BaseEntity
         {
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName + "/" + id;
@@ -257,13 +257,13 @@ namespace Hpe.Nga.Api.Core.Services
             return result;
         }
 
-        public void DeleteById<T>(IRequestContext context, long entityId)
+        public void DeleteById<T>(IRequestContext context, EntityId entityId)
              where T : BaseEntity
         {
             DeleteByIdAsync<T>(context, entityId).Wait();
         }
 
-        public async Task DeleteByIdAsync<T>(IRequestContext context, long entityId)
+        public async Task DeleteByIdAsync<T>(IRequestContext context, EntityId entityId)
              where T : BaseEntity
         {
             String collectionName = GetCollectionName<T>();

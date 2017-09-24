@@ -34,7 +34,7 @@ namespace Hpe.Nga.Api.Core.Entities
 
         }
 
-        public Sprint(long id)
+        public Sprint(EntityId id)
             : base(id)
         {
         }

@@ -31,7 +31,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public UserItem(long id)
+        public UserItem(EntityId id)
             : base(id)
         {
         }

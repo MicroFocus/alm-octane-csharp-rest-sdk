@@ -30,7 +30,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Feature(long id)
+        public Feature(EntityId id)
             : base(id)
         {
         }

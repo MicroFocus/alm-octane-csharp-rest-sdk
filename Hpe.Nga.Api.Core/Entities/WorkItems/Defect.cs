@@ -30,7 +30,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Defect(long id)
+        public Defect(EntityId id)
             : base(id)
         {
         }
