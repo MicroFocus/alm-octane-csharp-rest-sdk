@@ -159,6 +159,7 @@ namespace Hpe.Nga.Api.Core.Connector
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
 
+            request.Timeout = timeout ?? request.Timeout;
 
             //set content type/accept/method
             switch (requestType)
@@ -210,7 +211,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
         public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null);
+            return Send(restRelativeUri, queryParams, RequestType.Get, null,timeout);
         }
 
         public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
