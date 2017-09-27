@@ -43,15 +43,27 @@ namespace Hpe.Nga.Api.Core.Services.Core
 
             }
 
-            public object this[string key] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public object this[string key] { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
 
-            public ICollection<string> Keys => throw new NotImplementedException();
+            public ICollection<string> Keys
+            {
+                get { throw new NotImplementedException(); }
+            }
 
-            public ICollection<object> Values => throw new NotImplementedException();
+            public ICollection<object> Values
+            {
+                get { throw new NotImplementedException(); }
+            }
 
-            public int Count => throw new NotImplementedException();
+            public int Count
+            {
+                get { throw new NotImplementedException(); }
+            }
 
-            public bool IsReadOnly => throw new NotImplementedException();
+            public bool IsReadOnly
+            {
+                get { throw new NotImplementedException(); }
+            }
 
             public void Add(string key, object value)
             {
