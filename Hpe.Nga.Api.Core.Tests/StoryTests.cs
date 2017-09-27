@@ -80,7 +80,7 @@ namespace Hpe.Nga.Api.Core.Tests
             story.Parent = WORK_ITEM_ROOT;
             Story created = entityService.Create<Story>(workspaceContext, story, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(name, created.Name);
-            Assert.IsTrue(created.Id > 0);
+            Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
         }
     }

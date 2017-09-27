@@ -35,7 +35,7 @@ namespace Hpe.Nga.Api.Core.Entities
 
         }
 
-        public Release(long id) : base(id)
+        public Release(EntityId id) : base(id)
         {
         }
 

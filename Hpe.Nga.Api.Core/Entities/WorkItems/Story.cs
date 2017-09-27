@@ -30,7 +30,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Story(long id)
+        public Story(EntityId id)
             : base(id)
         {
         }

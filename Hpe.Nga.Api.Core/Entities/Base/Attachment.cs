@@ -28,7 +28,7 @@ namespace Hpe.Nga.Api.Core.Entities.Base
 
         }
 
-        public Attachment(long id)
+        public Attachment(EntityId id)
         {
             this.Id = id;
         }

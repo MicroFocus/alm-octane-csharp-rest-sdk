@@ -34,7 +34,7 @@ namespace Hpe.Nga.Api.Core.Entities
 
         }
 
-        public Milestone(long id)
+        public Milestone(EntityId id)
             : base(id)
         {
         }

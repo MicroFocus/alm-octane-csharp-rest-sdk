@@ -35,7 +35,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public SharedspaceUser(long id)
+        public SharedspaceUser(EntityId id)
             : base(id)
         {
         }

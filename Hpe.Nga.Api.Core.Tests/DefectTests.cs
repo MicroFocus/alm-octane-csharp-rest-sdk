@@ -232,7 +232,7 @@ namespace Hpe.Nga.Api.Core.Tests
             defect.Parent = getWorkItemRoot();
             Defect created = entityService.Create<Defect>(workspaceContext, defect, new string[] { "name" });
             Assert.AreEqual<String>(name, created.Name);
-            Assert.IsTrue(created.Id > 0);
+            Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
 
         }

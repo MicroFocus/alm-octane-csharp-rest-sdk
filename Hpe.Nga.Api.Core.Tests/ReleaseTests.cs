@@ -50,7 +50,7 @@ namespace Hpe.Nga.Api.Core.Tests
             List<String> fields = new List<string>();
             fields.Add(Release.NAME_FIELD);
             Release release = entityService.GetById<Release>(workspaceContext, created.Id, fields);
-            Assert.AreEqual<long>(release.Id, created.Id);
+            Assert.AreEqual(release.Id, created.Id);
             return release;
         }
 
@@ -168,7 +168,7 @@ namespace Hpe.Nga.Api.Core.Tests
             EntityListResult<Sprint> result = entityService.Get<Sprint>(workspaceContext, queryPhrases, fields);
             Assert.IsTrue(result.data.Count >= 1);
             Release releaseFromSprint = result.data[0].Release;
-            Assert.AreEqual<long>(release.Id, releaseFromSprint.Id);
+            Assert.AreEqual(release.Id, releaseFromSprint.Id);
         }
 
 

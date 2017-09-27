@@ -83,7 +83,7 @@ namespace Hpe.Nga.Api.Core.Tests
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
             SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
 
-            List<long> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList<long>();
+            List<EntityId> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList();
             Assert.IsTrue(assignedWorkspaceRoles.Contains(sharedSpaceAdminRole.Id));
         }
 
@@ -116,7 +116,7 @@ namespace Hpe.Nga.Api.Core.Tests
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
             SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
 
-            List<long> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList<long>();
+            List<EntityId> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList();
             Assert.IsTrue(assignedWorkspaceRoles.Contains(sharedSpaceAdminRole.Id));
             Assert.IsTrue(assignedWorkspaceRoles.Count > 1);
         }

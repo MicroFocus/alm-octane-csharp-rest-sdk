@@ -45,7 +45,7 @@ namespace Hpe.Nga.Api.Core.Entities
             AggregateType = "work_item";
         }
 
-        public WorkItem(long id)
+        public WorkItem(EntityId id)
             : base(id)
         {
             AggregateType = "work_item";

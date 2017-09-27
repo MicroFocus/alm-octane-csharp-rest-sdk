@@ -24,7 +24,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public TestGherkin(long id)
+        public TestGherkin(EntityId id)
             : base(id)
         {
         }

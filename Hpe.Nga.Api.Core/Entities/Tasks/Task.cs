@@ -29,7 +29,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Task(long id)
+        public Task(EntityId id)
             : base(id)
         {
         }

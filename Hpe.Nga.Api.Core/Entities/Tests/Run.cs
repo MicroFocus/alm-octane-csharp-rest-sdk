@@ -28,7 +28,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public Run(long id)
+        public Run(EntityId id)
             : base(id)
         {
         }

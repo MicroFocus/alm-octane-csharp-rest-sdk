@@ -56,6 +56,8 @@
     <Compile Include="Connector\Exceptions\MqmRestException.cs" />
     <Compile Include="Connector\UserPassConnectionInfo.cs" />
     <Compile Include="Entities\Base\Attachment.cs" />
+    <Compile Include="Entities\Base\EntityIdExtensions.cs" />
+    <Compile Include="Entities\Base\EntityId.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Entities\Base\Workspace.cs" />
     <Compile Include="Entities\Users\WorkspaceUser.cs" />
     <Compile Include="Services\Attributes\CustomCollectionPathAttribute.cs" />
+    <Compile Include="Services\Core\EntityIdJsonConverter.cs" />
     <Compile Include="Services\EntityList.cs" />
     <Compile Include="Services\GenericEntityListResult.cs" />
     <Compile Include="Services\GroupBy\GroupResult.cs" />

@@ -32,7 +32,7 @@ namespace Hpe.Nga.Api.Core.Entities
         {
         }
 
-        public TestManual(long id)
+        public TestManual(EntityId id)
             : base(id)
         {
         }
