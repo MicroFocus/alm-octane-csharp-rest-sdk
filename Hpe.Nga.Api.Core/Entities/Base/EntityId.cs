@@ -19,7 +19,11 @@ namespace Hpe.Nga.Api.Core.Entities
 
         public EntityId(string value)
         {
-            this.value = value ?? throw new ArgumentNullException("value");
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+            this.value = value;
         }
 
         public override bool Equals(object obj)
