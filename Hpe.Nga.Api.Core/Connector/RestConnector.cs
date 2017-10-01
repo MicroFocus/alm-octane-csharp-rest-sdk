@@ -29,6 +29,7 @@ namespace Hpe.Nga.Api.Core.Connector
     public class RestConnector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
+        private static string OCTANE_USER_COOKIE_NANE = "OCTANE_USER";
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
@@ -46,7 +47,8 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private string host;
 
-        private CookieContainer cookiesContainer = new CookieContainer();
+        private string lwSsoCookie;
+        private string octaneUserCookie;
 
         public String Host
         {
@@ -80,7 +82,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             httpWebRequest.Method = METHOD_POST;
             httpWebRequest.ContentType = CONTENT_TYPE_JSON;
-            httpWebRequest.CookieContainer = cookiesContainer;
+            httpWebRequest.CookieContainer = new CookieContainer();
 
 
             Stream stream = await httpWebRequest.GetRequestStreamAsync();
@@ -100,15 +102,31 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private string GetLwSsoToken()
         {
-            if (cookiesContainer.Count == 0) return null;
-            CookieCollection cookeisCollection = cookiesContainer.GetCookies(new Uri(host));
-            Cookie lwSsoCookie = cookeisCollection[LWSSO_COOKIE_NAME];
-            return lwSsoCookie == null ? null : lwSsoCookie.Value;
+            return lwSsoCookie;
         }
 
         private void SaveCookies(HttpWebResponse httpResponse)
         {
-            cookiesContainer.Add(httpResponse.Cookies);
+            if (httpResponse.Cookies[LWSSO_COOKIE_NAME] != null)
+            {
+                lwSsoCookie = httpResponse.Cookies[LWSSO_COOKIE_NAME].Value;
+            }
+
+            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NANE] != null)
+            {
+                octaneUserCookie = httpResponse.Cookies[OCTANE_USER_COOKIE_NANE].Value;
+            }
+        }
+
+        private string GetCookieValue(HttpWebResponse httpResponse, string cookieName)
+        {
+            Cookie cookie = httpResponse.Cookies[cookieName];
+            if (cookie == null)
+            {
+                return string.Empty;
+            }
+
+            return cookie.Value;
         }
 
         public void Disconnect()
@@ -116,7 +134,8 @@ namespace Hpe.Nga.Api.Core.Connector
             ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
 
             // Reset cookies container to erase any existing cookies of the previous session.
-            cookiesContainer = new CookieContainer();
+            lwSsoCookie = null;
+            octaneUserCookie = null;
         }
 
         public bool IsConnected()
@@ -130,11 +149,15 @@ namespace Hpe.Nga.Api.Core.Connector
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 
             //add cookies
-            request.CookieContainer = cookiesContainer;
+            String cookieDomain = request.Address.Host;
+            String cookiePath = "/";
+
+            request.CookieContainer = new CookieContainer();
+            request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
+            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NANE, octaneUserCookie, cookiePath, cookieDomain));
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
-
 
 
             //set content type/accept/method
@@ -231,7 +254,6 @@ namespace Hpe.Nga.Api.Core.Connector
 
             try
             {
-
                 var response = (HttpWebResponse)await request.GetResponseAsync();
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
@@ -240,7 +262,6 @@ namespace Hpe.Nga.Api.Core.Connector
 
                 responseWrapper.StatusCode = response.StatusCode;
                 SaveCookies(response);
-                //UpdateLwssoTokenFromResponse(response);
 
             }
             catch (WebException ex)
