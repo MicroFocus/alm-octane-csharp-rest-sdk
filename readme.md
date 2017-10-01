@@ -10,4 +10,6 @@ To run the test project the correct details need to be added to the `Hpe.Nga.Api
 
 See the default file for more information.  **Note:**  To run the tests correctly the user shoudl have *SharedSpace Admin* and *Workspace Admin* roles.
 
+## Disclaimer
 
+Certain versions of software accessible here may contain branding from Hewlett-Packard Company (now HP Inc.) and Hewlett Packard Enterprise Company.  As of September 1, 2017, the software is now offered by Micro Focus, a separately owned and operated company.  Any reference to the HP and Hewlett Packard Enterprise/HPE marks is historical in nature, and the HP and Hewlett Packard Enterprise/HPE marks are the property of their respective owners. 
