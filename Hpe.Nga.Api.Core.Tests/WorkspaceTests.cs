@@ -38,7 +38,30 @@ namespace Hpe.Nga.Api.Core.Tests
 
         }
 
-      
+        [TestMethod]
+        public void GetAllWorkspacesForCurrentUser()
+        {
+            EntityListResult<Workspace> workspaces = entityService.Get<Workspace>(sharedSpaceContext, null, null);
+            foreach (Workspace workspace in workspaces.data)
+            {
+                try
+                {
+                
+                    EntityListResult<WorkspaceUser> workspace_users = entityService.Get<WorkspaceUser>(new Services.RequestContext.WorkspaceContext(sharedSpaceContext.SharedSpaceId, workspace.Id));
+                    foreach (WorkspaceUser workspaceUser in workspace_users.data)
+                    {
+                        if (workspaceUser.Email.Equals(CurrentUserName))
+                        {
+                            System.Diagnostics.Trace.WriteLine(workspace.Id);
+                        }
+                    }
+                } catch (Exception)
+                {
+                    // do nothing
+                }
+            }
+
+        }
 
     }
 }

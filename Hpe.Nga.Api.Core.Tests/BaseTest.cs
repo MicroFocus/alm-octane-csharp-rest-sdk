@@ -56,6 +56,7 @@ namespace Hpe.Nga.Api.Core.Tests
                     connectionInfo = new APIKeyConnectionInfo(clientId, ConfigurationManager.AppSettings["clientSecret"]);
                 } else
                 {
+                    userName = ConfigurationManager.AppSettings["userName"];
                     connectionInfo = new UserPassConnectionInfo(ConfigurationManager.AppSettings["userName"], ConfigurationManager.AppSettings["password"]);
                 }
                 
