@@ -143,7 +143,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return GetLwSsoToken() != null;
         }
 
-        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType)
+        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType,int? timeout)
         {
             String url = host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -204,14 +204,14 @@ namespace Hpe.Nga.Api.Core.Connector
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams,int? timeout=null)
         {
-            return ExecuteGetAsync(restRelativeUri, queryParams).Result;
+            return ExecuteGetAsync(restRelativeUri, queryParams,timeout).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams)
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams,int? timeout=null)
         {
-            return Send(restRelativeUri, queryParams, RequestType.Get, null,timeout);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null,timeout);
         }
 
         public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
@@ -299,12 +299,12 @@ namespace Hpe.Nga.Api.Core.Connector
             return responseWrapper;
         }
 
-        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data,int? timeout=null)
         {
-            return SendAsync(restRelativeUri, queryParams, requestType, data).Result;
+            return SendAsync(restRelativeUri, queryParams, requestType, data,timeout).Result;
         }
 
-        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data,int? timeout=null)
         {
             if (!IsConnected())
             {
@@ -313,10 +313,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             //Console.WriteLine(requestType + " : " + restRelativeUri);
             restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
-            HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
-            request.Timeout = 200000;//default 100000
-
-
+            HttpWebRequest request = CreateRequest(restRelativeUri, requestType,timeout);                        
 
             if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
             {
@@ -333,17 +330,17 @@ namespace Hpe.Nga.Api.Core.Connector
 
         }
 
-        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData,int? timeout=null)
         {
-            return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData).Result;
+            return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData,timeout).Result;
         }
 
-        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData,int? timeout=null)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
-            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart);
+            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart,timeout);
             wr.ContentType += boundary;
 
             Stream rs = wr.GetRequestStream();
