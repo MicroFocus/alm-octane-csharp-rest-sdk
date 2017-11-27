@@ -50,6 +50,7 @@
     <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
     <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
     <Compile Include="Connector\Exceptions\ServerUnavailableException.cs" />
+    <Compile Include="Connector\RequestAdditionalData.cs" />
     <Compile Include="Connector\RequestType.cs" />
     <Compile Include="Connector\ResponseWrapper.cs" />
     <Compile Include="Connector\RestConnector.cs" />

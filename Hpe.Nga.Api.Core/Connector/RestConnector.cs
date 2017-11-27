@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
+using System.IO.Compression;
+using System.Collections.Generic;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
@@ -29,11 +31,12 @@ namespace Hpe.Nga.Api.Core.Connector
     public class RestConnector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string OCTANE_USER_COOKIE_NANE = "OCTANE_USER";
+        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
-        private static string CONTENT_TYPE_JSON = "application/json";
-        private static string CONTENT_TYPE_STREAM = "application/octet-stream";
-        private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
+        public static string CONTENT_TYPE_JSON = "application/json";
+        public static string CONTENT_TYPE_XML = "application/xml";
+        public static string CONTENT_TYPE_STREAM = "application/octet-stream";
+        public static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
 
         public static string AUTHENTICATION_URL = "/authentication/sign_in";
@@ -112,9 +115,9 @@ namespace Hpe.Nga.Api.Core.Connector
                 lwSsoCookie = httpResponse.Cookies[LWSSO_COOKIE_NAME].Value;
             }
 
-            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NANE] != null)
+            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NAME] != null)
             {
-                octaneUserCookie = httpResponse.Cookies[OCTANE_USER_COOKIE_NANE].Value;
+                octaneUserCookie = httpResponse.Cookies[OCTANE_USER_COOKIE_NAME].Value;
             }
         }
 
@@ -143,7 +146,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return GetLwSsoToken() != null;
         }
 
-        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType,int? timeout)
+        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestAdditionalData additionalData)
         {
             String url = host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -154,12 +157,11 @@ namespace Hpe.Nga.Api.Core.Connector
 
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
-            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NANE, octaneUserCookie, cookiePath, cookieDomain));
+            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
 
-            request.Timeout = timeout ?? request.Timeout;
 
             //set content type/accept/method
             switch (requestType)
@@ -200,18 +202,48 @@ namespace Hpe.Nga.Api.Core.Connector
                     break;
             }
 
+            if (additionalData.Timeout.HasValue)
+            {
+                request.Timeout = additionalData.Timeout.Value;
+            }
+            if (additionalData.Headers != null)
+            {
+                foreach(KeyValuePair<string,string> header2value in additionalData.Headers)
+                {
+                    switch (header2value.Key.ToLower())
+                    {
+                        case "contenttype":
+                            request.ContentType = header2value.Value;
+                            break;
+                        case "accept":
+                            request.Accept = header2value.Value;
+                            break;
+                        default:
+                            request.Headers.Add(header2value.Key, header2value.Value);
+                            break;
+
+                    }
+               
+                }
+            }
+
 
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams,int? timeout=null)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, int? timeout = null)
         {
-            return ExecuteGetAsync(restRelativeUri, queryParams,timeout).Result;
+            return ExecuteGetAsync(restRelativeUri, queryParams, timeout).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams,int? timeout=null)
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, int? timeout = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null,timeout);
+            RequestAdditionalData additionalData = null;
+            if (timeout.HasValue)
+            {
+                additionalData = RequestAdditionalData.Create().SetTimeout(timeout);
+            }
+            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalData);
         }
 
         public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
@@ -299,12 +331,13 @@ namespace Hpe.Nga.Api.Core.Connector
             return responseWrapper;
         }
 
-        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data,int? timeout=null)
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestAdditionalData additionalData = null)
         {
-            return SendAsync(restRelativeUri, queryParams, requestType, data,timeout).Result;
+            return SendAsync(restRelativeUri, queryParams, requestType, data, additionalData).Result;
         }
 
-        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data,int? timeout=null)
+
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestAdditionalData additionalData = null)
         {
             if (!IsConnected())
             {
@@ -313,7 +346,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             //Console.WriteLine(requestType + " : " + restRelativeUri);
             restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
-            HttpWebRequest request = CreateRequest(restRelativeUri, requestType,timeout);                        
+            HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalData);
 
             if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
             {
@@ -321,7 +354,18 @@ namespace Hpe.Nga.Api.Core.Connector
                 request.ContentLength = byteData.Length;
                 using (Stream postStream = request.GetRequestStream())
                 {
-                    postStream.Write(byteData, 0, byteData.Length);
+                    if (additionalData.IsGZip)
+                    {
+                        using (var zipStream = new GZipStream(postStream, CompressionMode.Compress))
+                        {
+                            zipStream.Write(byteData, 0, byteData.Length);
+                        }
+                    }
+                    else
+                    {
+                        postStream.Write(byteData, 0, byteData.Length);
+                    }
+
                 }
             }
 
@@ -330,17 +374,17 @@ namespace Hpe.Nga.Api.Core.Connector
 
         }
 
-        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData,int? timeout=null)
+        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
-            return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData,timeout).Result;
+            return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData).Result;
         }
 
-        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData,int? timeout=null)
+        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
-            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart,timeout);
+            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart, null);
             wr.ContentType += boundary;
 
             Stream rs = wr.GetRequestStream();
