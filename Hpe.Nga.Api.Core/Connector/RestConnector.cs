@@ -208,7 +208,7 @@ namespace Hpe.Nga.Api.Core.Connector
             }
             if (additionalData.Headers != null)
             {
-                foreach(KeyValuePair<string,string> header2value in additionalData.Headers)
+                foreach (KeyValuePair<string, string> header2value in additionalData.Headers)
                 {
                     switch (header2value.Key.ToLower())
                     {
@@ -221,9 +221,7 @@ namespace Hpe.Nga.Api.Core.Connector
                         default:
                             request.Headers.Add(header2value.Key, header2value.Value);
                             break;
-
                     }
-               
                 }
             }
 
@@ -231,18 +229,13 @@ namespace Hpe.Nga.Api.Core.Connector
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, int? timeout = null)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, RequestAdditionalData additionalData = null)
         {
-            return ExecuteGetAsync(restRelativeUri, queryParams, timeout).Result;
+            return ExecuteGetAsync(restRelativeUri, queryParams, additionalData).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, int? timeout = null)
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, RequestAdditionalData additionalData = null)
         {
-            RequestAdditionalData additionalData = null;
-            if (timeout.HasValue)
-            {
-                additionalData = RequestAdditionalData.Create().SetTimeout(timeout);
-            }
             return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalData);
         }
 
