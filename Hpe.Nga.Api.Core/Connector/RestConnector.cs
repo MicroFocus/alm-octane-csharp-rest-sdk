@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
+using System.IO.Compression;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Text.RegularExpressions;
@@ -32,7 +34,7 @@ namespace Hpe.Nga.Api.Core.Connector
     public class RestConnector
     {
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string OCTANE_USER_COOKIE_NANE = "OCTANE_USER";
+        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
         private static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
@@ -192,7 +194,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return GetLwSsoToken() != null;
         }
 
-        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType)
+        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
         {
             String url = host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -203,7 +205,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
-            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NANE, octaneUserCookie, cookiePath, cookieDomain));
+            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_REST_API_TECH_PREVIEW");
@@ -248,48 +250,77 @@ namespace Hpe.Nga.Api.Core.Connector
                     break;
             }
 
+            if (additionalRequestConfiguration != null)
+            {
+                if (additionalRequestConfiguration.Timeout.HasValue)
+                {
+                    request.Timeout = additionalRequestConfiguration.Timeout.Value;
+                }
+                if (additionalRequestConfiguration.Headers != null)
+                {
+                    foreach (KeyValuePair<string, string> header2value in additionalRequestConfiguration.Headers)
+                    {
+                        switch (header2value.Key.ToLower())
+                        {
+                            case "contenttype":
+                                request.ContentType = header2value.Value;
+                                break;
+                            case "accept":
+                                request.Accept = header2value.Value;
+                                break;
+                            default:
+                                request.Headers.Add(header2value.Key, header2value.Value);
+                                break;
+                        }
+                    }
+                }
+                if (additionalRequestConfiguration.GZipCompression)
+                {
+                    request.Headers.Add("Content-Encoding", "gzip");
+                }
+            }
 
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecuteGetAsync(restRelativeUri, queryParams).Result;
+            return ExecuteGetAsync(restRelativeUri, queryParams, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams)
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
+        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecutePostAsync(restRelativeUri, queryParams, data).Result;
+            return ExecutePostAsync(restRelativeUri, queryParams, data, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data)
+        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
+        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecutePutAsync(restRelativeUri, queryParams, data).Result;
+            return ExecutePutAsync(restRelativeUri, queryParams, data, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data)
+        public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Update, data);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Update, data, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecuteDelete(string restRelativeUri)
+        public ResponseWrapper ExecuteDelete(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecuteDeleteAsync(restRelativeUri).Result;
+            return ExecuteDeleteAsync(restRelativeUri, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri)
+        public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, null, RequestType.Delete, null);
+            return SendAsync(restRelativeUri, null, RequestType.Delete, null, additionalRequestConfiguration);
         }
 
         private ResponseWrapper DoSend(HttpWebRequest request)
@@ -341,18 +372,17 @@ namespace Hpe.Nga.Api.Core.Connector
                     }
                     throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
                 }
-
             }
 
             return responseWrapper;
         }
 
-        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalData = null)
         {
-            return SendAsync(restRelativeUri, queryParams, requestType, data).Result;
+            return SendAsync(restRelativeUri, queryParams, requestType, data, additionalData).Result;
         }
 
-        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data)
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
             if (!IsConnected())
             {
@@ -361,18 +391,26 @@ namespace Hpe.Nga.Api.Core.Connector
 
             //Console.WriteLine(requestType + " : " + restRelativeUri);
             restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
-            HttpWebRequest request = CreateRequest(restRelativeUri, requestType);
-            request.Timeout = 200000;//default 100000
-
-
+            HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalRequestConfiguration);
 
             if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
             {
                 byte[] byteData = Encoding.UTF8.GetBytes(data);
                 request.ContentLength = byteData.Length;
+
                 using (Stream postStream = request.GetRequestStream())
                 {
-                    postStream.Write(byteData, 0, byteData.Length);
+                    if (additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression)
+                    {
+                        using (var zipStream = new GZipStream(postStream, CompressionMode.Compress, true))
+                        {
+                            zipStream.Write(byteData, 0, byteData.Length);
+                        }
+                    }
+                    else
+                    {
+                        postStream.Write(byteData, 0, byteData.Length);
+                    }
                 }
             }
 
@@ -391,7 +429,7 @@ namespace Hpe.Nga.Api.Core.Connector
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
-            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart);
+            HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart, null);
             wr.ContentType += boundary;
 
             Stream rs = wr.GetRequestStream();
