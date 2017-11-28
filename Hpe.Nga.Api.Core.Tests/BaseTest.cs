@@ -22,7 +22,7 @@ namespace Hpe.Nga.Api.Core.Tests
     [TestClass]
     public class BaseTest
     {
-        
+
         protected static RestConnector restConnector = new RestConnector();
         protected static EntityService entityService = new EntityService(restConnector);
 
@@ -43,6 +43,13 @@ namespace Hpe.Nga.Api.Core.Tests
         {
             if (!restConnector.IsConnected())
             {
+
+                string ignoreServerCertificateValidation = ConfigurationManager.AppSettings["ignoreServerCertificateValidation"];
+                if (ignoreServerCertificateValidation != null && ignoreServerCertificateValidation.ToLower().Equals("true"))
+                {
+                    RestConnector.SetServerCertificateValidationCallback(RestConnector.IgnoreServerCertificateValidationCallback);
+                }
+
                 string host = ConfigurationManager.AppSettings["webAppUrl"];
 
                 // If webAppUrl is empty we do not try to connect.
@@ -54,12 +61,13 @@ namespace Hpe.Nga.Api.Core.Tests
                 {
                     userName = clientId;
                     connectionInfo = new APIKeyConnectionInfo(clientId, ConfigurationManager.AppSettings["clientSecret"]);
-                } else
+                }
+                else
                 {
                     userName = ConfigurationManager.AppSettings["userName"];
                     connectionInfo = new UserPassConnectionInfo(ConfigurationManager.AppSettings["userName"], ConfigurationManager.AppSettings["password"]);
                 }
-                
+
                 restConnector.Connect(host, connectionInfo);
 
 

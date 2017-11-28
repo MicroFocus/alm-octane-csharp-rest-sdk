@@ -19,6 +19,9 @@ using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
 using System.IO.Compression;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using System.Text.RegularExpressions;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
@@ -52,6 +55,26 @@ namespace Hpe.Nga.Api.Core.Connector
         private string lwSsoCookie;
         private string octaneUserCookie;
 
+        static RestConnector()
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        }
+
+        /// <summary>
+        /// Add custom ServerCertificateValidation.
+        /// If you need to ignore certificate validation, use <see cref="IgnoreServerCertificateValidationCallback"/> callback
+        /// </summary>
+        /// <param name="callback"></param>
+        public static void SetServerCertificateValidationCallback(RemoteCertificateValidationCallback callback)
+        {
+            ServicePointManager.ServerCertificateValidationCallback = callback;
+        }
+
+        public static bool IgnoreServerCertificateValidationCallback(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
+
         public String Host
         {
             get
@@ -77,7 +100,6 @@ namespace Hpe.Nga.Api.Core.Connector
                 throw new ArgumentNullException("connectionInfo");
             }
 
-
             this.host = host.TrimEnd('/');
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
@@ -85,7 +107,6 @@ namespace Hpe.Nga.Api.Core.Connector
             httpWebRequest.Method = METHOD_POST;
             httpWebRequest.ContentType = CONTENT_TYPE_JSON;
             httpWebRequest.CookieContainer = new CookieContainer();
-
 
             Stream stream = await httpWebRequest.GetRequestStreamAsync();
             using (var streamWriter = new StreamWriter(stream))
@@ -109,15 +130,43 @@ namespace Hpe.Nga.Api.Core.Connector
 
         private void SaveCookies(HttpWebResponse httpResponse)
         {
-            if (httpResponse.Cookies[LWSSO_COOKIE_NAME] != null)
+            lwSsoCookie = ExtractValueFromCookie(httpResponse, LWSSO_COOKIE_NAME, lwSsoCookie);
+            octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NANE, octaneUserCookie);
+
+            string[] setCookies = httpResponse.Headers.GetValues("Set-Cookie");
+            lwSsoCookie = ExtractValueFromSetCookie(setCookies, LWSSO_COOKIE_NAME, lwSsoCookie);
+            octaneUserCookie = ExtractValueFromSetCookie(setCookies, OCTANE_USER_COOKIE_NANE, octaneUserCookie);
+        }
+
+        private static string ExtractValueFromCookie(HttpWebResponse httpResponse, string key, string defaultValue)
+        {
+            if (httpResponse.Cookies[key] != null)
             {
-                lwSsoCookie = httpResponse.Cookies[LWSSO_COOKIE_NAME].Value;
+                return httpResponse.Cookies[key].Value;
+            }
+            return defaultValue;
+        }
+
+        private static string ExtractValueFromSetCookie(string[] setCookieValues, string key, string defaultValue)
+        {
+            if (setCookieValues != null)
+            {
+                foreach (string setValue in setCookieValues)
+                {
+                    if (setValue.StartsWith(key))
+                    {
+                        //OCTANE_USER=workspace.admin;Version=1;Domain=212.83.136.98;Path=/;Max-Age=86400;Secure;HttpOnly
+                        Regex regex = new Regex(key + "=(.*?);");
+                        Match match = regex.Match(setValue);
+                        if (match.Success)
+                        {
+                            return match.Groups[1].Value;
+                        }
+                    }
+                }
             }
 
-            if (httpResponse.Cookies[OCTANE_USER_COOKIE_NAME] != null)
-            {
-                octaneUserCookie = httpResponse.Cookies[OCTANE_USER_COOKIE_NAME].Value;
-            }
+            return defaultValue;
         }
 
         private string GetCookieValue(HttpWebResponse httpResponse, string cookieName)
