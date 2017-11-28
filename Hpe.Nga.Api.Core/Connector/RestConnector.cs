@@ -201,31 +201,34 @@ namespace Hpe.Nga.Api.Core.Connector
                     break;
             }
 
-            if (additionalRequestConfiguration.Timeout.HasValue)
+            if (additionalRequestConfiguration != null)
             {
-                request.Timeout = additionalRequestConfiguration.Timeout.Value;
-            }
-            if (additionalRequestConfiguration.Headers != null)
-            {
-                foreach (KeyValuePair<string, string> header2value in additionalRequestConfiguration.Headers)
+                if (additionalRequestConfiguration.Timeout.HasValue)
                 {
-                    switch (header2value.Key.ToLower())
+                    request.Timeout = additionalRequestConfiguration.Timeout.Value;
+                }
+                if (additionalRequestConfiguration.Headers != null)
+                {
+                    foreach (KeyValuePair<string, string> header2value in additionalRequestConfiguration.Headers)
                     {
-                        case "contenttype":
-                            request.ContentType = header2value.Value;
-                            break;
-                        case "accept":
-                            request.Accept = header2value.Value;
-                            break;
-                        default:
-                            request.Headers.Add(header2value.Key, header2value.Value);
-                            break;
+                        switch (header2value.Key.ToLower())
+                        {
+                            case "contenttype":
+                                request.ContentType = header2value.Value;
+                                break;
+                            case "accept":
+                                request.Accept = header2value.Value;
+                                break;
+                            default:
+                                request.Headers.Add(header2value.Key, header2value.Value);
+                                break;
+                        }
                     }
                 }
-            }
-            if (additionalRequestConfiguration.GZipCompression)
-            {
-                request.Headers.Add("Content-Encoding", "gzip");
+                if (additionalRequestConfiguration.GZipCompression)
+                {
+                    request.Headers.Add("Content-Encoding", "gzip");
+                }
             }
 
             return request;
@@ -330,7 +333,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return SendAsync(restRelativeUri, queryParams, requestType, data, additionalData).Result;
         }
 
-        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalData = null)
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
             if (!IsConnected())
             {
@@ -339,7 +342,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             //Console.WriteLine(requestType + " : " + restRelativeUri);
             restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
-            HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalData);
+            HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalRequestConfiguration);
 
             if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
             {
@@ -348,7 +351,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
                 using (Stream postStream = request.GetRequestStream())
                 {
-                    if (additionalData.GZipCompression)
+                    if (additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression)
                     {
                         using (var zipStream = new GZipStream(postStream, CompressionMode.Compress, true))
                         {
