@@ -224,7 +224,10 @@ namespace Hpe.Nga.Api.Core.Connector
                     }
                 }
             }
-
+            if (additionalData.IsGZip)
+            {
+                request.Headers.Add("Content-Encoding", "gzip");
+            }
 
             return request;
         }
@@ -239,14 +242,14 @@ namespace Hpe.Nga.Api.Core.Connector
             return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalData);
         }
 
-        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data)
+        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data, RequestAdditionalData additionalData = null)
         {
-            return ExecutePostAsync(restRelativeUri, queryParams, data).Result;
+            return ExecutePostAsync(restRelativeUri, queryParams, data, additionalData).Result;
         }
 
-        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data)
+        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data, RequestAdditionalData additionalData = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, additionalData);
         }
 
         public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
@@ -345,11 +348,12 @@ namespace Hpe.Nga.Api.Core.Connector
             {
                 byte[] byteData = Encoding.UTF8.GetBytes(data);
                 request.ContentLength = byteData.Length;
+
                 using (Stream postStream = request.GetRequestStream())
                 {
                     if (additionalData.IsGZip)
                     {
-                        using (var zipStream = new GZipStream(postStream, CompressionMode.Compress))
+                        using (var zipStream = new GZipStream(postStream, CompressionMode.Compress, true))
                         {
                             zipStream.Write(byteData, 0, byteData.Length);
                         }
