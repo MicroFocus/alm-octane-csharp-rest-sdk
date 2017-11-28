@@ -131,11 +131,11 @@ namespace Hpe.Nga.Api.Core.Connector
         private void SaveCookies(HttpWebResponse httpResponse)
         {
             lwSsoCookie = ExtractValueFromCookie(httpResponse, LWSSO_COOKIE_NAME, lwSsoCookie);
-            octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NANE, octaneUserCookie);
+            octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
 
             string[] setCookies = httpResponse.Headers.GetValues("Set-Cookie");
             lwSsoCookie = ExtractValueFromSetCookie(setCookies, LWSSO_COOKIE_NAME, lwSsoCookie);
-            octaneUserCookie = ExtractValueFromSetCookie(setCookies, OCTANE_USER_COOKIE_NANE, octaneUserCookie);
+            octaneUserCookie = ExtractValueFromSetCookie(setCookies, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
         }
 
         private static string ExtractValueFromCookie(HttpWebResponse httpResponse, string key, string defaultValue)
