@@ -33,10 +33,9 @@ namespace Hpe.Nga.Api.Core.Connector
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
         private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
-        public static string CONTENT_TYPE_JSON = "application/json";
-        public static string CONTENT_TYPE_XML = "application/xml";
-        public static string CONTENT_TYPE_STREAM = "application/octet-stream";
-        public static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
+        private static string CONTENT_TYPE_JSON = "application/json";
+        private static string CONTENT_TYPE_STREAM = "application/octet-stream";
+        private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
 
         public static string AUTHENTICATION_URL = "/authentication/sign_in";
@@ -146,7 +145,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return GetLwSsoToken() != null;
         }
 
-        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestAdditionalData additionalData)
+        private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
         {
             String url = host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
@@ -202,13 +201,13 @@ namespace Hpe.Nga.Api.Core.Connector
                     break;
             }
 
-            if (additionalData.Timeout.HasValue)
+            if (additionalRequestConfiguration.Timeout.HasValue)
             {
-                request.Timeout = additionalData.Timeout.Value;
+                request.Timeout = additionalRequestConfiguration.Timeout.Value;
             }
-            if (additionalData.Headers != null)
+            if (additionalRequestConfiguration.Headers != null)
             {
-                foreach (KeyValuePair<string, string> header2value in additionalData.Headers)
+                foreach (KeyValuePair<string, string> header2value in additionalRequestConfiguration.Headers)
                 {
                     switch (header2value.Key.ToLower())
                     {
@@ -224,7 +223,7 @@ namespace Hpe.Nga.Api.Core.Connector
                     }
                 }
             }
-            if (additionalData.IsGZip)
+            if (additionalRequestConfiguration.GZipCompression)
             {
                 request.Headers.Add("Content-Encoding", "gzip");
             }
@@ -232,44 +231,44 @@ namespace Hpe.Nga.Api.Core.Connector
             return request;
         }
 
-        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, RequestAdditionalData additionalData = null)
+        public ResponseWrapper ExecuteGet(string restRelativeUri, string queryParams, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecuteGetAsync(restRelativeUri, queryParams, additionalData).Result;
+            return ExecuteGetAsync(restRelativeUri, queryParams, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, RequestAdditionalData additionalData = null)
+        public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalData);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data, RequestAdditionalData additionalData = null)
+        public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecutePostAsync(restRelativeUri, queryParams, data, additionalData).Result;
+            return ExecutePostAsync(restRelativeUri, queryParams, data, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data, RequestAdditionalData additionalData = null)
+        public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, additionalData);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data)
+        public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecutePutAsync(restRelativeUri, queryParams, data).Result;
+            return ExecutePutAsync(restRelativeUri, queryParams, data, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data)
+        public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, queryParams, RequestType.Update, data);
+            return SendAsync(restRelativeUri, queryParams, RequestType.Update, data, additionalRequestConfiguration);
         }
 
-        public ResponseWrapper ExecuteDelete(string restRelativeUri)
+        public ResponseWrapper ExecuteDelete(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return ExecuteDeleteAsync(restRelativeUri).Result;
+            return ExecuteDeleteAsync(restRelativeUri, additionalRequestConfiguration).Result;
         }
 
-        public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri)
+        public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
         {
-            return SendAsync(restRelativeUri, null, RequestType.Delete, null);
+            return SendAsync(restRelativeUri, null, RequestType.Delete, null, additionalRequestConfiguration);
         }
 
         private ResponseWrapper DoSend(HttpWebRequest request)
@@ -321,19 +320,17 @@ namespace Hpe.Nga.Api.Core.Connector
                     }
                     throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
                 }
-
             }
 
             return responseWrapper;
         }
 
-        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestAdditionalData additionalData = null)
+        public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalData = null)
         {
             return SendAsync(restRelativeUri, queryParams, requestType, data, additionalData).Result;
         }
 
-
-        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestAdditionalData additionalData = null)
+        public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalData = null)
         {
             if (!IsConnected())
             {
@@ -351,7 +348,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
                 using (Stream postStream = request.GetRequestStream())
                 {
-                    if (additionalData.IsGZip)
+                    if (additionalData.GZipCompression)
                     {
                         using (var zipStream = new GZipStream(postStream, CompressionMode.Compress, true))
                         {
@@ -362,7 +359,6 @@ namespace Hpe.Nga.Api.Core.Connector
                     {
                         postStream.Write(byteData, 0, byteData.Length);
                     }
-
                 }
             }
 

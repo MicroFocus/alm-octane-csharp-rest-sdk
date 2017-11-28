@@ -3,32 +3,32 @@
 
 namespace Hpe.Nga.Api.Core.Connector
 {
-    public class RequestAdditionalData
+    public class RequestConfiguration
     {
-        public bool IsGZip { get; set; }
+        public bool GZipCompression { get; set; }
 
         public int? Timeout { get; set; }
 
         public Dictionary<string, string> Headers { get; set; }
 
-        public static RequestAdditionalData Create()
+        public static RequestConfiguration Create()
         {
-            return new RequestAdditionalData();
+            return new RequestConfiguration();
         }
 
-        public RequestAdditionalData SetIsGZip(bool b)
+        public RequestConfiguration SetGZipCompression(bool compress)
         {
-            this.IsGZip = b;
+            this.GZipCompression = compress;
             return this;
         }
 
-        public RequestAdditionalData SetTimeout(int? timeout)
+        public RequestConfiguration SetTimeout(int? timeout)
         {
             this.Timeout = timeout;
             return this;
         }
 
-        public RequestAdditionalData AddHeader(string name, string value)
+        public RequestConfiguration AddHeader(string name, string value)
         {
             if (Headers == null)
             {
