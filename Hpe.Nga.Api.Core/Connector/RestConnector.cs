@@ -58,6 +58,11 @@ namespace Hpe.Nga.Api.Core.Connector
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         }
 
+        /// <summary>
+        /// Add custom ServerCertificateValidation.
+        /// If you need to ignore certificate validation, use <see cref="IgnoreServerCertificateValidationCallback"/> callback
+        /// </summary>
+        /// <param name="callback"></param>
         public static void SetServerCertificateValidationCallback(RemoteCertificateValidationCallback callback)
         {
             ServicePointManager.ServerCertificateValidationCallback = callback;
