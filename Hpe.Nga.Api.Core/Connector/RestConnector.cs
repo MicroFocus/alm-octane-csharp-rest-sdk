@@ -19,8 +19,6 @@ using System.Web.Script.Serialization;
 using Hpe.Nga.Api.Core.Connector.Exceptions;
 using System.IO.Compression;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
 using System.Text.RegularExpressions;
 
 namespace Hpe.Nga.Api.Core.Connector
@@ -49,31 +47,10 @@ namespace Hpe.Nga.Api.Core.Connector
         private static string METHOD_GET = "GET";
         private static string METHOD_PUT = "PUT";
         private static string METHOD_DELETE = "DELETE";
-
         private string host;
 
         private string lwSsoCookie;
         private string octaneUserCookie;
-
-        static RestConnector()
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-        }
-
-        /// <summary>
-        /// Add custom ServerCertificateValidation.
-        /// If you need to ignore certificate validation, use <see cref="IgnoreServerCertificateValidationCallback"/> callback
-        /// </summary>
-        /// <param name="callback"></param>
-        public static void SetServerCertificateValidationCallback(RemoteCertificateValidationCallback callback)
-        {
-            ServicePointManager.ServerCertificateValidationCallback = callback;
-        }
-
-        public static bool IgnoreServerCertificateValidationCallback(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            return true;
-        }
 
         public String Host
         {
@@ -82,6 +59,8 @@ namespace Hpe.Nga.Api.Core.Connector
                 return host;
             }
         }
+
+        public static bool AwaitContinueOnCapturedContext { get; set; } = true;
 
         public bool Connect(string host, ConnectionInfo connectionInfo)
         {
@@ -108,7 +87,7 @@ namespace Hpe.Nga.Api.Core.Connector
             httpWebRequest.ContentType = CONTENT_TYPE_JSON;
             httpWebRequest.CookieContainer = new CookieContainer();
 
-            Stream stream = await httpWebRequest.GetRequestStreamAsync();
+            Stream stream = await httpWebRequest.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
             using (var streamWriter = new StreamWriter(stream))
             {
                 JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
@@ -116,7 +95,7 @@ namespace Hpe.Nga.Api.Core.Connector
                 streamWriter.Write(json);
             }
 
-            var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
+            var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
 
             SaveCookies(httpResponse);
 
@@ -334,7 +313,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
             try
             {
-                var response = (HttpWebResponse)await request.GetResponseAsync();
+                var response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
                     responseWrapper.Data = streamReader.ReadToEnd();
@@ -389,8 +368,8 @@ namespace Hpe.Nga.Api.Core.Connector
                 throw new NotConnectedException();
             }
 
-            //Console.WriteLine(requestType + " : " + restRelativeUri);
-            restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + "?" + queryParams;
+            restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri :
+                restRelativeUri + (restRelativeUri.Contains("?") ? "&" : "?") + queryParams;
             HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalRequestConfiguration);
 
             if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
@@ -398,7 +377,7 @@ namespace Hpe.Nga.Api.Core.Connector
                 byte[] byteData = Encoding.UTF8.GetBytes(data);
                 request.ContentLength = byteData.Length;
 
-                using (Stream postStream = request.GetRequestStream())
+                using (Stream postStream = await request.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
                 {
                     if (additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression)
                     {
@@ -414,9 +393,7 @@ namespace Hpe.Nga.Api.Core.Connector
                 }
             }
 
-            return await DoSendAsync(request);
-
-
+            return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
         public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
@@ -424,7 +401,7 @@ namespace Hpe.Nga.Api.Core.Connector
             return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData).Result;
         }
 
-        public Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        public async Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
@@ -432,7 +409,7 @@ namespace Hpe.Nga.Api.Core.Connector
             HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart, null);
             wr.ContentType += boundary;
 
-            Stream rs = wr.GetRequestStream();
+            Stream rs = await wr.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
 
             string formdataTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"blob\"\r\nContent-Type: application/json\r\n\r\n{1}";
 
@@ -462,7 +439,7 @@ namespace Hpe.Nga.Api.Core.Connector
             rs.Write(trailer, 0, trailer.Length);
             rs.Close();
 
-            return DoSendAsync(wr);
+            return await DoSendAsync(wr).ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
     }
