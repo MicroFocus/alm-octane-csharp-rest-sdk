@@ -79,7 +79,7 @@ namespace Hpe.Nga.Api.Core.Services
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
 
-            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString);
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
             {
                 EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
@@ -123,7 +123,7 @@ namespace Hpe.Nga.Api.Core.Services
 
             string queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, serviceArgs);
 
-            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString);
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
             {
                 GroupResult result = jsonSerializer.Deserialize<GroupResult>(response.Data);
@@ -135,7 +135,7 @@ namespace Hpe.Nga.Api.Core.Services
         public async Task<TestScript> GetTestScriptAsync(IRequestContext context, EntityId id)
         {
             string url = string.Format("{0}/tests/{1}/script", context.GetPath(), id);
-            ResponseWrapper response = await rc.ExecuteGetAsync(url, string.Empty);
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, string.Empty).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
 
             TestScript result = jsonSerializer.Deserialize<TestScript>(response.Data);
             return result;
@@ -171,7 +171,7 @@ namespace Hpe.Nga.Api.Core.Services
             string url = context.GetPath() + "/" + collectionName + "/" + id;
             String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null, null);
 
-            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString);
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             T result = jsonSerializer.Deserialize<T>(response.Data);
             return result;
         }
@@ -194,7 +194,7 @@ namespace Hpe.Nga.Api.Core.Services
 
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entityList);
-            ResponseWrapper response = await rc.ExecutePostAsync(url, queryParams, data);
+            ResponseWrapper response = await rc.ExecutePostAsync(url, queryParams, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
         }
@@ -206,7 +206,7 @@ namespace Hpe.Nga.Api.Core.Services
 
         public async Task<T> CreateAsync<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            EntityListResult<T> result = await CreateAsync<T>(context, EntityList<T>.Create(entity), fieldsToReturn);
+            EntityListResult<T> result = await CreateAsync<T>(context, EntityList<T>.Create(entity), fieldsToReturn).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             return result.data[0];
         }
 
@@ -235,7 +235,7 @@ namespace Hpe.Nga.Api.Core.Services
 
             string url = context.GetPath() + "/" + collectionName + "/" + entity.Id;
             String data = jsonSerializer.Serialize(entity);
-            ResponseWrapper response = await rc.ExecutePutAsync(url, queryString, data);
+            ResponseWrapper response = await rc.ExecutePutAsync(url, queryString, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             T result = jsonSerializer.Deserialize<T>(response.Data);
             return result;
         }
@@ -252,7 +252,7 @@ namespace Hpe.Nga.Api.Core.Services
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entities);
-            ResponseWrapper response = await rc.ExecutePutAsync(url, null, data);
+            ResponseWrapper response = await rc.ExecutePutAsync(url, null, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
         }
@@ -268,7 +268,7 @@ namespace Hpe.Nga.Api.Core.Services
         {
             String collectionName = GetCollectionName<T>();
             string url = context.GetPath() + "/" + collectionName + "/" + entityId;
-            ResponseWrapper response = await rc.ExecuteDeleteAsync(url);
+            ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
         public void DeleteByFilter<T>(IRequestContext context, IList<QueryPhrase> queryPhrases)
@@ -283,7 +283,7 @@ namespace Hpe.Nga.Api.Core.Services
             String collectionName = GetCollectionName<T>();
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
-            ResponseWrapper response = await rc.ExecuteDeleteAsync(url);
+            ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
         public Attachment AttachToEntity(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType, string[] fieldsToReturn)
@@ -301,7 +301,7 @@ namespace Hpe.Nga.Api.Core.Services
                 attachmentEntity = string.Format("{0}\"name\":\"{2}\",\"owner_{3}\":{0}\"type\":\"{3}\",\"id\":\"{4}\"{1}{1}",
                     "{", "}", fileName, entity.AggregateType, entity.Id.ToString());
             }
-            ResponseWrapper response = await rc.SendMultiPartAsync(url, content, contentType, fileName, attachmentEntity);
+            ResponseWrapper response = await rc.SendMultiPartAsync(url, content, contentType, fileName, attachmentEntity).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<Attachment> result = jsonSerializer.Deserialize<EntityListResult<Attachment>>(response.Data);
             return (Attachment)result.data[0];
         }

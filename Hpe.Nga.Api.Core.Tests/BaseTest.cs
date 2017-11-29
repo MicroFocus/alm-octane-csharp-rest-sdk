@@ -47,8 +47,9 @@ namespace Hpe.Nga.Api.Core.Tests
                 string ignoreServerCertificateValidation = ConfigurationManager.AppSettings["ignoreServerCertificateValidation"];
                 if (ignoreServerCertificateValidation != null && ignoreServerCertificateValidation.ToLower().Equals("true"))
                 {
-                    RestConnector.SetServerCertificateValidationCallback(RestConnector.IgnoreServerCertificateValidationCallback);
+                    NetworkSettings.IgnoreServerCertificateValidation();
                 }
+                NetworkSettings.EnableAllSecurityProtocols();
 
                 string host = ConfigurationManager.AppSettings["webAppUrl"];
 

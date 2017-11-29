@@ -46,8 +46,8 @@ namespace Hpe.Nga.Api.Core.Tests
             {
                 try
                 {
-                
-                    EntityListResult<WorkspaceUser> workspace_users = entityService.Get<WorkspaceUser>(new Services.RequestContext.WorkspaceContext(sharedSpaceContext.SharedSpaceId, workspace.Id));
+                    long workspaceId = long.Parse((string)workspace.Id);
+                    EntityListResult<WorkspaceUser> workspace_users = entityService.Get<WorkspaceUser>(new Services.RequestContext.WorkspaceContext(sharedSpaceContext.SharedSpaceId, workspaceId));
                     foreach (WorkspaceUser workspaceUser in workspace_users.data)
                     {
                         if (workspaceUser.Email.Equals(CurrentUserName))
