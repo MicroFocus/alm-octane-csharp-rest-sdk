@@ -52,12 +52,12 @@ namespace Hpe.Nga.Api.Core.Services.RequestContext
 
 		public virtual string GetPath()
 		{
-			return $"/api/shared_spaces/{SharedSpaceId}/workspaces/{WorkspaceId}";
+			return string.Format("/api/shared_spaces/{0}/workspaces/{1}", SharedSpaceId, WorkspaceId);
 		}
 
 		public override string ToString()
 		{
-			return $"Shared Space Id = {SharedSpaceId}; Workspace Id : {WorkspaceId}";
+			return string.Format("Shared Space Id = {0}; Workspace Id : {1}", SharedSpaceId, WorkspaceId);
 		}
 	}
 }

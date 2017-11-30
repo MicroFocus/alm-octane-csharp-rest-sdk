@@ -47,7 +47,7 @@ namespace Hpe.Nga.Api.Core.Services.RequestContext
 
 		public virtual string GetPath()
 		{
-			return $"/api/shared_spaces/{SharedSpaceId}";
+			return string.Format("/api/shared_spaces/{0}", SharedSpaceId);
 		}
 
 		public override string ToString()
