@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HPE")]
 [assembly: AssemblyProduct("Hpe.Nga.Api.Core")]
-[assembly: AssemblyCopyright("Copyright © HPE 2016")]
+[assembly: AssemblyCopyright("Copyright © HPE 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -44,8 +44,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("12.55.5.0")]
-[assembly: AssemblyFileVersion("12.55.5.0")]
+[assembly: AssemblyVersion("12.55.9.0")]
+[assembly: AssemblyFileVersion("12.55.9.0")]
 
 // The following allows the testing assembly to access internal classes such as QueryStringBuilder.
 [assembly: InternalsVisibleTo("Hpe.Nga.Api.Core.Tests")]
