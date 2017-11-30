@@ -18,34 +18,46 @@ using System.Threading.Tasks;
 
 namespace Hpe.Nga.Api.Core.Services.RequestContext
 {
-    /// <summary>
-    /// Define URL for specific workspace context
-    /// </summary>
-    public class WorkspaceContext : IRequestContext
-    {
-        public long WorkspaceId { get; set; }
+	/// <summary>
+	/// Define URL for specific workspace context
+	/// </summary>
+	public class WorkspaceContext : IRequestContext
+	{
+		public long WorkspaceId { get; set; }
 
-        public long SharedSpaceId { get; set; }
+		public long SharedSpaceId { get; set; }
 
-        public WorkspaceContext(long sharedSpaceId, long workspaceId)
-        {
-            WorkspaceId = workspaceId;
-            SharedSpaceId = sharedSpaceId;
-        }
+		public WorkspaceContext(long sharedSpaceId, long workspaceId)
+		{
+			WorkspaceId = workspaceId;
+			SharedSpaceId = sharedSpaceId;
+		}
 
-        public static WorkspaceContext Create(long sharedSpaceId, long workspaceId)
-        {
-            return new WorkspaceContext(sharedSpaceId, workspaceId);
-        }
+		public WorkspaceContext(string sharedSpaceId, string workspaceId)
+		{
+			WorkspaceId = long.Parse(workspaceId);
+			SharedSpaceId = long.Parse(sharedSpaceId);
+		}
 
-        public virtual string GetPath()
-        {
-            return String.Format("/api/shared_spaces/{0}/workspaces/{1}", SharedSpaceId, WorkspaceId);
-        }
+		public static WorkspaceContext Create(long sharedSpaceId, long workspaceId)
+		{
+			return new WorkspaceContext(sharedSpaceId, workspaceId);
+		}
 
-        public override string ToString()
-        {
-            return String.Format("Shared Space Id = {0}; Workspace Id : {1}", SharedSpaceId, WorkspaceId);
-        }
-    }
+		public static WorkspaceContext Create(string sharedSpaceId, string workspaceId)
+		{
+			return new WorkspaceContext(sharedSpaceId, workspaceId);
+		}
+
+
+		public virtual string GetPath()
+		{
+			return $"/api/shared_spaces/{SharedSpaceId}/workspaces/{WorkspaceId}";
+		}
+
+		public override string ToString()
+		{
+			return $"Shared Space Id = {SharedSpaceId}; Workspace Id : {WorkspaceId}";
+		}
+	}
 }
