@@ -386,18 +386,21 @@ namespace Hpe.Nga.Api.Core.Connector
 			if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
 			{
 				byte[] byteData = Encoding.UTF8.GetBytes(data);
-				request.ContentLength = byteData.Length;
-
-				using (Stream postStream = await request.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
+				bool gzip = additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression;
+				if (gzip)
 				{
-					if (additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression)
+					using (Stream postStream = await request.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
 					{
-						using (var zipStream = new GZipStream(postStream, CompressionMode.Compress, true))
+						using (var zipStream = new GZipStream(postStream, CompressionMode.Compress))
 						{
 							zipStream.Write(byteData, 0, byteData.Length);
 						}
 					}
-					else
+				}
+				else
+				{
+					request.ContentLength = byteData.Length;
+					using (Stream postStream = await request.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
 					{
 						postStream.Write(byteData, 0, byteData.Length);
 					}
