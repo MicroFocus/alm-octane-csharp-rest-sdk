@@ -172,7 +172,15 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public void Disconnect()
 		{
-			ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
+			try
+			{
+				ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
+
+			}
+			catch (Exception)
+			{
+				//do nothing
+			}
 
 			// Reset cookies container to erase any existing cookies of the previous session.
 			lwSsoCookie = null;
@@ -360,7 +368,15 @@ namespace Hpe.Nga.Api.Core.Connector
 						// an exception with the original exception as inner.
 						throw new ServerUnavailableException("Server is unavailable", ex);
 					}
-					throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+					if (response.StatusCode == HttpStatusCode.RequestTimeout)
+					{
+						throw new WebException(null, WebExceptionStatus.Timeout);
+					}
+					else
+					{
+						throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+					}
+
 				}
 			}
 
