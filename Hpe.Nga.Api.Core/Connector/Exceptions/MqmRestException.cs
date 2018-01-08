@@ -26,8 +26,9 @@ namespace Hpe.Nga.Api.Core.Connector.Exceptions
             get { return statusCode; }
         }
 
-        public MqmRestException(RestExceptionInfo exceptionInfo, HttpStatusCode statusCode, Exception innerException) : base(exceptionInfo.description, innerException)
-        {
+		public MqmRestException(RestExceptionInfo exceptionInfo, HttpStatusCode statusCode, Exception innerException) : 
+			base(exceptionInfo == null ? "" : exceptionInfo.description, innerException)
+		{ 
             this.exceptionInfo = exceptionInfo;
             this.statusCode = statusCode;
         }
