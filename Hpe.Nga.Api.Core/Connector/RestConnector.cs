@@ -440,18 +440,30 @@ namespace Hpe.Nga.Api.Core.Connector
 			{
 				return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
 			}
+			//catch - intended to handle the case LWSSO is expired, we will try reconnect and resend original request
 			catch (InvalidCredentialException e)
 			{
-				if (allowReconnect && Reconnect())
+				try
 				{
-					return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration);
+					bool reconnected = allowReconnect && Reconnect();
+					if (!reconnected)
+					{
+						throw e;
+					}
+					// we reconnected, 
+					// but await can't exist in a catch because the CLR would lose the ambient exception.
+					// We don’t need the ambient exception (i.e. we don't "throw;", 
+					// so we need to trick it out by putting retry logic after the catch
 				}
-				else
+				catch
 				{
+					//if reconnect throwed any exception - we rethrow original exception
 					throw e;
 				}
 			}
-
+			//resend after reconnect
+			return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration)
+				   .ConfigureAwait(AwaitContinueOnCapturedContext);
 		}
 
 		public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
