@@ -43,15 +43,14 @@ namespace Hpe.Nga.Api.Core.Tests
             Assert.IsNotNull(created);
         }
 
-        [TestMethod]
-        private static Release GetReleaseByIdTest()
+		[TestMethod]
+		public void GetReleaseByIdTest()
         {
             Release created = CreateRelease();
             List<String> fields = new List<string>();
             fields.Add(Release.NAME_FIELD);
             Release release = entityService.GetById<Release>(workspaceContext, created.Id, fields);
             Assert.AreEqual(release.Id, created.Id);
-            return release;
         }
 
         [TestMethod]

@@ -10,16 +10,17 @@
 
 // See the License for the specific language governing permissions and limitations under the License.
 
+using Hpe.Nga.Api.Core.Connector.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
+using System.Security.Authentication;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using Hpe.Nga.Api.Core.Connector.Exceptions;
-using System.IO.Compression;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace Hpe.Nga.Api.Core.Connector
 {
@@ -48,6 +49,7 @@ namespace Hpe.Nga.Api.Core.Connector
 		private static string METHOD_PUT = "PUT";
 		private static string METHOD_DELETE = "DELETE";
 		private string host;
+		private ConnectionInfo connectionInfo;
 
 		private string lwSsoCookie;
 		private string octaneUserCookie;
@@ -78,6 +80,18 @@ namespace Hpe.Nga.Api.Core.Connector
 			return ConnectAsync(host, connectionInfo).Result;
 		}
 
+		private bool Reconnect()
+		{
+			try
+			{
+				return Connect(host, connectionInfo);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
 		public async Task<bool> ConnectAsync(string host, ConnectionInfo connectionInfo)
 		{
 			if (host == null)
@@ -91,6 +105,7 @@ namespace Hpe.Nga.Api.Core.Connector
 			}
 
 			this.host = host.TrimEnd('/');
+			this.connectionInfo = connectionInfo;
 
 			var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
 
@@ -288,7 +303,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public Task<ResponseWrapper> ExecuteGetAsync(string restRelativeUri, string queryParams, RequestConfiguration additionalRequestConfiguration = null)
 		{
-			return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, additionalRequestConfiguration);
+			return SendAsync(restRelativeUri, queryParams, RequestType.Get, null, true, additionalRequestConfiguration);
 		}
 
 		public ResponseWrapper ExecutePost(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
@@ -298,7 +313,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public Task<ResponseWrapper> ExecutePostAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
 		{
-			return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, additionalRequestConfiguration);
+			return SendAsync(restRelativeUri, queryParams, RequestType.Post, data, true, additionalRequestConfiguration);
 		}
 
 		public ResponseWrapper ExecutePut(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
@@ -308,7 +323,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public Task<ResponseWrapper> ExecutePutAsync(string restRelativeUri, string queryParams, string data, RequestConfiguration additionalRequestConfiguration = null)
 		{
-			return SendAsync(restRelativeUri, queryParams, RequestType.Update, data, additionalRequestConfiguration);
+			return SendAsync(restRelativeUri, queryParams, RequestType.Update, data, true, additionalRequestConfiguration);
 		}
 
 		public ResponseWrapper ExecuteDelete(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
@@ -318,12 +333,7 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public Task<ResponseWrapper> ExecuteDeleteAsync(string restRelativeUri, RequestConfiguration additionalRequestConfiguration = null)
 		{
-			return SendAsync(restRelativeUri, null, RequestType.Delete, null, additionalRequestConfiguration);
-		}
-
-		private ResponseWrapper DoSend(HttpWebRequest request)
-		{
-			return DoSendAsync(request).Result;
+			return SendAsync(restRelativeUri, null, RequestType.Delete, null, true, additionalRequestConfiguration);
 		}
 
 		private async Task<ResponseWrapper> DoSendAsync(HttpWebRequest request)
@@ -351,6 +361,10 @@ namespace Hpe.Nga.Api.Core.Connector
 				}
 				else
 				{
+					if (response.StatusCode == HttpStatusCode.Unauthorized)
+					{
+						throw new InvalidCredentialException("Credentials are invalid");
+					}
 					RestExceptionInfo exceptionInfo;
 					try
 					{
@@ -385,18 +399,17 @@ namespace Hpe.Nga.Api.Core.Connector
 
 		public ResponseWrapper Send(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalData = null)
 		{
-			return SendAsync(restRelativeUri, queryParams, requestType, data, additionalData).Result;
+			return SendAsync(restRelativeUri, queryParams, requestType, data, true, additionalData).Result;
 		}
 
-		public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, RequestConfiguration additionalRequestConfiguration = null)
+		public async Task<ResponseWrapper> SendAsync(string restRelativeUri, string queryParams, RequestType requestType, string data, bool allowReconnect = true, RequestConfiguration additionalRequestConfiguration = null)
 		{
 			if (!IsConnected())
 			{
 				throw new NotConnectedException();
 			}
 
-			restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri :
-				restRelativeUri + (restRelativeUri.Contains("?") ? "&" : "?") + queryParams;
+			restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + (restRelativeUri.Contains("?") ? "&" : "?") + queryParams;
 			HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalRequestConfiguration);
 
 			if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
@@ -423,7 +436,22 @@ namespace Hpe.Nga.Api.Core.Connector
 				}
 			}
 
-			return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
+			try
+			{
+				return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
+			}
+			catch (InvalidCredentialException e)
+			{
+				if (allowReconnect && Reconnect())
+				{
+					return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration);
+				}
+				else
+				{
+					throw e;
+				}
+			}
+
 		}
 
 		public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)

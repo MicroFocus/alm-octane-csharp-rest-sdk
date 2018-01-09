@@ -151,7 +151,7 @@ namespace Hpe.Nga.Api.Core.Tests
         }
 
         [TestMethod]
-        public void GetOnlyDefectWithGroupSeverityTest(WorkspaceContext context)
+        public void GetOnlyDefectWithGroupSeverityTest()
         {
             List<String> fields = new List<string>();
             fields.Add(WorkItem.NAME_FIELD);
@@ -163,7 +163,7 @@ namespace Hpe.Nga.Api.Core.Tests
             queries.Add(subtypeQuery);
 
             //~work_items/groups?group_by=severity&query="(subtype='defect');
-            GroupResult result = entityService.GetWithGroupBy<WorkItem>(context, queries, Defect.SEVERITY_FIELD);
+            GroupResult result = entityService.GetWithGroupBy<WorkItem>(workspaceContext, queries, Defect.SEVERITY_FIELD);
         }
 
     }
