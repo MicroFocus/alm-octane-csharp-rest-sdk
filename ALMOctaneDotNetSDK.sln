@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctaneSdk", "Hpe.Nga.Api.Core\OctaneSdk.csproj", "{344D2EA6-C3E6-4A67-95C1-51B5E7647E89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctaneSdk", "OctaneSdk\OctaneSdk.csproj", "{344D2EA6-C3E6-4A67-95C1-51B5E7647E89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctaneSdkTest", "Hpe.Nga.Api.Core.Tests\OctaneSdkTest.csproj", "{E4F5B839-ECBB-421B-A231-0062A6EE7FEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctaneSdkTest", "OctaneSdkTests\OctaneSdkTest.csproj", "{E4F5B839-ECBB-421B-A231-0062A6EE7FEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
