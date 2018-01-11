@@ -6,7 +6,7 @@ Examples are available in test project.
 
 ## Test Project
 
-To run the test project the correct details need to be added to the `Hpe.Nga.Api.Core.Tests\App.config` XML file.  There are two ways of authenticating the API - either by the use of a *API key* or user and password.  The recommended method is to use the *API Key*.
+To run the test project the correct details need to be added to the `OctaneSdkTests\App.config` XML file.  There are two ways of authenticating the API - either by the use of a *API key* or user and password.  The recommended method is to use the *API Key*.
 
 See the default file for more information.  **Note:**  To run the tests correctly the user shoudl have *SharedSpace Admin* and *Workspace Admin* roles.
 
