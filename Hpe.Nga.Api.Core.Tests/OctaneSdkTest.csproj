@@ -6,8 +6,8 @@
     <ProjectGuid>{E4F5B839-ECBB-421B-A231-0062A6EE7FEA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hpe.Nga.Api.Core.Tests</RootNamespace>
-    <AssemblyName>Hpe.Nga.Api.Core.Tests</AssemblyName>
+    <RootNamespace>MicroFocus.Adm.Octane.Api.Core.Tests</RootNamespace>
+    <AssemblyName>MicroFocus.Adm.Octane.Api.Core.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -74,9 +74,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hpe.Nga.Api.Core\Hpe.Nga.Api.Core.csproj">
+    <ProjectReference Include="..\Hpe.Nga.Api.Core\OctaneSdk.csproj">
       <Project>{344d2ea6-c3e6-4a67-95c1-51b5e7647e89}</Project>
-      <Name>Hpe.Nga.Api.Core</Name>
+      <Name>OctaneSdk</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
