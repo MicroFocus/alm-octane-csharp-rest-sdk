@@ -7,8 +7,8 @@
     <ProjectGuid>{344D2EA6-C3E6-4A67-95C1-51B5E7647E89}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hpe.Nga.Api.Core</RootNamespace>
-    <AssemblyName>Hpe.Nga.Api.Core</AssemblyName>
+    <RootNamespace>MicroFocus.Adm.Octane.Api.Core</RootNamespace>
+    <AssemblyName>MicroFocus.Adm.Octane.Api.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
