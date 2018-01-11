@@ -74,7 +74,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hpe.Nga.Api.Core\OctaneSdk.csproj">
+    <ProjectReference Include="..\OctaneSdk\OctaneSdk.csproj">
       <Project>{344d2ea6-c3e6-4a67-95c1-51b5e7647e89}</Project>
       <Name>OctaneSdk</Name>
     </ProjectReference>
