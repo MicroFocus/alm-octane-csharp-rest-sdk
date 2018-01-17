@@ -396,9 +396,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 						RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
 						throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
 					}
-					catch
+					catch (Exception e)
 					{
-						throw new GeneralHttpException(body, response.StatusCode);
+						if (e is MqmRestException)
+						{
+							throw e;
+						}
+						else
+						{
+							throw new GeneralHttpException(body, response.StatusCode);
+						}
 					}
 				}
 			}
