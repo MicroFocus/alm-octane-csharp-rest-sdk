@@ -370,32 +370,36 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 					{
 						throw new InvalidCredentialException("Credentials are invalid");
 					}
-					RestExceptionInfo exceptionInfo;
+					if (response.StatusCode == HttpStatusCode.RequestTimeout)
+					{
+						throw new WebException(ex.Message, WebExceptionStatus.Timeout);
+					}
+
+					String body = string.Empty;
 					try
 					{
-						String body = null;
 						using (var streamReader = new StreamReader(response.GetResponseStream()))
 						{
 							body = streamReader.ReadToEnd();
 						}
-						JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-						exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
 					}
 					catch
 					{
-						// If anything goes wrong in the parsing of the server response we still want to throw
+						// If anything goes wrong in the reading of the server response we still want to throw
 						// an exception with the original exception as inner.
-						throw new ServerUnavailableException("Server is unavailable", ex);
-					}
-					if (response.StatusCode == HttpStatusCode.RequestTimeout)
-					{
-						throw new WebException(null, WebExceptionStatus.Timeout);
-					}
-					else
-					{
-						throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+						throw ex;
 					}
 
+					try
+					{
+						JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+						RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
+						throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+					}
+					catch
+					{
+						throw new GeneralHttpException(body, response.StatusCode);
+					}
 				}
 			}
 

@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Connector\APIKeyConnectionInfo.cs" />
     <Compile Include="Connector\ConnectionInfo.cs" />
+    <Compile Include="Connector\Exceptions\GeneralHttpException.cs" />
     <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
     <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
     <Compile Include="Connector\Exceptions\ServerUnavailableException.cs" />

@@ -21,61 +21,54 @@ using System.Net;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
 {
-    public class MqmRestException : Exception
-    {
-        RestExceptionInfo exceptionInfo;
-        HttpStatusCode statusCode;
+	public class MqmRestException : GeneralHttpException
+	{
+		RestExceptionInfo exceptionInfo;
 
-        public HttpStatusCode StatusCode
-        {
-            get { return statusCode; }
-        }
+		public MqmRestException(RestExceptionInfo exceptionInfo, HttpStatusCode statusCode, Exception innerException) :
+			base(exceptionInfo.description, statusCode, innerException)
+		{
+			this.exceptionInfo = exceptionInfo;
+		}
 
-		public MqmRestException(RestExceptionInfo exceptionInfo, HttpStatusCode statusCode, Exception innerException) : 
-			base(exceptionInfo == null ? "" : exceptionInfo.description, innerException)
-		{ 
-            this.exceptionInfo = exceptionInfo;
-            this.statusCode = statusCode;
-        }
+		public String ErrorCode
+		{
+			get
+			{
+				return exceptionInfo.error_code;
+			}
+		}
 
-        public String ErrorCode
-        {
-            get
-            {
-                return exceptionInfo.error_code;
-            }
-        }
+		public String CorrelationInfo
+		{
+			get
+			{
+				return exceptionInfo.correlation_id;
+			}
+		}
 
-        public String CorrelationInfo
-        {
-            get
-            {
-                return exceptionInfo.correlation_id;
-            }
-        }
+		public String Description
+		{
+			get
+			{
+				return exceptionInfo.description;
+			}
+		}
 
-        public String Description
-        {
-            get
-            {
-                return exceptionInfo.description;
-            }
-        }
+		public String DescriptionTranslated
+		{
+			get
+			{
+				return exceptionInfo.description_translated;
+			}
+		}
 
-        public String DescriptionTranslated
-        {
-            get
-            {
-                return exceptionInfo.description_translated;
-            }
-        }
-
-        public Dictionary<String, String> Properties
-        {
-            get
-            {
-                return exceptionInfo.properties;
-            }
-        }
-    }
+		public Dictionary<String, String> Properties
+		{
+			get
+			{
+				return exceptionInfo.properties;
+			}
+		}
+	}
 }
