@@ -74,6 +74,7 @@
     <Compile Include="Entities\Users\Role.cs" />
     <Compile Include="Entities\Users\SharedspaceUser.cs" />
     <Compile Include="Entities\Users\BaseUserEntity.cs" />
+    <Compile Include="Entities\WorkItems\Comment.cs" />
     <Compile Include="Entities\WorkItems\Feature.cs" />
     <Compile Include="Entities\WorkItems\Story.cs" />
     <Compile Include="Entities\WorkItems\Defect.cs" />
