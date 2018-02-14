@@ -15,21 +15,20 @@
 */
 
 
-using System;
-using System.Collections.Generic;
-using System.Web.Script.Serialization;
 using MicroFocus.Adm.Octane.Api.Core.Connector;
 using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Entities.Base;
 using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 using MicroFocus.Adm.Octane.Api.Core.Services.Core;
 using MicroFocus.Adm.Octane.Api.Core.Services.GroupBy;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
-using MicroFocus.Adm.Octane.Api.Core.Entities.Base;
-using System.Threading.Tasks;
-
-using Task = System.Threading.Tasks.Task;
+using System;
+using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using Task = System.Threading.Tasks.Task;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services
 {
@@ -172,12 +171,24 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<T> GetByIdAsync<T>(IRequestContext context, EntityId id, IList<String> fields) where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            var entity = (T)await GetByIdInternalAsync(context, id, typeof(T), fields);
+            return entity;
+        }
+
+        public async Task<BaseEntity> GetByIdAsync(IRequestContext context, EntityId id, string type, IList<String> fields)
+        {
+            Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(type);
+            return await GetByIdInternalAsync(context, id, entityType, fields);
+        }
+
+        private async Task<BaseEntity> GetByIdInternalAsync(IRequestContext context, EntityId id, Type entityType, IList<String> fields)
+        {
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
             string url = context.GetPath() + "/" + collectionName + "/" + id;
             String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null, null);
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
-            T result = jsonSerializer.Deserialize<T>(response.Data);
+            BaseEntity result = (BaseEntity)jsonSerializer.Deserialize(response.Data, entityType);
             return result;
         }
 
