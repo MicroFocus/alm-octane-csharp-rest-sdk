@@ -25,6 +25,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string OWNER_WORK_FIELD = "owner_work_item";
         public const string OWNER_TEST_FIELD = "owner_test";
         public const string OWNER_RUN_FIELD = "owner_run";
+        public const string OWNER_REQUIREMENT_FIELD = "owner_requirement";
         public const string TEXT_FIELD = "text";
 
         public Comment()
@@ -41,6 +42,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public BaseEntity OwnerTest => (BaseEntity)GetValue(OWNER_TEST_FIELD);
 
         public BaseEntity OwnerRun => (BaseEntity)GetValue(OWNER_RUN_FIELD);
+
+        public BaseEntity OwnerRequirement => (BaseEntity)GetValue(OWNER_REQUIREMENT_FIELD);
 
         public string Text => GetStringValue(TEXT_FIELD);
     }
