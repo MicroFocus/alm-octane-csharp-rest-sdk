@@ -76,6 +76,7 @@
     <Compile Include="Entities\Users\BaseUserEntity.cs" />
     <Compile Include="Entities\General\Comment.cs" />
     <Compile Include="Entities\WorkItems\Feature.cs" />
+    <Compile Include="Entities\WorkItems\QualityStory.cs" />
     <Compile Include="Entities\WorkItems\Story.cs" />
     <Compile Include="Entities\WorkItems\Defect.cs" />
     <Compile Include="Entities\Base\Phase.cs" />
