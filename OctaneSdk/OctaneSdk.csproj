@@ -93,6 +93,7 @@
     <Compile Include="Entities\Base\Workspace.cs" />
     <Compile Include="Entities\Users\WorkspaceUser.cs" />
     <Compile Include="Services\Attributes\CustomCollectionPathAttribute.cs" />
+    <Compile Include="Services\Attributes\CustomEntityPathAttribute.cs" />
     <Compile Include="Services\Core\EntityIdJsonConverter.cs" />
     <Compile Include="Services\EntityList.cs" />
     <Compile Include="Services\GenericEntityListResult.cs" />
