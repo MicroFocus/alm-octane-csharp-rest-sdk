@@ -18,11 +18,11 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Wrapper for Epic entity
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary>
-	public class Epic : BaseEntity
+    /// <summary>
+    /// Wrapper for Epic entity
+    /// More fields might be supported by entity that still are not exposed in the class
+    /// </summary>
+    public class Epic : WorkItem
     {
 
         public Epic()
