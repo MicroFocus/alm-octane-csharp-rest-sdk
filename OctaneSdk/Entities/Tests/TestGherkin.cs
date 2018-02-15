@@ -15,13 +15,17 @@
 */
 
 
+using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
+
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
     /// Wrapper for Gherkin Test entity.
     /// </summary>
+    [CustomEntityPath(SUBTYPE_GHERKIN_TEST)]
     public class TestGherkin : Test
     {
+        public const string SUBTYPE_GHERKIN_TEST = "gherkin_test";
 
         public TestGherkin()
             : base()
