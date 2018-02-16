@@ -18,7 +18,6 @@
 using MicroFocus.Adm.Octane.Api.Core.Connector;
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Entities.Base;
-using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 using MicroFocus.Adm.Octane.Api.Core.Services.Core;
 using MicroFocus.Adm.Octane.Api.Core.Services.GroupBy;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
@@ -78,7 +77,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit) where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName;
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
@@ -92,24 +91,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return null;
         }
 
-        private string GetCollectionName<T>() where T : BaseEntity
-        {
-            var customCollectionPathAttribute = (CustomCollectionPathAttribute)
-                Attribute.GetCustomAttribute(typeof(T), typeof(CustomCollectionPathAttribute));
-
-            string collectionName;
-            if (customCollectionPathAttribute != null)
-            {
-                collectionName = customCollectionPathAttribute.Path;
-            }
-            else
-            {
-                collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
-            }
-
-            return collectionName;
-        }
-
         public GroupResult GetWithGroupBy<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
         {
             return GetResultOrThrowInnerException(GetWithGroupByAsync<T>(context, queryPhrases, groupBy));
@@ -117,7 +98,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<GroupResult> GetWithGroupByAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
         {
-            string collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName + "/groups";
 
             // Octane group API now return logical name by default as ID field,
@@ -199,7 +180,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<EntityListResult<T>> CreateAsync<T>(IRequestContext context, EntityList<T> entityList, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            string collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
             string queryParams = "";
 
@@ -245,7 +226,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
              where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, serviceArguments);
 
 
@@ -265,7 +246,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<EntityListResult<T>> UpdateEntitiesAsync<T>(IRequestContext context, EntityList<T> entities)
             where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entities);
             ResponseWrapper response = await rc.ExecutePutAsync(url, null, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
@@ -282,7 +263,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task DeleteByIdAsync<T>(IRequestContext context, EntityId entityId)
              where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName + "/" + entityId;
             ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
@@ -296,7 +277,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task DeleteByFilterAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases)
             where T : BaseEntity
         {
-            String collectionName = GetCollectionName<T>();
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
             ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);

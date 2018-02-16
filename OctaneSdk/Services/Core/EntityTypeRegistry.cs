@@ -53,7 +53,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             string entityTypeName = entityPathAttribute != null ? entityPathAttribute.Path : ExtractEntityTypeName(type);
             entityTypeName2Type[entityTypeName] = type;
 
-            String collectionName = entityTypeName.EndsWith("y") ? entityTypeName.Substring(0, entityTypeName.Length - 1) + "ies" : entityTypeName + "s";
+            var collectionPathAttribute = (CustomCollectionPathAttribute)Attribute.GetCustomAttribute(type, typeof(CustomCollectionPathAttribute));
+
+            string collectionName;
+            if (collectionPathAttribute != null)
+            {
+                collectionName = collectionPathAttribute.Path;
+            }
+            else
+            {
+                collectionName = entityTypeName.EndsWith("y") ? entityTypeName.Substring(0, entityTypeName.Length - 1) + "ies" : entityTypeName + "s";
+            }
             type2collectionNameMap[type] = collectionName;
         }
 
