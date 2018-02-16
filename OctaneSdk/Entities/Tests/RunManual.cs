@@ -19,7 +19,7 @@
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
-    /// Wrapper for automated test entity.
+    /// Wrapper for manual test run entity.
     /// </summary>
     public class RunManual : Run
     {
