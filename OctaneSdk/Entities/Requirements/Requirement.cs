@@ -28,11 +28,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public Requirement()
         {
+            AggregateType = "requirement";
         }
 
         public Requirement(EntityId id)
             : base(id)
         {
+            AggregateType = "requirement";
         }
 
         public string SubType

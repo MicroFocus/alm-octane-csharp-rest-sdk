@@ -31,11 +31,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public Run()
         {
+            AggregateType = "run";
         }
 
         public Run(EntityId id)
             : base(id)
         {
+            AggregateType = "run";
         }
 
         public string SubType

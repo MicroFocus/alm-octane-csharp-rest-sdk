@@ -19,23 +19,21 @@
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
-    /// Wrapper for Epic entity
-    /// More fields might be supported by entity that still are not exposed in the class
+    /// Wrapper for automated test entity.
     /// </summary>
-    public class Epic : WorkItem
+    public class TestAutomated : Test
     {
+        public const string SUBTYPE_TEST_AUTOMATED = "test_automated";
 
-        public Epic()
+        public TestAutomated()
+            : base()
         {
-
         }
 
-        public Epic(EntityId id)
+        public TestAutomated(EntityId id)
             : base(id)
         {
         }
-
-
-
     }
 }
+

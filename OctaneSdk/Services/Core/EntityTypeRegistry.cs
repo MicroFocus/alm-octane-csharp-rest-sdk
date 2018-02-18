@@ -14,12 +14,13 @@
 * limitations under the License.
 */
 
+using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MicroFocus.Adm.Octane.Api.Core.Entities;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 {
@@ -47,11 +48,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 
         public void RegisterType(Type type)
         {
-            string entityTypeName = ExtractEntityTypeName(type);
+            var entityPathAttribute = (CustomEntityPathAttribute)Attribute.GetCustomAttribute(type, typeof(CustomEntityPathAttribute));
+
+            string entityTypeName = entityPathAttribute != null ? entityPathAttribute.Path : ExtractEntityTypeName(type);
             entityTypeName2Type[entityTypeName] = type;
 
+            var collectionPathAttribute = (CustomCollectionPathAttribute)Attribute.GetCustomAttribute(type, typeof(CustomCollectionPathAttribute));
 
-            String collectionName = entityTypeName.EndsWith("y") ? entityTypeName.Substring(0, entityTypeName.Length - 1) + "ies" : entityTypeName + "s";
+            string collectionName;
+            if (collectionPathAttribute != null)
+            {
+                collectionName = collectionPathAttribute.Path;
+            }
+            else
+            {
+                collectionName = entityTypeName.EndsWith("y") ? entityTypeName.Substring(0, entityTypeName.Length - 1) + "ies" : entityTypeName + "s";
+            }
             type2collectionNameMap[type] = collectionName;
         }
 

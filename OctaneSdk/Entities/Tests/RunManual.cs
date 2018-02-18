@@ -19,23 +19,21 @@
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
-    /// Wrapper for Epic entity
-    /// More fields might be supported by entity that still are not exposed in the class
+    /// Wrapper for manual test run entity.
     /// </summary>
-    public class Epic : WorkItem
+    public class RunManual : Run
     {
+        public const string SUBTYPE_RUN_MANUAL = "run_manual";
 
-        public Epic()
+        public RunManual()
+            : base()
         {
-
         }
 
-        public Epic(EntityId id)
+        public RunManual(EntityId id)
             : base(id)
         {
         }
-
-
-
     }
 }
+

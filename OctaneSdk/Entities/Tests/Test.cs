@@ -18,11 +18,11 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Wrapper for Test entity
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary>
-	public class Test : BaseEntity
+    /// <summary>
+    /// Wrapper for Test entity
+    /// More fields might be supported by entity that still are not exposed in the class
+    /// </summary>
+    public class Test : BaseEntity
     {
         public static string SUBTYPE_FIELD = "subtype";
         public static string PHASE_FIELD = "phase";
@@ -32,11 +32,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public Test()
         {
+            AggregateType = "test";
         }
 
         public Test(EntityId id)
             : base(id)
         {
+            AggregateType = "test";
         }
 
         public string SubType

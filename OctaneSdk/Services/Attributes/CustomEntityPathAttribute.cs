@@ -14,28 +14,18 @@
 * limitations under the License.
 */
 
+using System;
 
-
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+namespace MicroFocus.Adm.Octane.Api.Core.Services.Attributes
 {
-    /// <summary>
-    /// Wrapper for Epic entity
-    /// More fields might be supported by entity that still are not exposed in the class
-    /// </summary>
-    public class Epic : WorkItem
+    [AttributeUsage(AttributeTargets.Class)]
+    public class CustomEntityPathAttribute : Attribute
     {
+        public string Path { get; }
 
-        public Epic()
+        public CustomEntityPathAttribute(string path)
         {
-
+            Path = path;
         }
-
-        public Epic(EntityId id)
-            : base(id)
-        {
-        }
-
-
-
     }
 }
