@@ -37,14 +37,29 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         {
         }
 
-        public BaseEntity OwnerWorkItem => (BaseEntity)GetValue(OWNER_WORK_FIELD);
+        public BaseEntity OwnerWorkItem
+        {
+            get { return (BaseEntity)GetValue(OWNER_WORK_FIELD); }
+        }
 
-        public BaseEntity OwnerTest => (BaseEntity)GetValue(OWNER_TEST_FIELD);
+        public BaseEntity OwnerTest
+        {
+            get { return (BaseEntity)GetValue(OWNER_TEST_FIELD); }
+        }
 
-        public BaseEntity OwnerRun => (BaseEntity)GetValue(OWNER_RUN_FIELD);
+        public BaseEntity OwnerRun
+        {
+            get { return (BaseEntity)GetValue(OWNER_RUN_FIELD); }
+        }
 
-        public BaseEntity OwnerRequirement => (BaseEntity)GetValue(OWNER_REQUIREMENT_FIELD);
+        public BaseEntity OwnerRequirement
+        {
+            get { return (BaseEntity)GetValue(OWNER_REQUIREMENT_FIELD); }
+        }
 
-        public string Text => GetStringValue(TEXT_FIELD);
+        public string Text
+        {
+            get { return GetStringValue(TEXT_FIELD); }
+        }
     }
 }
