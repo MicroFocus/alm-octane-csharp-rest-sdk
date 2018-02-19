@@ -66,6 +66,7 @@
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
     <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
+    <Compile Include="Entities\Tests\RunAutomated.cs" />
     <Compile Include="Entities\Tests\RunManual.cs" />
     <Compile Include="Entities\Tests\RunSuite.cs" />
     <Compile Include="Entities\Tests\TestAutomated.cs" />
