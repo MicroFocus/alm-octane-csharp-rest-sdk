@@ -21,7 +21,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class CustomEntityPathAttribute : Attribute
     {
-        public string Path { get; }
+        public string Path { get; private set; }
 
         public CustomEntityPathAttribute(string path)
         {
