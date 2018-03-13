@@ -26,6 +26,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string OWNER_TEST_FIELD = "owner_test";
         public const string OWNER_RUN_FIELD = "owner_run";
         public const string OWNER_REQUIREMENT_FIELD = "owner_requirement";
+        public const string CREATION_TIME_FIELD = "creation_time";
         public const string TEXT_FIELD = "text";
 
         public Comment()
@@ -35,6 +36,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public Comment(EntityId id)
             : base(id)
         {
+        }
+
+        public string Author
+        {
+            get { return GetStringValue(AUTHOR_FIELD); }
         }
 
         public BaseEntity OwnerWorkItem
@@ -55,6 +61,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public BaseEntity OwnerRequirement
         {
             get { return (BaseEntity)GetValue(OWNER_REQUIREMENT_FIELD); }
+        }
+
+        public string CreationTime
+        {
+            get { return GetStringValue(CREATION_TIME_FIELD); }
         }
 
         public string Text
