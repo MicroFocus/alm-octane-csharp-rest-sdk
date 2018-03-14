@@ -14,22 +14,23 @@
 * limitations under the License.
 */
 
-
-using MicroFocus.Adm.Octane.Api.Core.Entities;
 using System.Collections.Generic;
-
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services
 {
     /// <summary>
-    /// List that returned by response
+    /// Generic list returned in response 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EntityListResult<T> : ListResult<T>, GenericEntityListResult where T : BaseEntity
+    public class ListResult<T>
     {
-        public IEnumerable<BaseEntity> BaseEntities
+        public List<T> data { get; set; }
+
+        public int? total_count { get; set; }
+
+        public ListResult()
         {
-            get { return data; }
+            data = new List<T>();
+            total_count = 0;
         }
     }
 }

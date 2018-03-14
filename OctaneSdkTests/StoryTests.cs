@@ -24,8 +24,8 @@ using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
-    public class StoryTests: BaseTest
+    [TestClass]
+    public class StoryTests : BaseTest
     {
         private static Phase PHASE_NEW;
         private static WorkItemRoot WORK_ITEM_ROOT;
@@ -40,12 +40,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetStoryFieldMetadataTest()
         {
-            List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
-
-            LogicalQueryPhrase byEntityNamePhrase = new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, "story");
-            queryPhrases.Add(byEntityNamePhrase);
-
-            EntityListResult<FieldMetadata> result = entityService.Get<FieldMetadata>(workspaceContext, queryPhrases, null);
+            ListResult<FieldMetadata> result = entityService.GetFieldsMetadataAsync(workspaceContext, WorkItem.SUBTYPE_STORY).Result;
             Assert.IsTrue(result.total_count >= 1);
         }
 
@@ -69,7 +64,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             List<QueryPhrase> queries = new List<QueryPhrase>();
             LogicalQueryPhrase byStorySubType = new LogicalQueryPhrase(WorkItem.SUBTYPE_FIELD, WorkItem.SUBTYPE_STORY);
             queries.Add(byStorySubType);
-  
+
             EntityListResult<WorkItem> storiesAsWorkItems = entityService.Get<WorkItem>(workspaceContext, queries, null);
             Assert.AreEqual<int?>(stories.total_count, storiesAsWorkItems.total_count);
 

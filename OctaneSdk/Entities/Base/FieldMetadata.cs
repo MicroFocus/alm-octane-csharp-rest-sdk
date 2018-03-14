@@ -18,14 +18,17 @@ using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Wrapper for Field Metadata entity
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary
-	[CustomCollectionPathAttribute("metadata/fields")]
-    public class FieldMetadata : BaseEntity
+    /// <summary>
+    /// Wrapper for Field Metadata entity
+    /// More fields might be supported by entity that still are not exposed in the class
+    /// </summary>
+    [CustomCollectionPath("metadata/fields")]
+    public class FieldMetadata
     {
         public static string ENTITY_NAME_FIELD = "entity_name";
 
+        public string name;
+        public string label;
+        public bool visible_in_ui;
     }
 }

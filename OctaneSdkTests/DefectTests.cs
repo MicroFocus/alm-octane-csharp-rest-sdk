@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
+    [TestClass]
     public class DefectTests : BaseTest
     {
         private static Phase phaseNew;
@@ -73,12 +73,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetDefectFieldMetadataTest()
         {
-            List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
-
-            LogicalQueryPhrase byEntityNamePhrase = new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, "defect");
-            queryPhrases.Add(byEntityNamePhrase);
-
-            EntityListResult<FieldMetadata> result = entityService.Get<FieldMetadata>(workspaceContext, queryPhrases, null);
+            ListResult<FieldMetadata> result = entityService.GetFieldsMetadataAsync(workspaceContext, WorkItem.SUBTYPE_DEFECT).Result;
             Assert.IsTrue(result.total_count >= 50);
         }
 

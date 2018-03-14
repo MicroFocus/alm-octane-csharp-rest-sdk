@@ -106,6 +106,7 @@
     <Compile Include="Services\GroupBy\GroupResult.cs" />
     <Compile Include="Services\GroupBy\Group.cs" />
     <Compile Include="Services\GroupBy\GroupByValue.cs" />
+    <Compile Include="Services\ListResult.cs" />
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
     <Compile Include="Services\Queries\NegativeQueryPhrase.cs" />

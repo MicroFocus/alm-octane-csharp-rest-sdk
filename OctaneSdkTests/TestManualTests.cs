@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
+    [TestClass]
     public class TestManualTests : BaseTest
     {
         private static Phase PHASE_NEW;
@@ -39,12 +39,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetManualTestFieldMetadataTest()
         {
-            List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
-
-            LogicalQueryPhrase byEntityNamePhrase = new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, Test.SUBTYPE_MANUAL_TEST);
-            queryPhrases.Add(byEntityNamePhrase);
-
-            EntityListResult<FieldMetadata> result = entityService.Get<FieldMetadata>(workspaceContext, queryPhrases, null);
+            ListResult<FieldMetadata> result = entityService.GetFieldsMetadataAsync(workspaceContext, Test.SUBTYPE_MANUAL_TEST).Result;
             Assert.IsTrue(result.total_count >= 1);
         }
 
