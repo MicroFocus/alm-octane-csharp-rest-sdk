@@ -19,7 +19,6 @@ using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
@@ -27,16 +26,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
     [TestClass]
     public class StoryTests : BaseTest
     {
-        private static Phase PHASE_NEW;
-        private static WorkItemRoot WORK_ITEM_ROOT;
-
-        [ClassInitialize()]
-        public static void ClassInit(TestContext context)
-        {
-            PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
-            WORK_ITEM_ROOT = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
-        }
-
         [TestMethod]
         public void GetStoryFieldMetadataTest()
         {
@@ -47,13 +36,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void CreateStoryTest()
         {
-            CreateStory();
+            StoryUtilities.CreateStory(entityService, workspaceContext);
         }
 
         [TestMethod]
         public void GetAllStories()
         {
-            CreateStory();
+            StoryUtilities.CreateStory(entityService, workspaceContext);
 
             //get as stories
             EntityListResult<Story> stories = entityService.Get<Story>(workspaceContext, null, null);
@@ -68,20 +57,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             EntityListResult<WorkItem> storiesAsWorkItems = entityService.Get<WorkItem>(workspaceContext, queries, null);
             Assert.AreEqual<int?>(stories.total_count, storiesAsWorkItems.total_count);
 
-        }
-
-        private static Story CreateStory()
-        {
-            String name = "Story" + Guid.NewGuid();
-            Story story = new Story();
-            story.Name = name;
-            story.Phase = PHASE_NEW;
-
-            story.Parent = WORK_ITEM_ROOT;
-            Story created = entityService.Create<Story>(workspaceContext, story, TestHelper.NameSubtypeFields);
-            Assert.AreEqual<String>(name, created.Name);
-            Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
-            return created;
         }
     }
 }
