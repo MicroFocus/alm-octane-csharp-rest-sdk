@@ -24,24 +24,24 @@ using System.Configuration;
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
 
-	[TestClass]
+    [TestClass]
     public class BaseTest
     {
 
         protected static RestConnector restConnector = new RestConnector();
         protected static EntityService entityService = new EntityService(restConnector);
 
-        private static int sharedSpaceId;
-        private static int workspaceId;
-        private static string userName;
+        public static string userName;
+        public static string password;
+        public static string host;
 
         protected string CurrentUserName
         {
             get { return BaseTest.userName; }
         }
 
-        protected static WorkspaceContext workspaceContext;
-        protected static SharedSpaceContext sharedSpaceContext;
+        public static WorkspaceContext workspaceContext;
+        public static SharedSpaceContext sharedSpaceContext;
 
         [AssemblyInitialize]
         public static void InitConnection(TestContext context)
@@ -56,7 +56,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
                 }
                 NetworkSettings.EnableAllSecurityProtocols();
 
-                string host = ConfigurationManager.AppSettings["webAppUrl"];
+                host = ConfigurationManager.AppSettings["webAppUrl"];
 
                 // If webAppUrl is empty we do not try to connect.
                 if (string.IsNullOrWhiteSpace(host)) return;
@@ -71,14 +71,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
                 else
                 {
                     userName = ConfigurationManager.AppSettings["userName"];
-                    connectionInfo = new UserPassConnectionInfo(ConfigurationManager.AppSettings["userName"], ConfigurationManager.AppSettings["password"]);
+                    password = ConfigurationManager.AppSettings["password"];
+                    connectionInfo = new UserPassConnectionInfo(userName, password);
                 }
 
                 restConnector.Connect(host, connectionInfo);
 
 
-                sharedSpaceId = int.Parse(ConfigurationManager.AppSettings["sharedSpaceId"]);
-                workspaceId = int.Parse(ConfigurationManager.AppSettings["workspaceId"]);
+                var sharedSpaceId = int.Parse(ConfigurationManager.AppSettings["sharedSpaceId"]);
+                var workspaceId = int.Parse(ConfigurationManager.AppSettings["workspaceId"]);
 
                 workspaceContext = new WorkspaceContext(sharedSpaceId, workspaceId);
                 sharedSpaceContext = new SharedSpaceContext(sharedSpaceId);
