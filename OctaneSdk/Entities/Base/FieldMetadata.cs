@@ -30,5 +30,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public string name;
         public string label;
         public bool visible_in_ui;
+        public string field_type;
     }
 }
