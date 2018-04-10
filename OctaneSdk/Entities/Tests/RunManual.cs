@@ -25,6 +25,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     {
         public const string SUBTYPE_RUN_MANUAL = "run_manual";
 
+        public const string HAS_VISUAL_COVERAGE_FIELD = "has_visual_coverage";
+
         public RunManual()
             : base()
         {
