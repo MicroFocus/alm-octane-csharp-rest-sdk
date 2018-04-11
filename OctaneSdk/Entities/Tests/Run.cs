@@ -25,7 +25,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     {
         public static string SUBTYPE_FIELD = "subtype";
         public static string PHASE_FIELD = "phase";
-
+        public const string TEST_FIELD = "test";
 
         public static string SUBTYPE_MANUAL_TEST = "test_manual";
 

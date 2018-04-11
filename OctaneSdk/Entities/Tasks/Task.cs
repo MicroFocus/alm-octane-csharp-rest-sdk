@@ -22,6 +22,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     /// </summary>
     public class Task : BaseEntity
     {
+        public const string TYPE_TASK = "task";
+
         public const string OWNER_FIELD = "owner";
         public const string AUTHOR_FIELD = "author";
         public const string PHASE_FIELD = "phase";

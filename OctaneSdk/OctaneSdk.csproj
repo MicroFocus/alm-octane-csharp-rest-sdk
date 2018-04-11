@@ -106,6 +106,7 @@
     <Compile Include="Services\GroupBy\GroupResult.cs" />
     <Compile Include="Services\GroupBy\Group.cs" />
     <Compile Include="Services\GroupBy\GroupByValue.cs" />
+    <Compile Include="Services\ListResult.cs" />
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
     <Compile Include="Services\Queries\NegativeQueryPhrase.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Services\Queries\QueryPhrase.cs" />
     <Compile Include="Services\Queries\LogicalQueryPhrase.cs" />
     <Compile Include="Entities\Base\BaseEntity.cs" />
-    <Compile Include="Services\Core\BaseEntityJsonConverter.cs" />
+    <Compile Include="Services\Core\EntityJsonConverter.cs" />
     <Compile Include="Services\EntityService.cs" />
     <Compile Include="Services\RequestContext\IRequestContext.cs" />
     <Compile Include="Services\RequestContext\SharedSpaceContext.cs" />

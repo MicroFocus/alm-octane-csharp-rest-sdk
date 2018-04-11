@@ -47,7 +47,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         {
             this.rc = rc;
             this.jsonSerializer = new JavaScriptSerializer();
-            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new BaseEntityJsonConverter(), new EntityIdJsonConverter() });
+            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new EntityJsonConverter(), new EntityIdJsonConverter() });
         }
 
         public EntityListResult<T> Get<T>(IRequestContext context) where T : BaseEntity
@@ -303,5 +303,27 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return (Attachment)result.data[0];
         }
 
+        /// <summary>
+        /// Returns the fields' metadata for the given entity type
+        /// </summary>
+        public async Task<ListResult<FieldMetadata>> GetFieldsMetadataAsync(IRequestContext context, string entityType)
+        {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            string url = context.GetPath() + "/metadata/fields";
+
+            var query = new List<QueryPhrase>
+            {
+                new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, entityType)
+            };
+            var queryString = QueryStringBuilder.BuildQueryString(query);
+
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+            if (response.Data == null)
+                return null;
+
+            return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
+        }
     }
 }

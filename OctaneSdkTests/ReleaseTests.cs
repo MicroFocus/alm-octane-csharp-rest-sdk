@@ -25,19 +25,14 @@ using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
+    [TestClass]
     public class ReleaseTests : BaseTest
     {
 
         [TestMethod]
         public void GetReleaseFieldMetadata()
         {
-            List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
-
-            LogicalQueryPhrase byEntityNamePhrase = new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, "release");
-            queryPhrases.Add(byEntityNamePhrase);
-
-            EntityListResult<FieldMetadata> result = entityService.Get<FieldMetadata>(workspaceContext, queryPhrases, null);
+            ListResult<FieldMetadata> result = entityService.GetFieldsMetadataAsync(workspaceContext, "release").Result;
             Assert.IsTrue(result.total_count >= 1);
         }
 
@@ -48,8 +43,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.IsNotNull(created);
         }
 
-		[TestMethod]
-		public void GetReleaseByIdTest()
+        [TestMethod]
+        public void GetReleaseByIdTest()
         {
             Release created = CreateRelease();
             List<String> fields = new List<string>();

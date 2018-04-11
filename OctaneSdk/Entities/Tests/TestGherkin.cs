@@ -27,6 +27,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     {
         public const string SUBTYPE_GHERKIN_TEST = "gherkin_test";
 
+        public const string TEST_STATUS_FIELD = "test_status";
+        public const string IDENTITY_HASH_FIELD = "identity_hash";
+
+
         public TestGherkin()
             : base()
         {
