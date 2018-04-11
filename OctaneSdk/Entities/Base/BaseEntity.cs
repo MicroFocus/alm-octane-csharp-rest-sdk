@@ -21,10 +21,10 @@ using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Base class for entities
-	/// </summary>
-	public class BaseEntity : DictionaryBasedEntity
+    /// <summary>
+    /// Base class for entities
+    /// </summary>
+    public class BaseEntity : DictionaryBasedEntity
     {
         public static string ID_FIELD = "id";
         public static string TYPE_FIELD = "type";
@@ -107,53 +107,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         #endregion
 
-        #region Types handling Properties
-
-        public long? GetLongValue(String propertyName)
-        {
-            Object obj = GetValue(propertyName);
-            if (obj == null)
-            {
-                return null;
-            }
-            else if (obj is long)
-            {
-                return (long)obj;
-            }
-            else if (obj is int)
-            {
-                return (int)obj;
-            }
-            else
-            {
-                return long.Parse((String)obj);
-            }
-        }
-
-        public long GetLongValue(String propertyName, long defaultValue)
-        {
-            long? value = GetLongValue(propertyName);
-            return (value.HasValue) ? value.Value : defaultValue;
-        }
-
-        public void SetLongValue(String propertyName, long value)
-        {
-            SetValue(propertyName, value);
-        }
-
-        public int GetIntValue(String propertyName, int defaultValue)
-        {
-            int? value = GetIntValue(propertyName);
-            return (value.HasValue) ? value.Value : defaultValue;
-        }
-
-        public void SetIntValue(String propertyName, int value)
-        {
-            SetValue(propertyName, value);
-        }
-
-
-
         public DateTime? GetDateTimeValue(string propertyName)
         {
             Object obj = GetValue(propertyName);
@@ -199,14 +152,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         //
         //String formatterdDate = date.ToString(format);
 
-        #endregion
-
         public override string ToString()
         {
             String name = Name == null ? "No name" : Name.Substring(0, Math.Min(20, Name.Length)); //Show upto 20 characters in name
             return m_properties == null ? "No properties" : String.Format("{0} #{1} - {2} , {3} properties", TypeName, Id, name, m_properties.Count);
         }
-
-
     }
 }

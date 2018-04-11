@@ -117,7 +117,7 @@
     <Compile Include="Services\Queries\QueryPhrase.cs" />
     <Compile Include="Services\Queries\LogicalQueryPhrase.cs" />
     <Compile Include="Entities\Base\BaseEntity.cs" />
-    <Compile Include="Services\Core\BaseEntityJsonConverter.cs" />
+    <Compile Include="Services\Core\EntityJsonConverter.cs" />
     <Compile Include="Services\EntityService.cs" />
     <Compile Include="Services\RequestContext\IRequestContext.cs" />
     <Compile Include="Services\RequestContext\SharedSpaceContext.cs" />

@@ -47,7 +47,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         {
             this.rc = rc;
             this.jsonSerializer = new JavaScriptSerializer();
-            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new BaseEntityJsonConverter(), new EntityIdJsonConverter() });
+            jsonSerializer.RegisterConverters(new JavaScriptConverter[] { new EntityJsonConverter(), new EntityIdJsonConverter() });
         }
 
         public EntityListResult<T> Get<T>(IRequestContext context) where T : BaseEntity

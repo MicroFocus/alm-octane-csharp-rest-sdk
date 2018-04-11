@@ -23,10 +23,10 @@ using System.Web.Script.Serialization;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 {
-	/// <summary>
-	/// Serailization and deserialization to JSON of classes that inherit <see cref="BaseEntity"/>
-	/// </summary>
-	public class BaseEntityJsonConverter : JavaScriptConverter
+    /// <summary>
+    /// Serialization and deserialization to JSON of classes that inherit <see cref="DictionaryBasedEntity"/>
+    /// </summary>
+    public class EntityJsonConverter : JavaScriptConverter
     {
         public override IEnumerable<Type> SupportedTypes
         {
@@ -35,6 +35,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
                 List<Type> types = new List<Type>(EntityTypeRegistry.GetInstance().GetRegisteredTypes());
                 types.Add(typeof(BaseEntity));
 
+                types.Add(typeof(DictionaryBasedEntity));
 
                 return types;
             }
@@ -44,20 +45,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             if (obj == null) return result;
-            BaseEntity entity = ((BaseEntity)obj);
+            DictionaryBasedEntity entity = ((DictionaryBasedEntity)obj);
             return entity.GetProperties();
         }
 
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
-            BaseEntity entity = (BaseEntity)Activator.CreateInstance(type);
+            DictionaryBasedEntity entity = (DictionaryBasedEntity)Activator.CreateInstance(type);
             entity.SetProperties(dictionary);
             OverrideReferenceFields(entity);
 
             return entity;
         }
 
-        private static void OverrideReferenceFields(BaseEntity entity)
+        private static void OverrideReferenceFields(DictionaryBasedEntity entity)
         {
             ICollection<String> keys = new List<String>(entity.GetProperties().Keys);
             foreach (String key in keys)
