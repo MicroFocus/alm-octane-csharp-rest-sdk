@@ -31,17 +31,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         protected static RestConnector restConnector = new RestConnector();
         protected static EntityService entityService = new EntityService(restConnector);
 
-        public static string userName;
-        public static string password;
-        public static string host;
+        protected static string userName;
+        protected static string password;
+        protected static string host;
 
         protected string CurrentUserName
         {
             get { return BaseTest.userName; }
         }
 
-        public static WorkspaceContext workspaceContext;
-        public static SharedSpaceContext sharedSpaceContext;
+        protected static WorkspaceContext workspaceContext;
+        protected static SharedSpaceContext sharedSpaceContext;
 
         [AssemblyInitialize]
         public static void InitConnection(TestContext context)
