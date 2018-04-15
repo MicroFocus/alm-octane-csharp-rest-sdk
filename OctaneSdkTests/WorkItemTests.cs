@@ -119,7 +119,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             //epicToCreate.SubType = WorkItem.SUBTYPE_EPIC;//For workItems - SUBTYPE have to be set
             string[] fields = new string[] { "subtype", "name" };
 
-            WorkItem createdEpic = entityService.Create<WorkItem>(workspaceContext, epicToCreate, fields);
+			Epic createdEpic = entityService.Create<Epic>(workspaceContext, epicToCreate, fields);
             //Assert.AreEqual<String>(WorkItem.SUBTYPE_EPIC, createdEpic.SubType);
             Assert.AreEqual<String>(epicName, createdEpic.Name);
 
