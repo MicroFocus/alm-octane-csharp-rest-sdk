@@ -74,7 +74,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void GetDefectFieldMetadataTest()
         {
             ListResult<FieldMetadata> result = entityService.GetFieldsMetadataAsync(workspaceContext, WorkItem.SUBTYPE_DEFECT).Result;
-            Assert.IsTrue(result.total_count >= 50);
+            Assert.IsTrue(result.total_count >= 41);
         }
 
         [TestMethod]
@@ -202,7 +202,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             LogicalQueryPhrase byName = new LogicalQueryPhrase(Defect.NAME_FIELD, createdDefect.Name);
             queries.Add(byName);
 
-            entityService.DeleteByFilter<WorkItem>(workspaceContext, queries);
+            entityService.DeleteByFilter<Defect>(workspaceContext, queries);
 
             try
             {

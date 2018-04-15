@@ -50,91 +50,91 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         }
 
         [TestMethod]
-        public void CrudDefectAsWorkItemTest()
+        public void CrudDefect()
         {
             //CREATE
             Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.new");
             ListNode SEVERITY_HIGH = TestHelper.GetSeverityByName(entityService, workspaceContext, "High");
             String name = "Defect" + Guid.NewGuid();
-            WorkItem workItem = new WorkItem();
+            Defect workItem = new Defect();
             workItem.Name = name;
             workItem.Phase = DEFECT_PHASE_NEW;
             workItem.Severity = SEVERITY_HIGH;
             workItem.Parent = getWorkItemRoot();
-            workItem.SubType = WorkItem.SUBTYPE_DEFECT;//For workItems - SUBTYPE have to be set
-            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
+			//workItem.SubType = WorkItem.SUBTYPE_DEFECT;//For workItems - SUBTYPE have to be set
+			Defect created = entityService.Create<Defect>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
 
-            Assert.AreEqual<String>(WorkItem.SUBTYPE_DEFECT, created.SubType);
+           // Assert.AreEqual<String>(WorkItem.SUBTYPE_DEFECT, created.SubType);
             Assert.AreEqual<String>(name, created.Name);
 
             //UPDATE
-            WorkItem workItemForUpdate = new WorkItem(created.Id);
+            Defect workItemForUpdate = new Defect(created.Id);
             workItemForUpdate.Name = created.Name + "_updated";
-            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
+			Defect updated = entityService.Update<Defect>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
             Assert.AreEqual<String>(workItemForUpdate.Name, updated.Name);
 
 
             //DELETE BY ID
-            entityService.DeleteById<WorkItem>(workspaceContext, created.Id);
+            entityService.DeleteById<Defect>(workspaceContext, created.Id);
         }
 
 
         [TestMethod]
-        public void CrudStoryAsWorkItemTest()
+        public void CrudStory()
         {
             Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
             String name = "Story" + Guid.NewGuid();
-            WorkItem workItem = new WorkItem();
+            Story workItem = new Story();
             workItem.Name = name;
             workItem.Phase = STORY_PHASE_NEW;
             workItem.Parent = getWorkItemRoot();
-            workItem.SubType = WorkItem.SUBTYPE_STORY;//For workItems - SUBTYPE have to be set
+            //workItem.SubType = WorkItem.SUBTYPE_STORY;//For workItems - SUBTYPE have to be set
 
-            WorkItem created = entityService.Create<WorkItem>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
-            Assert.AreEqual<String>(WorkItem.SUBTYPE_STORY, created.SubType);
+            WorkItem created = entityService.Create<Story>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
+            //Assert.AreEqual<String>(WorkItem.SUBTYPE_STORY, created.SubType);
             Assert.AreEqual<String>(name, created.Name);
 
 
-            //UPDATE
-            WorkItem workItemForUpdate = new WorkItem(created.Id);
+			//UPDATE
+			Story workItemForUpdate = new Story(created.Id);
             workItemForUpdate.Name = created.Name + "_updated";
-            WorkItem updated = entityService.Update<WorkItem>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
+			Story updated = entityService.Update<Story>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
             Assert.AreEqual<String>(workItemForUpdate.Name, updated.Name);
 
 
             //DELETE BY FILTER
-            entityService.DeleteById<WorkItem>(workspaceContext, created.Id);
+            entityService.DeleteById<Story>(workspaceContext, created.Id);
         }
 
         [TestMethod]
-        public void CreateEpicAndFeatureAsWorkItemsTest()
+        public void CreateEpicAndFeature()
         {
             //create epic
             Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_EPIC, "phase.epic.new");
             String epicName = "Epic" + Guid.NewGuid();
-            WorkItem epicToCreate = new WorkItem();
+            Epic epicToCreate = new Epic();
             epicToCreate.Name = epicName;
             epicToCreate.Phase = EPIC_PHASE_NEW;
             epicToCreate.Parent = getWorkItemRoot();
-            epicToCreate.SubType = WorkItem.SUBTYPE_EPIC;//For workItems - SUBTYPE have to be set
+            //epicToCreate.SubType = WorkItem.SUBTYPE_EPIC;//For workItems - SUBTYPE have to be set
             string[] fields = new string[] { "subtype", "name" };
 
             WorkItem createdEpic = entityService.Create<WorkItem>(workspaceContext, epicToCreate, fields);
-            Assert.AreEqual<String>(WorkItem.SUBTYPE_EPIC, createdEpic.SubType);
+            //Assert.AreEqual<String>(WorkItem.SUBTYPE_EPIC, createdEpic.SubType);
             Assert.AreEqual<String>(epicName, createdEpic.Name);
 
 
             //parent of feature can be only epic, workItemRoot cannot be parent of feature
             Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_FEATURE, "phase.feature.new");
             String featureName = "Feature" + Guid.NewGuid();
-            WorkItem featureToCreate = new WorkItem();
+			Feature featureToCreate = new Feature();
             featureToCreate.Name = featureName;
             featureToCreate.Phase = FEATURE_PHASE_NEW;
             featureToCreate.Parent = createdEpic;
-            featureToCreate.SubType = WorkItem.SUBTYPE_FEATURE; //For workItems - SUBTYPE have to be set
+            //featureToCreate.SubType = WorkItem.SUBTYPE_FEATURE; //For workItems - SUBTYPE have to be set
 
-            WorkItem createdFeature = entityService.Create<WorkItem>(workspaceContext, featureToCreate, fields);
-            Assert.AreEqual<String>(WorkItem.SUBTYPE_FEATURE, createdFeature.SubType);
+			Feature createdFeature = entityService.Create<Feature>(workspaceContext, featureToCreate, fields);
+            //Assert.AreEqual<String>(WorkItem.SUBTYPE_FEATURE, createdFeature.SubType);
             Assert.AreEqual<String>(featureName, createdFeature.Name);
         }
 

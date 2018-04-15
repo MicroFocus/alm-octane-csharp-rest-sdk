@@ -227,10 +227,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
+			//request.Headers.Add("ALM_OCTANE_TECH_PREVIEW", "true");
 
 
-            //set content type/accept/method
-            switch (requestType)
+			//set content type/accept/method
+			switch (requestType)
             {
                 case RequestType.Get:
                     request.Accept = CONTENT_TYPE_JSON;
