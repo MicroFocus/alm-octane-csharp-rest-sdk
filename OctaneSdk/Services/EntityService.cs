@@ -325,5 +325,36 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
         }
+
+        public async Task<EntityListResult<T>> Search<T>(IRequestContext context, string searchString, int limit, string type)
+            where T : BaseEntity
+        {
+            string url = context.GetPath() + "/" + EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));//EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T).BaseType);
+
+            var query = new List<QueryPhrase>
+            {
+                new LogicalQueryPhrase("subtype", type)//EntityTypeRegistry.GetInstance().ExtractEntityTypeName(typeof(T)))
+            };
+
+            var serviceArguments = new Dictionary<string, string>
+            {
+                { "text_search", "{\"type\":\"global\",\"text\":\"" + searchString + "\"}" }
+            };
+            var queryString = QueryStringBuilder.BuildQueryString(query, null, "id", null, limit, null, serviceArguments);
+
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+            EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
+
+            foreach (var entity in result.data)
+            {
+                var i = entity.GetValue("global_text_search_result") as BaseEntity;
+                if (i == null)
+                    continue;
+
+                entity.SetValue("name", i.GetValue("name"));
+                entity.SetValue("description", i.GetValue("description"));
+            }
+            return result;
+        }
     }
 }
