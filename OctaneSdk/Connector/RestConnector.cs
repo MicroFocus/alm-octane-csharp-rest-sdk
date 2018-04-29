@@ -138,7 +138,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return lwSsoCookie;
         }
 
-        private void SaveCookies(HttpWebResponse httpResponse)
+		/// <summary>
+		///DON'T USE DIRECTLY. Only Testing API
+		/// </summary>
+		internal void SetLwSsoToken(string token)
+		{
+			lwSsoCookie = token;
+		}
+
+
+		private void SaveCookies(HttpWebResponse httpResponse)
         {
             lwSsoCookie = ExtractValueFromCookie(httpResponse, LWSSO_COOKIE_NAME, lwSsoCookie);
             octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
@@ -453,33 +462,41 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 }
             }
 
-            try
+			InvalidCredentialException originalException = null;
+			try
             {
                 return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
             }
             //catch - intended to handle the case LWSSO is expired, we will try reconnect and resend original request
             catch (InvalidCredentialException e)
             {
-                try
-                {
-                    bool reconnected = allowReconnect && await Reconnect();
-                    if (!reconnected)
-                    {
-                        throw e;
-                    }
-                    // we reconnected, 
-                    // but await can't exist in a catch because the CLR would lose the ambient exception.
-                    // We don’t need the ambient exception (i.e. we don't "throw;", 
-                    // so we need to trick it out by putting retry logic after the catch
-                }
-                catch
-                {
-                    //if reconnect throwed any exception - we rethrow original exception
-                    throw e;
-                }
-            }
-            //resend after reconnect
-            return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration)
+				// await can't exist in a catch because the CLR would lose the ambient exception.
+				// We don’t need the ambient exception (i.e. we don't "throw;", 
+				// so we need to trick it out by putting retry logic after the catch
+				originalException = e;
+			}
+
+			//RECONNECT SECTION
+			try
+			{
+				bool reconnected = allowReconnect && await Reconnect();
+				if (!reconnected)
+				{
+					throw originalException;
+				}
+				// we reconnected, 
+				// but await can't exist in a catch because the CLR would lose the ambient exception.
+				// We don’t need the ambient exception (i.e. we don't "throw;", 
+				// so we need to trick it out by putting retry logic after the catch
+			}
+			catch
+			{
+				//if reconnect throwed any exception - we rethrow original exception
+				throw originalException;
+			}
+
+			//resend after reconnect
+			return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration)
                    .ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
