@@ -85,11 +85,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return ConnectAsync(host, connectionInfo).Result;
         }
 
-        private bool Reconnect()
+        private async Task<bool> Reconnect()
         {
             try
             {
-                return Connect(host, connectionInfo);
+                return await ConnectAsync(host, connectionInfo);
             }
             catch (Exception)
             {
@@ -462,7 +462,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             {
                 try
                 {
-                    bool reconnected = allowReconnect && Reconnect();
+                    bool reconnected = allowReconnect && await Reconnect();
                     if (!reconnected)
                     {
                         throw e;
