@@ -104,7 +104,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Defect defect = CreateDefect();
         }
 
-        [TestMethod]
+		[TestMethod]
+		public void CreateDefectWithTaskTest()
+		{
+			Defect defect = CreateDefect();
+			Task task = CreateTask(defect);
+
+			WorkItem parent = (WorkItem)task.GetValue(Task.STORY_FIELD);
+			Assert.AreEqual(defect.Id, parent.Id);
+		}
+
+		[TestMethod]
         public void UpdateDefectNameTest()
         {
             Defect defect = CreateDefect();
@@ -252,6 +262,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             return created;
         }
 
-    }
+		private static Task CreateTask(WorkItem story)
+		{
+			String name = "Task" + Guid.NewGuid();
+			int estimatedHours = 5;
+			Task task = new Task();
+			task.Name = name;
+			task.SetStory(story);
+			task.SetEstimatedHours(estimatedHours);
+
+			string[] fieldsToFetch = new string[] {Task.STORY_FIELD,Task.NAME_FIELD,Task.ESTIMATED_HOURS_FIELD, Task.OWNER_FIELD, Task.PHASE_FIELD, Task.REMAINING_HOURS_FIELD };
+			Task created = entityService.Create<Task>(workspaceContext, task, fieldsToFetch);
+			Assert.AreEqual<String>(name, created.Name);
+			Assert.AreEqual<int?>(estimatedHours, created.GetEstimatedHours());
+			return created;
+		}
+
+	}
 
 }

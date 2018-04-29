@@ -40,5 +40,45 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             : base(id)
         {
         }
-    }
+
+		public void SetStory(WorkItem story)
+		{
+			SetValue(STORY_FIELD, story);
+		}
+
+		public WorkItem GetStory()
+		{
+			return (WorkItem)GetValue(STORY_FIELD);
+		}
+
+		public void SetEstimatedHours(int hours)
+		{
+			SetIntValue(ESTIMATED_HOURS_FIELD, hours);
+		}
+
+		public int? GetEstimatedHours()
+		{
+			return GetIntValue(ESTIMATED_HOURS_FIELD);
+		}
+
+		public void SetRemainingHours(int hours)
+		{
+			SetIntValue(REMAINING_HOURS_FIELD, hours);
+		}
+
+		public int? GetRemainingHours()
+		{
+			return GetIntValue(REMAINING_HOURS_FIELD);
+		}
+
+		public void SetInvestedHours(int hours)
+		{
+			SetIntValue(INVESTED_HOURS_FIELD, hours);
+		}
+
+		public int? GetInvestedHours()
+		{
+			return GetIntValue(INVESTED_HOURS_FIELD);
+		}
+	}
 }
