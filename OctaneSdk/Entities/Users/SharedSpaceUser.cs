@@ -27,7 +27,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 	[CustomCollectionPathAttribute("users")]
     public class SharedspaceUser : BaseUserEntity
     {
-        public static string PASSWORD_FIELD = "password";
         public static string WORKSPACE_ROLES_FIELD = "workspace_roles";
 
         public SharedspaceUser()
@@ -38,18 +37,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public SharedspaceUser(EntityId id)
             : base(id)
         {
-        }
-
-        public string Password
-        {
-            get
-            {
-                return GetStringValue(PASSWORD_FIELD);
-            }
-            set
-            {
-                SetValue(PASSWORD_FIELD, value);
-            }
         }
 
         public EntityList<BaseEntity> WorkspaceRoles

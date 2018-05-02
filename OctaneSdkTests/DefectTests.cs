@@ -127,7 +127,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(newName, defectAfterUpdate.Name);
         }
 
-        [TestMethod]
+		[TestMethod]
+		public void UpdateDefectDetectedByTest()
+		{
+			Defect defect = CreateDefect();
+			Defect defectForUpdate = new Defect(defect.Id);
+			
+			defectForUpdate.DetectedBy = defect.Author;
+			entityService.Update(workspaceContext, defectForUpdate);
+
+			Defect defectAfterUpdate = entityService.GetById<Defect>(workspaceContext, defect.Id, new string[] { Defect.NAME_FIELD, Defect.DETECTED_BY_FIELD, Defect.AUTHOR_FIELD });
+			Assert.AreEqual(defectForUpdate.DetectedBy.Id, defectAfterUpdate.DetectedBy.Id);
+		}
+
+		[TestMethod]
         public void GetNotDoneDefectsAssinedToReleaseTest()
         {
             Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.closed");
@@ -136,7 +149,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Defect defect2 = CreateDefect(PHASE_CLOSED);
             Defect defect3 = CreateDefect();
             Defect defect4 = CreateDefect();
-            Release release = CreateRelease();
+            Release release = ReleaseTests.CreateRelease();
 
             //assign defect to release
             Defect defectForUpdate1 = new Defect(defect1.Id);
@@ -226,13 +239,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         }
 
-        private static Defect CreateDefect()
+		public static Defect CreateDefect()
         {
             return CreateDefect(getPhaseNew());
 
         }
 
-        private static Defect CreateDefect(Phase phase)
+        public static Defect CreateDefect(Phase phase)
         {
             String name = "Defect" + Guid.NewGuid();
             Defect defect = new Defect();
@@ -240,27 +253,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             defect.Phase = phase;
             defect.Severity = getSeverityHigh();
             defect.Parent = getWorkItemRoot();
-            Defect created = entityService.Create<Defect>(workspaceContext, defect, new string[] { "name" });
-            Assert.AreEqual<String>(name, created.Name);
+            Defect created = entityService.Create(workspaceContext, defect, new string[] { Defect.NAME_FIELD, Defect.AUTHOR_FIELD });
+            Assert.AreEqual(name, created.Name);
             Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
 
         }
 
-        private static Release CreateRelease()
-        {
-            String name = "Release_" + Guid.NewGuid();
-            Release release = new Release();
-            release.Name = name;
-            release.StartDate = DateTime.Now;
-            release.EndDate = DateTime.Now.AddDays(10);
-            release.SprintDuration = 7;
-
-
-            Release created = entityService.Create<Release>(workspaceContext, release, TestHelper.NameFields);
-            Assert.AreEqual<String>(name, created.Name);
-            return created;
-        }
 
 		private static Task CreateTask(WorkItem story)
 		{
@@ -268,13 +267,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 			int estimatedHours = 5;
 			Task task = new Task();
 			task.Name = name;
-			task.SetStory(story);
-			task.SetEstimatedHours(estimatedHours);
+			task.Story = story;
+			task.EstimatedHours = estimatedHours;
 
 			string[] fieldsToFetch = new string[] {Task.STORY_FIELD,Task.NAME_FIELD,Task.ESTIMATED_HOURS_FIELD, Task.OWNER_FIELD, Task.PHASE_FIELD, Task.REMAINING_HOURS_FIELD };
 			Task created = entityService.Create<Task>(workspaceContext, task, fieldsToFetch);
 			Assert.AreEqual<String>(name, created.Name);
-			Assert.AreEqual<int?>(estimatedHours, created.GetEstimatedHours());
+			Assert.AreEqual<int?>(estimatedHours, created.EstimatedHours);
 			return created;
 		}
 

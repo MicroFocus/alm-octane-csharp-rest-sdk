@@ -29,10 +29,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public static string SEVERITY_FIELD = "severity";
         public static string PARENT_FIELD = "parent";
         public static string DESCRIPTION_FIELD = "description";
+		public static string AUTHOR_FIELD = "author";
 
 
 
-        public static string SUBTYPE_DEFECT = "defect";
+		public static string SUBTYPE_DEFECT = "defect";
         public static string SUBTYPE_STORY = "story";
         public static string SUBTYPE_QUALITY_STORY = "quality_story";
         public static string SUBTYPE_FEATURE = "feature";
@@ -98,8 +99,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             }
         }
 
+		public WorkspaceUser Author
+		{
+			get
+			{
+				return (WorkspaceUser)GetValue(AUTHOR_FIELD);
+			}
+			set
+			{
+				SetValue(AUTHOR_FIELD, value);
+			}
+		}
 
-        public Release Release
+
+		public Release Release
         {
             get
             {

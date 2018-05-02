@@ -18,7 +18,9 @@
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
+using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
@@ -36,13 +38,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void CreateStoryTest()
         {
-            StoryUtilities.CreateStory(entityService, workspaceContext);
+            CreateStory();
         }
 
         [TestMethod]
         public void GetAllStories()
         {
-            StoryUtilities.CreateStory(entityService, workspaceContext);
+            CreateStory();
 
             //get as stories
             EntityListResult<Story> stories = entityService.Get<Story>(workspaceContext, null, null);
@@ -58,5 +60,43 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual<int?>(stories.total_count, storiesAsWorkItems.total_count);
 
         }
-    }
+
+		private static Phase _phaseNew;
+		private static WorkItemRoot _workItemRoot;
+
+		private static Phase GetPhaseNew()
+		{
+			if (_phaseNew == null)
+				_phaseNew = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
+
+			return _phaseNew;
+		}
+
+		private static WorkItemRoot GetWorkItemRoot()
+		{
+			if (_workItemRoot == null)
+				_workItemRoot = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
+
+			return _workItemRoot;
+		}
+
+		/// <summary>
+		/// Create a new user story entity
+		/// </summary>
+		public static Story CreateStory()
+		{
+			var name = "Story_" + Guid.NewGuid();
+			var story = new Story
+			{
+				Name = name,
+				Phase = GetPhaseNew(),
+				Parent = GetWorkItemRoot()
+			};
+
+			var createdStory = entityService.Create(workspaceContext, story, TestHelper.NameSubtypeFields);
+			Assert.AreEqual<String>(name, createdStory.Name, "Newly created story doesn't have the expected name");
+			Assert.IsFalse(string.IsNullOrEmpty(createdStory.Id), "Newly created story should have a valid ID");
+			return createdStory;
+		}
+	}
 }

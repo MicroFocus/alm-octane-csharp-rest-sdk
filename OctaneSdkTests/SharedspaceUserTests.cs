@@ -46,23 +46,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         }
 
-        [TestMethod]
-        public void GetWorkspaceAdminRoleTest()
-        {
-            LogicalQueryPhrase logicalNamePhrase = new LogicalQueryPhrase(Role.LOGICAL_NAME_FIELD, "role.workspace.admin");
-            CrossQueryPhrase byRole = new CrossQueryPhrase(WorkspaceRole.ROLE_FIELD, logicalNamePhrase);
 
-            LogicalQueryPhrase workspaceIdPhrase = new LogicalQueryPhrase(Workspace.ID_FIELD, workspaceContext.WorkspaceId);
-            CrossQueryPhrase byWorkpace = new CrossQueryPhrase(WorkspaceRole.WORKSPACE_FIELD, workspaceIdPhrase);
-
-            List<QueryPhrase> queries = new List<QueryPhrase>();
-            queries.Add(byWorkpace);
-            queries.Add(byRole);
-            EntityListResult<WorkspaceRole> roles = entityService.Get<WorkspaceRole>(sharedSpaceContext, queries, null);
-            WorkspaceRole workspaceAdminRole = roles.data[0];
-        }
-
-        [TestMethod]
+		[TestMethod]
         public void AssignSharedSpaceAdminRoleToUserTest()
         {
 

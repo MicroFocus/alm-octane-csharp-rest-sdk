@@ -39,7 +39,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 		public void ReConnectionTest()
 		{
 			restConnector.SetLwSsoToken(" ");
-			StoryUtilities.CreateStory(entityService, workspaceContext);			
+			StoryTests.CreateStory();			
 			Assert.IsTrue(restConnector.IsConnected());
 		}
 	}

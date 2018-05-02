@@ -17,68 +17,80 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-    /// <summary>
-    /// Wrapper for Task entity.
-    /// </summary>
-    public class Task : BaseEntity
-    {
-        public const string TYPE_TASK = "task";
+	/// <summary>
+	/// Wrapper for Task entity.
+	/// </summary>
+	public class Task : BaseEntity
+	{
+		public const string TYPE_TASK = "task";
 
-        public const string OWNER_FIELD = "owner";
-        public const string AUTHOR_FIELD = "author";
-        public const string PHASE_FIELD = "phase";
-        public const string INVESTED_HOURS_FIELD = "invested_hours";
-        public const string REMAINING_HOURS_FIELD = "remaining_hours";
-        public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
-        public const string STORY_FIELD = "story";
+		public const string OWNER_FIELD = "owner";
+		public const string AUTHOR_FIELD = "author";
+		public const string PHASE_FIELD = "phase";
+		public const string INVESTED_HOURS_FIELD = "invested_hours";
+		public const string REMAINING_HOURS_FIELD = "remaining_hours";
+		public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
+		public const string STORY_FIELD = "story";
 
-        public Task()
-        {
-        }
-
-        public Task(EntityId id)
-            : base(id)
-        {
-        }
-
-		public void SetStory(WorkItem story)
+		public Task()
 		{
-			SetValue(STORY_FIELD, story);
 		}
 
-		public WorkItem GetStory()
+		public Task(EntityId id)
+			: base(id)
 		{
-			return (WorkItem)GetValue(STORY_FIELD);
 		}
 
-		public void SetEstimatedHours(int hours)
+		public WorkItem Story
 		{
-			SetIntValue(ESTIMATED_HOURS_FIELD, hours);
+			get
+			{
+				return (WorkItem)GetValue(STORY_FIELD);
+			}
+			set
+
+			{
+				SetValue(STORY_FIELD, value);
+			}
 		}
 
-		public int? GetEstimatedHours()
+		public int? EstimatedHours
 		{
-			return GetIntValue(ESTIMATED_HOURS_FIELD);
+			get
+			{
+				return GetIntValue(ESTIMATED_HOURS_FIELD);
+			}
+			set
+
+			{
+				SetIntValue(ESTIMATED_HOURS_FIELD, value.Value);
+			}
 		}
 
-		public void SetRemainingHours(int hours)
+		public int? RemainingHours
 		{
-			SetIntValue(REMAINING_HOURS_FIELD, hours);
+			get
+			{
+				return GetIntValue(REMAINING_HOURS_FIELD);
+			}
+			set
+
+			{
+				SetIntValue(REMAINING_HOURS_FIELD, value.Value);
+			}
 		}
 
-		public int? GetRemainingHours()
+		public int? InvestedHours
 		{
-			return GetIntValue(REMAINING_HOURS_FIELD);
-		}
+			get
+			{
+				return GetIntValue(INVESTED_HOURS_FIELD);
+			}
+			set
 
-		public void SetInvestedHours(int hours)
-		{
-			SetIntValue(INVESTED_HOURS_FIELD, hours);
-		}
-
-		public int? GetInvestedHours()
-		{
-			return GetIntValue(INVESTED_HOURS_FIELD);
+			{
+				SetIntValue(INVESTED_HOURS_FIELD, value.Value);
+			}
 		}
 	}
 }
