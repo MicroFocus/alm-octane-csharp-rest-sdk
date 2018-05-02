@@ -36,11 +36,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-
+		
            
         }
 
-        private WorkItemRoot getWorkItemRoot()
+        public static WorkItemRoot getWorkItemRoot()
         {
             if (workItemRoot == null)
             {

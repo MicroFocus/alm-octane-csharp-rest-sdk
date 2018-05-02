@@ -171,7 +171,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         }
 
 
-        private static Release CreateRelease()
+        public static Release CreateRelease()
         {
             String name = "Release_" + Guid.NewGuid();
             Release release = new Release();

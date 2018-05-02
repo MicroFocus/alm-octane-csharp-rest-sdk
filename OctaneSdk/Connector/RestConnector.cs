@@ -16,6 +16,7 @@
 
 
 using MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions;
+using MicroFocus.Adm.Octane.Api.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -104,14 +105,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 throw new ArgumentNullException("host");
             }
 
-            if (connectionInfo == null)
-            {
-                throw new ArgumentNullException("connectionInfo");
-            }
-
-            this.host = host.TrimEnd('/');
-            this.connectionInfo = connectionInfo;
-
+			this.connectionInfo = connectionInfo ?? throw new ArgumentNullException("connectionInfo");
+			this.host = host.TrimEnd('/');
+            
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
 
             httpWebRequest.Method = METHOD_POST;
@@ -402,9 +398,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
                     try
                     {
-                        JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                        RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
-                        throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+						JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+						if (body.Contains("total_count")){
+							RestExceptionInfos exceptionInfos = jsSerializer.Deserialize<RestExceptionInfos>(body);
+							throw new MqmRestException(exceptionInfos.errors[0], response.StatusCode, ex);
+						}
+						else
+						{
+							RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
+							throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+						}
                     }
                     catch (Exception e)
                     {

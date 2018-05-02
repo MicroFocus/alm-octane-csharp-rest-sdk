@@ -17,20 +17,92 @@
 
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services;
+using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
 	[TestClass]
-    public class WorkspaceUserTests : BaseTest
-    {
+	public class WorkspaceUserTests : BaseTest
+	{
 
-        [TestMethod]
-        public void GetAllWorkspaceUsers()
-        {
-            EntityListResult<WorkspaceUser> users = entityService.Get<WorkspaceUser>(workspaceContext, null, null);
-            Assert.IsTrue(users.total_count >= 1);
+		[TestMethod]
+		public void GetAllWorkspaceUsersTest()
+		{
+			EntityListResult<WorkspaceUser> users = GetAllWorkspaceUsers();
+			Assert.IsTrue(users.total_count >= 1);
+		}
 
-        }
-    }
+
+		public static EntityListResult<WorkspaceUser> GetAllWorkspaceUsers()
+		{
+			return entityService.Get<WorkspaceUser>(workspaceContext, null, null); 
+		}
+		/*[TestMethod]
+		public void CreateUserTest()
+		{
+			CreateUser();
+
+		}
+
+
+		private static int USER_CREATOR_COUNTER = 0;
+		public static WorkspaceUser CreateUser()
+		{
+			String first = "ws_user_" + USER_CREATOR_COUNTER++;
+			String last = Guid.NewGuid().ToString();
+			string name = first + "." + last + "@microfocus.com";
+
+
+			var user = new WorkspaceUser
+			{
+				Language = "lang.en",
+				Name = name,
+				FirstName = first,
+				LastName = last,
+				Email = name,
+				Password = "Welcome1",
+				Roles = EntityList<WorkspaceRole>.Create(GetWorkspaceAdminRole())
+			};
+
+
+
+			string[] fieldsToFetch = new string[] { WorkspaceUser.FIRST_NAME_FIELD, WorkspaceUser.LAST_NAME_FIELD, WorkspaceUser.ROLES_FIELD, WorkspaceUser.NAME_FIELD };
+			WorkspaceUser createdUser = entityService.Create<WorkspaceUser>(workspaceContext, user, fieldsToFetch);
+			Assert.AreEqual<String>(first, createdUser.FirstName);
+			return createdUser;
+
+			//{"data":[{"language":"lang.en","name":"a1","first_name":"a1","last_name":"a1","email":"a1@a1","password":"Welcome1","roles":{"data":[{"type":"user_role","id":"1005"}]}}]}
+		}*/
+
+		[TestMethod]
+		public void GetWorkspaceAdminRoleTest()
+		{
+			GetWorkspaceAdminRole();
+
+		}
+
+		private static WorkspaceRole workspaceAdminRole;
+		public static WorkspaceRole GetWorkspaceAdminRole()
+		{
+			if (workspaceAdminRole == null)
+			{
+				LogicalQueryPhrase logicalNamePhrase = new LogicalQueryPhrase(Role.LOGICAL_NAME_FIELD, "role.workspace.admin");
+				CrossQueryPhrase byRole = new CrossQueryPhrase(WorkspaceRole.ROLE_FIELD, logicalNamePhrase);
+
+				LogicalQueryPhrase workspaceIdPhrase = new LogicalQueryPhrase(Workspace.ID_FIELD, workspaceContext.WorkspaceId);
+				CrossQueryPhrase byWorkpace = new CrossQueryPhrase(WorkspaceRole.WORKSPACE_FIELD, workspaceIdPhrase);
+
+				List<QueryPhrase> queries = new List<QueryPhrase>();
+				queries.Add(byWorkpace);
+				queries.Add(byRole);
+				EntityListResult<WorkspaceRole> roles = entityService.Get<WorkspaceRole>(sharedSpaceContext, queries, null);
+				workspaceAdminRole = roles.data[0];
+			}
+			return workspaceAdminRole;
+		}
+
+	}
 }

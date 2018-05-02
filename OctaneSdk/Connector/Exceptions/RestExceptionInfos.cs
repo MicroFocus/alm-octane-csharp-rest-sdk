@@ -14,36 +14,16 @@
 * limitations under the License.
 */
 
+using MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions;
+using System.Collections.Generic;
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+namespace MicroFocus.Adm.Octane.Api.Core.Services
 {
-	/// <summary>
-	/// Wrapper for defect entity. Acutally defect is subtype of work_item.
-	/// </summary>
-	public class Defect : WorkItem
+    /// <summary>
+    /// Generic list returned in response 
+    /// </summary>
+    public class RestExceptionInfos : ListResult<RestExceptionInfo>
 	{
-		public static string DETECTED_BY_FIELD = "detected_by";
-
-		public Defect()
-			: base()
-		{
-		}
-
-		public Defect(EntityId id)
-			: base(id)
-		{
-		}
-
-		public WorkspaceUser DetectedBy
-		{
-			get
-			{
-				return (WorkspaceUser)GetValue(DETECTED_BY_FIELD);
-			}
-			set
-			{
-				SetValue(DETECTED_BY_FIELD, value);
-			}
-		}
-	}
+        public List<RestExceptionInfo> errors { get; set; }
+    }
 }
