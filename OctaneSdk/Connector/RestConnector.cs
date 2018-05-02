@@ -105,7 +105,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 throw new ArgumentNullException("host");
             }
 
-			this.connectionInfo = connectionInfo ?? throw new ArgumentNullException("connectionInfo");
+			if (connectionInfo == null)
+			{
+				throw new ArgumentNullException("connectionInfo");
+			}
+
+			this.connectionInfo = connectionInfo;
 			this.host = host.TrimEnd('/');
             
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
