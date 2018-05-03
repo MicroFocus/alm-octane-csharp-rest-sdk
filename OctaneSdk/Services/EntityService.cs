@@ -326,14 +326,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
         }
 
-        public async Task<EntityListResult<T>> Search<T>(IRequestContext context, string searchString, int limit, string subType)
+        /// <summary>
+        /// Search for all entities of given type that satify the search criteria
+        /// </summary>
+        public async Task<EntityListResult<T>> SearchAsync<T>(IRequestContext context, string searchString, int limit, string type)
             where T : BaseEntity
         {
             string url = context.GetPath() + "/" + EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
             var query = new List<QueryPhrase>
             {
-                new LogicalQueryPhrase("subtype", subType)
+                new LogicalQueryPhrase("subtype", type)
             };
 
             var serviceArguments = new Dictionary<string, string>
