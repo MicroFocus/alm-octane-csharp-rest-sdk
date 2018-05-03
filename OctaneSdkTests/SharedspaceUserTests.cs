@@ -32,13 +32,21 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
     public class SharedspaceUserTests : BaseTest
     {
 
-        [TestMethod]
+		[TestMethod]
         public void CreateUserTest()
         {
             CreateUser();
         }
 
-        [TestMethod]
+		[TestMethod]
+		public void CreateUserWithRoleTest()
+		{
+			SharedspaceUser user = CreateUser(GetWorkspaceAdminRole());
+			Assert.AreEqual(WorkspaceRole.WORKSPACE_ADMIN_ROLE_LOGICAL_NAME, user.WorkspaceRoles.data[0].Role.LogicalName);
+		}
+
+
+		[TestMethod]
         public void GetAllSharedspaceUsersTest()
         {
             EntityListResult<SharedspaceUser> users = entityService.Get<SharedspaceUser>(sharedSpaceContext, null, null);
@@ -67,7 +75,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             SharedspaceUser userForUpdate = new SharedspaceUser(createdUser.Id);
             userForUpdate.WorkspaceRoles = createdUser.WorkspaceRoles;
             userForUpdate.WorkspaceRoles.data.Add(sharedSpaceAdminRole);
-            entityService.Update<SharedspaceUser>(sharedSpaceContext, userForUpdate);
+            entityService.Update(sharedSpaceContext, userForUpdate);
 
             //READ USER
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
@@ -95,12 +103,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             //UPDATE USER by appending shared space admin role
             SharedspaceUser userForUpdate = new SharedspaceUser(createdUser.Id);
-            userForUpdate.WorkspaceRoles = new EntityList<BaseEntity>();
+            userForUpdate.WorkspaceRoles = new EntityList<WorkspaceRole>();
             userForUpdate.WorkspaceRoles.data.Add(sharedSpaceAdminRole);
             Dictionary<String, String> serviceArgs = new Dictionary<string, string>();
             serviceArgs.Add("reference_update_mode", "append");
 
-            entityService.Update<SharedspaceUser>(sharedSpaceContext, userForUpdate, serviceArgs, null);
+            entityService.Update(sharedSpaceContext, userForUpdate, serviceArgs, null);
 
             //READ USER
             List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
@@ -111,7 +119,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.IsTrue(assignedWorkspaceRoles.Count > 1);
         }
 
-        private static SharedspaceUser CreateUser()
+        private static SharedspaceUser CreateUser(WorkspaceRole role = null)
         {
             SharedspaceUser user = new SharedspaceUser();
             user.Name = "Name" + Guid.NewGuid() + "@hpe.com";
@@ -121,11 +129,48 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             user.Email = user.Name;
             user.Phone1 = "123-123-123";
 
+			if (role != null)
+			{
+				user.WorkspaceRoles = EntityList<WorkspaceRole>.Create(role);
+			}
+
             var fields = new string[] { "name", "workspace_roles" };
 
             SharedspaceUser createdUser = entityService.Create<SharedspaceUser>(sharedSpaceContext, user, fields);
             Assert.AreEqual<string>(user.Name, createdUser.Name);
             return createdUser;
         }
+
+		[TestMethod]
+		public void GetWorkspaceAdminRoleTest()
+		{
+			GetWorkspaceAdminRole();
+
+		}
+
+		private static WorkspaceRole workspaceAdminRole;
+		public static WorkspaceRole GetWorkspaceAdminRole()
+		{
+			if (workspaceAdminRole == null)
+			{
+				
+				LogicalQueryPhrase logicalNamePhrase = new LogicalQueryPhrase(Role.LOGICAL_NAME_FIELD, WorkspaceRole.WORKSPACE_ADMIN_ROLE_LOGICAL_NAME);
+				CrossQueryPhrase byRole = new CrossQueryPhrase(WorkspaceRole.ROLE_FIELD, logicalNamePhrase);
+
+				LogicalQueryPhrase workspaceIdPhrase = new LogicalQueryPhrase(Workspace.ID_FIELD, workspaceContext.WorkspaceId);
+				CrossQueryPhrase byWorkpace = new CrossQueryPhrase(WorkspaceRole.WORKSPACE_FIELD, workspaceIdPhrase);
+
+				List<QueryPhrase> queries = new List<QueryPhrase>();
+				queries.Add(byWorkpace);
+				queries.Add(byRole);
+				EntityListResult<WorkspaceRole> roles = entityService.Get<WorkspaceRole>(sharedSpaceContext, queries, null);
+				workspaceAdminRole = roles.data[0];
+				Assert.AreEqual(WorkspaceRole.WORKSPACE_ADMIN_ROLE_LOGICAL_NAME, workspaceAdminRole.Role.LogicalName);
+				Assert.AreEqual(workspaceContext.WorkspaceId.ToString(), workspaceAdminRole.Workspace.Id.ToString());
+
+
+			}
+			return workspaceAdminRole;
+		}
     }
 }

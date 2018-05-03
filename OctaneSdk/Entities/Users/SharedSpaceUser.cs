@@ -39,11 +39,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         {
         }
 
-        public EntityList<BaseEntity> WorkspaceRoles
+        public EntityList<WorkspaceRole> WorkspaceRoles
         {
             get
             {
-                return (EntityList<BaseEntity>)GetValue(WORKSPACE_ROLES_FIELD);
+                return GetEntityList<WorkspaceRole>(WORKSPACE_ROLES_FIELD);
             }
             set
             {

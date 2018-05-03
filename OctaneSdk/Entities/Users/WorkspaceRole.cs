@@ -26,7 +26,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public static string WORKSPACE_FIELD = "workspace";
         public static string ROLE_FIELD = "role";
 
-        public Workspace Workspace
+		
+		public static string SHARED_SPACE_ADMIN_ROLE_LOGICAL_NAME = "role.shared.space.admin";
+
+		//WORKSPACE
+		public static string WORKSPACE_ADMIN_ROLE_LOGICAL_NAME = "role.workspace.admin";
+		public static string WORKSPACE_LEADER_ROLE_LOGICAL_NAME = "role.workspace.leader";
+		public static string WORKSPACE_TEAM_MEMBER_ROLE_LOGICAL_NAME = "role.workspace.team.member";
+		public static string WORKSPACE_TESTER_ROLE_LOGICAL_NAME = "role.workspace.tester";
+
+		public Workspace Workspace
         {
             get
             {

@@ -72,11 +72,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         }
 
-        public EntityList<BaseEntity> Releases
+        public EntityList<Release> Releases
         {
             get
             {
-                return (EntityList<BaseEntity>)GetValue(RELEASES_FIELD);
+                return GetEntityList<Release>(RELEASES_FIELD);
             }
             set
             {
