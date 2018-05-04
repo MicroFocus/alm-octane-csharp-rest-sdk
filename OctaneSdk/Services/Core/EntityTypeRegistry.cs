@@ -68,7 +68,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
         }
 
 
-        public string ExtractEntityTypeName(Type type)
+        private string ExtractEntityTypeName(Type type)
         {
             String className = type.Name;
             StringBuilder sb = new StringBuilder();
