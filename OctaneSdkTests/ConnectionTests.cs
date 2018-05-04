@@ -34,5 +34,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             InitConnection(null);
             Assert.IsTrue(restConnector.IsConnected());
         }
-    }
+
+		[TestMethod]
+		public void ReConnectionTest()
+		{
+			restConnector.SetLwSsoToken(" ");
+			StoryTests.CreateStory();			
+			Assert.IsTrue(restConnector.IsConnected());
+		}
+	}
 }

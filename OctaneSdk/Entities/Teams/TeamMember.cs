@@ -15,34 +15,27 @@
 */
 
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+using MicroFocus.Adm.Octane.Api.Core.Services;
+
+namespace MicroFocus.Adm.Octane.Api.Core.Entities.Teams
 {
 	/// <summary>
-	/// Wrapper for defect entity. Acutally defect is subtype of work_item.
+	/// Wrapper for Team member entity
+	/// More fields might be supported by entity that still are not exposed in the class
 	/// </summary>
-	public class Defect : WorkItem
+	public class TeamMember : BaseEntity
 	{
-		public static string DETECTED_BY_FIELD = "detected_by";
+		public static string CAPACITY_FIELD = "capacity";
 
-		public Defect()
-			: base()
-		{
-		}
-
-		public Defect(EntityId id)
-			: base(id)
-		{
-		}
-
-		public WorkspaceUser DetectedBy
+		public int? Capacity
 		{
 			get
 			{
-				return (WorkspaceUser)GetValue(DETECTED_BY_FIELD);
+				return GetIntValue(CAPACITY_FIELD);
 			}
 			set
 			{
-				SetValue(DETECTED_BY_FIELD, value);
+				SetIntValue(CAPACITY_FIELD, value.Value);
 			}
 		}
 	}

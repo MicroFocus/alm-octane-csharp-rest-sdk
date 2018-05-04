@@ -16,6 +16,7 @@
 
 
 using MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions;
+using MicroFocus.Adm.Octane.Api.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -85,11 +86,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return ConnectAsync(host, connectionInfo).Result;
         }
 
-        private bool Reconnect()
+        private async Task<bool> Reconnect()
         {
             try
             {
-                return Connect(host, connectionInfo);
+                return await ConnectAsync(host, connectionInfo);
             }
             catch (Exception)
             {
@@ -104,14 +105,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 throw new ArgumentNullException("host");
             }
 
-            if (connectionInfo == null)
-            {
-                throw new ArgumentNullException("connectionInfo");
-            }
+			if (connectionInfo == null)
+			{
+				throw new ArgumentNullException("connectionInfo");
+			}
 
-            this.host = host.TrimEnd('/');
-            this.connectionInfo = connectionInfo;
-
+			this.connectionInfo = connectionInfo;
+			this.host = host.TrimEnd('/');
+            
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
 
             httpWebRequest.Method = METHOD_POST;
@@ -138,7 +139,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return lwSsoCookie;
         }
 
-        private void SaveCookies(HttpWebResponse httpResponse)
+		/// <summary>
+		///DON'T USE DIRECTLY. Only Testing API
+		/// </summary>
+		internal void SetLwSsoToken(string token)
+		{
+			lwSsoCookie = token;
+		}
+
+
+		private void SaveCookies(HttpWebResponse httpResponse)
         {
             lwSsoCookie = ExtractValueFromCookie(httpResponse, LWSSO_COOKIE_NAME, lwSsoCookie);
             octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
@@ -227,10 +237,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
+			//request.Headers.Add("ALM_OCTANE_TECH_PREVIEW", "true");
 
 
-            //set content type/accept/method
-            switch (requestType)
+			//set content type/accept/method
+			switch (requestType)
             {
                 case RequestType.Get:
                     request.Accept = CONTENT_TYPE_JSON;
@@ -392,9 +403,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
                     try
                     {
-                        JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                        RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
-                        throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+						JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
+						if (body.Contains("total_count")){
+							RestExceptionInfos exceptionInfos = jsSerializer.Deserialize<RestExceptionInfos>(body);
+							throw new MqmRestException(exceptionInfos.errors[0], response.StatusCode, ex);
+						}
+						else
+						{
+							RestExceptionInfo exceptionInfo = jsSerializer.Deserialize<RestExceptionInfo>(body);
+							throw new MqmRestException(exceptionInfo, response.StatusCode, ex);
+						}
                     }
                     catch (Exception e)
                     {
@@ -452,33 +470,41 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 }
             }
 
-            try
+			InvalidCredentialException originalException = null;
+			try
             {
                 return await DoSendAsync(request).ConfigureAwait(AwaitContinueOnCapturedContext);
             }
             //catch - intended to handle the case LWSSO is expired, we will try reconnect and resend original request
             catch (InvalidCredentialException e)
             {
-                try
-                {
-                    bool reconnected = allowReconnect && Reconnect();
-                    if (!reconnected)
-                    {
-                        throw e;
-                    }
-                    // we reconnected, 
-                    // but await can't exist in a catch because the CLR would lose the ambient exception.
-                    // We don’t need the ambient exception (i.e. we don't "throw;", 
-                    // so we need to trick it out by putting retry logic after the catch
-                }
-                catch
-                {
-                    //if reconnect throwed any exception - we rethrow original exception
-                    throw e;
-                }
-            }
-            //resend after reconnect
-            return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration)
+				// await can't exist in a catch because the CLR would lose the ambient exception.
+				// We don’t need the ambient exception (i.e. we don't "throw;", 
+				// so we need to trick it out by putting retry logic after the catch
+				originalException = e;
+			}
+
+			//RECONNECT SECTION
+			try
+			{
+				bool reconnected = allowReconnect && await Reconnect();
+				if (!reconnected)
+				{
+					throw originalException;
+				}
+				// we reconnected, 
+				// but await can't exist in a catch because the CLR would lose the ambient exception.
+				// We don’t need the ambient exception (i.e. we don't "throw;", 
+				// so we need to trick it out by putting retry logic after the catch
+			}
+			catch
+			{
+				//if reconnect throwed any exception - we rethrow original exception
+				throw originalException;
+			}
+
+			//resend after reconnect
+			return await SendAsync(restRelativeUri, queryParams, requestType, data, false, additionalRequestConfiguration)
                    .ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 

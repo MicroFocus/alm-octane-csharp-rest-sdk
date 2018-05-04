@@ -17,28 +17,80 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-    /// <summary>
-    /// Wrapper for Task entity.
-    /// </summary>
-    public class Task : BaseEntity
-    {
-        public const string TYPE_TASK = "task";
+	/// <summary>
+	/// Wrapper for Task entity.
+	/// </summary>
+	public class Task : BaseEntity
+	{
+		public const string TYPE_TASK = "task";
 
-        public const string OWNER_FIELD = "owner";
-        public const string AUTHOR_FIELD = "author";
-        public const string PHASE_FIELD = "phase";
-        public const string INVESTED_HOURS_FIELD = "invested_hours";
-        public const string REMAINING_HOURS_FIELD = "remaining_hours";
-        public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
-        public const string STORY_FIELD = "story";
+		public const string OWNER_FIELD = "owner";
+		public const string AUTHOR_FIELD = "author";
+		public const string PHASE_FIELD = "phase";
+		public const string INVESTED_HOURS_FIELD = "invested_hours";
+		public const string REMAINING_HOURS_FIELD = "remaining_hours";
+		public const string ESTIMATED_HOURS_FIELD = "estimated_hours";
+		public const string STORY_FIELD = "story";
 
-        public Task()
-        {
-        }
+		public Task()
+		{
+		}
 
-        public Task(EntityId id)
-            : base(id)
-        {
-        }
-    }
+		public Task(EntityId id)
+			: base(id)
+		{
+		}
+
+		public WorkItem Story
+		{
+			get
+			{
+				return (WorkItem)GetValue(STORY_FIELD);
+			}
+			set
+
+			{
+				SetValue(STORY_FIELD, value);
+			}
+		}
+
+		public int? EstimatedHours
+		{
+			get
+			{
+				return GetIntValue(ESTIMATED_HOURS_FIELD);
+			}
+			set
+
+			{
+				SetIntValue(ESTIMATED_HOURS_FIELD, value.Value);
+			}
+		}
+
+		public int? RemainingHours
+		{
+			get
+			{
+				return GetIntValue(REMAINING_HOURS_FIELD);
+			}
+			set
+
+			{
+				SetIntValue(REMAINING_HOURS_FIELD, value.Value);
+			}
+		}
+
+		public int? InvestedHours
+		{
+			get
+			{
+				return GetIntValue(INVESTED_HOURS_FIELD);
+			}
+			set
+
+			{
+				SetIntValue(INVESTED_HOURS_FIELD, value.Value);
+			}
+		}
+	}
 }

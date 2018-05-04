@@ -309,7 +309,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<ListResult<FieldMetadata>> GetFieldsMetadataAsync(IRequestContext context, string entityType)
         {
             if (context == null)
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException("context");
 
             string url = context.GetPath() + "/metadata/fields";
 

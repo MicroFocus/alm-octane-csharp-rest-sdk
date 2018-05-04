@@ -16,6 +16,9 @@
 
 
 
+using MicroFocus.Adm.Octane.Api.Core.Services;
+using System.Collections.Generic;
+
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
 
@@ -27,8 +30,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public static string LAST_NAME_FIELD = "last_name";
         public static string EMAIL_FIELD = "email";
         public static string PHONE1_FIELD = "phone1";
+		public static string LANGUAGE_FIELD = "language";
+		public static string PASSWORD_FIELD = "password";
 
-        public BaseUserEntity()
+
+		public BaseUserEntity()
             : base()
         {
         }
@@ -109,5 +115,29 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
                 SetValue(PHONE1_FIELD, value);
             }
         }
-    }
+
+		public string Language
+		{
+			get
+			{
+				return GetStringValue(LANGUAGE_FIELD);
+			}
+			set
+			{
+				SetValue(LANGUAGE_FIELD, value);
+			}
+		}
+
+		public string Password
+		{
+			get
+			{
+				return GetStringValue(PASSWORD_FIELD);
+			}
+			set
+			{
+				SetValue(PASSWORD_FIELD, value);
+			}
+		}
+	}
 }
