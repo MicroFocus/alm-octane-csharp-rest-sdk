@@ -58,5 +58,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual<int?>(stories.total_count, storiesAsWorkItems.total_count);
 
         }
+
+        [TestMethod]
+        public void SearchStories()
+        {
+            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", 10, WorkItem.SUBTYPE_STORY).Result;
+
+            Assert.IsTrue(searchResult.data.Count > 0);
+            Assert.IsTrue(searchResult.data.Count <= 10);
+        }
     }
 }
