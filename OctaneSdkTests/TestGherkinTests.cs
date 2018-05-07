@@ -15,8 +15,12 @@
 */
 
 using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -45,9 +49,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(expectedTest.Name, test.Name, "Mismatched name for retrieved gherkin test");
         }
 
-        private static TestGherkin CreateGherkinTestInternal()
+        private static TestGherkin CreateGherkinTestInternal(string customName = null)
         {
-            string name = "GherkinTest" + Guid.NewGuid();
+            string name = customName ?? "GherkinTest" + Guid.NewGuid();
             var test = new TestGherkin
             {
                 Name = name,
@@ -58,6 +62,43 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(name, createdTest.Name, "Mismatched name for newly created gherkin test");
             Assert.IsTrue(!string.IsNullOrEmpty(createdTest.Id), "Gherking test id shouldn't be null or empty");
             return createdTest;
+        }
+
+        [TestCategory("LongTest")]
+        [TestMethod]
+        public void SearchGherkinTests()
+        {
+            var guid = Guid.NewGuid();
+            var gherkinTest1 = CreateGherkinTestInternal("GherkinTest1_CustomName_" + guid);
+            var gherkinTest2 = CreateGherkinTestInternal("GherkinTest2_CustomName_" + guid);
+            var gherkinTest3 = CreateGherkinTestInternal("GherkinTest3_CustomName_" + guid);
+            var gherkinTest4 = CreateGherkinTestInternal("GherkinTest4_CustomName_" + guid);
+            var gherkinTest5 = CreateGherkinTestInternal("GherkinTest5_CustomName_" + guid);
+
+            var possibleExpectedTests = new List<TestGherkin>
+            {
+                gherkinTest1, gherkinTest2, gherkinTest3, gherkinTest4, gherkinTest5
+            };
+
+            EntityListResult<Test> searchResult = null;
+            SpinWait.SpinUntil(() =>
+            {
+                Thread.Sleep(1000);
+                searchResult = entityService.SearchAsync<Test>(workspaceContext, "_CustomName_" + guid,
+                    new List<string> { TestGherkin.SUBTYPE_GHERKIN_TEST }, 4).Result;
+                return searchResult.data.Count == 4;
+            }, new TimeSpan(0, 2, 0));
+
+            Assert.IsNotNull(searchResult, "search operation should have returned something");
+            Assert.AreEqual(4, searchResult.data.Count, "Mismatched number of entities returned by the search operation");
+
+            int actualTestsFoundCount = 0;
+            foreach (var test in possibleExpectedTests)
+            {
+                actualTestsFoundCount += searchResult.data.Count(t => t.Id == test.Id);
+            }
+
+            Assert.AreEqual(searchResult.data.Count, actualTestsFoundCount, "Search request didn't return expected results");
         }
     }
 }

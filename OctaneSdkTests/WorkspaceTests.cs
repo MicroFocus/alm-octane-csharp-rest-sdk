@@ -21,10 +21,10 @@ using System;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
+    [TestClass]
     public class WorkspaceTests : BaseTest
     {
-
+        [TestCategory("LongTest")]
         [TestMethod]
         public void CreateWorkspace()
         {
@@ -54,7 +54,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
                             System.Diagnostics.Trace.WriteLine(workspace.Id);
                         }
                     }
-                } catch (Exception)
+                }
+                catch (Exception)
                 {
                     // do nothing
                 }
