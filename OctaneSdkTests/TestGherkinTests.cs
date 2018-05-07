@@ -64,6 +64,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             return createdTest;
         }
 
+        [TestCategory("LongTest")]
         [TestMethod]
         public void SearchGherkinTests()
         {

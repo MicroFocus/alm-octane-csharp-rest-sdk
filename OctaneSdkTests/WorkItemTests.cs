@@ -183,6 +183,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             GroupResult result = entityService.GetWithGroupBy<WorkItem>(workspaceContext, queries, Defect.SEVERITY_FIELD);
         }
 
+        [TestCategory("LongTest")]
         [TestMethod]
         public void SearchWorkItems()
         {

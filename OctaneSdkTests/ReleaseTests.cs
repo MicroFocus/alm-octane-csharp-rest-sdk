@@ -171,6 +171,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(release.Id, releaseFromSprint.Id);
         }
 
+        [TestCategory("LongTest")]
         [TestMethod]
         public void SearchReleases()
         {

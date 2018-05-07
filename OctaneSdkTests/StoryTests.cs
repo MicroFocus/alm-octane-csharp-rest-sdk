@@ -99,6 +99,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             return createdStory;
         }
 
+        [TestCategory("LongTest")]
         [TestMethod]
         public void SearchStories()
         {
