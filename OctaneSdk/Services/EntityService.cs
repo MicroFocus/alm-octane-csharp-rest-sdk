@@ -309,7 +309,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<ListResult<FieldMetadata>> GetFieldsMetadataAsync(IRequestContext context, string entityType)
         {
             if (context == null)
+            {
                 throw new ArgumentNullException("context");
+            }
+            if (string.IsNullOrEmpty(entityType))
+            {
+                throw new ArgumentException("entityType parameter is null or empty");
+            }
 
             string url = context.GetPath() + "/metadata/fields";
 
@@ -321,7 +327,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data == null)
+            {
                 return null;
+            }
 
             return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
         }
@@ -329,14 +337,31 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         /// <summary>
         /// Search for all entities of given type that satify the search criteria
         /// </summary>
-        public async Task<EntityListResult<T>> SearchAsync<T>(IRequestContext context, string searchString, int limit, string type)
+        public async Task<EntityListResult<T>> SearchAsync<T>(IRequestContext context, string searchString, string subType, int limit = 30)
             where T : BaseEntity
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+            if (string.IsNullOrEmpty(searchString))
+            {
+                throw new ArgumentException("searchString parameter is null or empty");
+            }
+            if (string.IsNullOrEmpty(subType))
+            {
+                throw new ArgumentException("subType parameter is null or empty");
+            }
+            if (limit <= 0)
+            {
+                throw new ArgumentException("search limit should be greater than 0");
+            }
+
             string url = context.GetPath() + "/" + EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
             var query = new List<QueryPhrase>
             {
-                new LogicalQueryPhrase("subtype", type)
+                new LogicalQueryPhrase("subtype", subType)
             };
 
             var serviceArguments = new Dictionary<string, string>
@@ -352,7 +377,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             {
                 var searchResult = entity.GetValue("global_text_search_result") as BaseEntity;
                 if (searchResult == null)
+                {
                     continue;
+                }
 
                 entity.SetValue("name", searchResult.GetValue("name"));
                 entity.SetValue("description", searchResult.GetValue("description"));

@@ -18,7 +18,6 @@
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
-using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -61,48 +60,48 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         }
 
-		private static Phase _phaseNew;
-		private static WorkItemRoot _workItemRoot;
+        private static Phase _phaseNew;
+        private static WorkItemRoot _workItemRoot;
 
-		private static Phase GetPhaseNew()
-		{
-			if (_phaseNew == null)
-				_phaseNew = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
+        private static Phase GetPhaseNew()
+        {
+            if (_phaseNew == null)
+                _phaseNew = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
 
-			return _phaseNew;
-		}
+            return _phaseNew;
+        }
 
-		private static WorkItemRoot GetWorkItemRoot()
-		{
-			if (_workItemRoot == null)
-				_workItemRoot = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
+        private static WorkItemRoot GetWorkItemRoot()
+        {
+            if (_workItemRoot == null)
+                _workItemRoot = TestHelper.GetWorkItemRoot(entityService, workspaceContext);
 
-			return _workItemRoot;
-		}
+            return _workItemRoot;
+        }
 
-		/// <summary>
-		/// Create a new user story entity
-		/// </summary>
-		public static Story CreateStory()
-		{
-			var name = "Story_" + Guid.NewGuid();
-			var story = new Story
-			{
-				Name = name,
-				Phase = GetPhaseNew(),
-				Parent = GetWorkItemRoot()
-			};
+        /// <summary>
+        /// Create a new user story entity
+        /// </summary>
+        public static Story CreateStory()
+        {
+            var name = "Story_" + Guid.NewGuid();
+            var story = new Story
+            {
+                Name = name,
+                Phase = GetPhaseNew(),
+                Parent = GetWorkItemRoot()
+            };
 
-			var createdStory = entityService.Create(workspaceContext, story, TestHelper.NameSubtypeFields);
-			Assert.AreEqual<String>(name, createdStory.Name, "Newly created story doesn't have the expected name");
-			Assert.IsFalse(string.IsNullOrEmpty(createdStory.Id), "Newly created story should have a valid ID");
-			return createdStory;
-		}
+            var createdStory = entityService.Create(workspaceContext, story, TestHelper.NameSubtypeFields);
+            Assert.AreEqual<String>(name, createdStory.Name, "Newly created story doesn't have the expected name");
+            Assert.IsFalse(string.IsNullOrEmpty(createdStory.Id), "Newly created story should have a valid ID");
+            return createdStory;
+        }
 
         [TestMethod]
         public void SearchStories()
         {
-            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", 10, WorkItem.SUBTYPE_STORY).Result;
+            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", WorkItem.SUBTYPE_STORY, 10).Result;
 
             Assert.IsTrue(searchResult.data.Count > 0);
             Assert.IsTrue(searchResult.data.Count <= 10);
