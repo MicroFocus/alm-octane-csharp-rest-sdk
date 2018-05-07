@@ -22,6 +22,7 @@ using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -170,6 +171,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(release.Id, releaseFromSprint.Id);
         }
 
+        [TestMethod]
+        public void SearchReleases()
+        {
+            EntityListResult<Release> searchResult = null;
+            SpinWait.SpinUntil(() =>
+            {
+                Thread.Sleep(1000);
+
+                searchResult = entityService.SearchAsync<Release>(workspaceContext, "Release_", null, 2).Result;
+
+                return searchResult.data.Count > 0;
+            }, new TimeSpan(0, 2, 0));
+
+            Assert.IsTrue(searchResult.data.Count > 0);
+            Assert.IsTrue(searchResult.data.Count <= 2);
+        }
 
         public static Release CreateRelease()
         {

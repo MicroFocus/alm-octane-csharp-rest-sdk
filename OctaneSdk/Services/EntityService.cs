@@ -348,10 +348,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             {
                 throw new ArgumentException("searchString parameter is null or empty");
             }
-            if (subTypes == null)
-            {
-                throw new ArgumentNullException("subTypes");
-            }
             if (limit <= 0)
             {
                 throw new ArgumentException("search limit should be greater than 0");
@@ -359,10 +355,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             string url = context.GetPath() + "/" + EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
-            var query = new List<QueryPhrase>
+            List<QueryPhrase> query = null;
+            if (subTypes != null && subTypes.Count > 0)
             {
-                new InQueryPhrase("subtype", subTypes)
-            };
+                query = new List<QueryPhrase> { new InQueryPhrase("subtype", subTypes) };
+            }
 
             var serviceArguments = new Dictionary<string, string>
             {

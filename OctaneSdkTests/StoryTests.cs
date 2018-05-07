@@ -21,6 +21,7 @@ using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -101,7 +102,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void SearchStories()
         {
-            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", new List<string> { WorkItem.SUBTYPE_STORY }, 10).Result;
+            EntityListResult<WorkItem> searchResult = null;
+            SpinWait.SpinUntil(() =>
+            {
+                Thread.Sleep(1000);
+
+                searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "story", new List<string> { WorkItem.SUBTYPE_STORY }, 10).Result;
+
+                return searchResult.data.Count > 0;
+            }, new TimeSpan(0, 2, 0));
 
             Assert.IsTrue(searchResult.data.Count > 0);
             Assert.IsTrue(searchResult.data.Count <= 10);
