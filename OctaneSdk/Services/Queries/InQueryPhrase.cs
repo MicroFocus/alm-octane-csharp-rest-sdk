@@ -20,8 +20,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 {
     public class InQueryPhrase : QueryPhrase
     {
-        public string FieldName { get; }
-        public List<string> Values { get; }
+        public string FieldName { get; set; }
+        public List<string> Values { get; set; }
 
         public InQueryPhrase(string fieldName, List<string> values)
         {
