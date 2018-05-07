@@ -337,7 +337,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         /// <summary>
         /// Search for all entities of given type that satify the search criteria
         /// </summary>
-        public async Task<EntityListResult<T>> SearchAsync<T>(IRequestContext context, string searchString, string subType, int limit = 30)
+        public async Task<EntityListResult<T>> SearchAsync<T>(IRequestContext context, string searchString, List<string> subTypes, int limit = 30)
             where T : BaseEntity
         {
             if (context == null)
@@ -348,9 +348,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             {
                 throw new ArgumentException("searchString parameter is null or empty");
             }
-            if (string.IsNullOrEmpty(subType))
+            if (subTypes == null)
             {
-                throw new ArgumentException("subType parameter is null or empty");
+                throw new ArgumentNullException("subTypes");
             }
             if (limit <= 0)
             {
@@ -361,7 +361,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             var query = new List<QueryPhrase>
             {
-                new LogicalQueryPhrase("subtype", subType)
+                new InQueryPhrase("subtype", subTypes)
             };
 
             var serviceArguments = new Dictionary<string, string>

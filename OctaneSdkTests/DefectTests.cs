@@ -104,17 +104,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Defect defect = CreateDefect();
         }
 
-		[TestMethod]
-		public void CreateDefectWithTaskTest()
-		{
-			Defect defect = CreateDefect();
-			Task task = CreateTask(defect);
+        [TestMethod]
+        public void CreateDefectWithTaskTest()
+        {
+            Defect defect = CreateDefect();
+            Task task = CreateTask(defect);
 
-			WorkItem parent = (WorkItem)task.GetValue(Task.STORY_FIELD);
-			Assert.AreEqual(defect.Id, parent.Id);
-		}
+            WorkItem parent = (WorkItem)task.GetValue(Task.STORY_FIELD);
+            Assert.AreEqual(defect.Id, parent.Id);
+        }
 
-		[TestMethod]
+        [TestMethod]
         public void UpdateDefectNameTest()
         {
             Defect defect = CreateDefect();
@@ -127,20 +127,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.AreEqual(newName, defectAfterUpdate.Name);
         }
 
-		[TestMethod]
-		public void UpdateDefectDetectedByTest()
-		{
-			Defect defect = CreateDefect();
-			Defect defectForUpdate = new Defect(defect.Id);
-			
-			defectForUpdate.DetectedBy = defect.Author;
-			entityService.Update(workspaceContext, defectForUpdate);
+        [TestMethod]
+        public void UpdateDefectDetectedByTest()
+        {
+            Defect defect = CreateDefect();
+            Defect defectForUpdate = new Defect(defect.Id);
 
-			Defect defectAfterUpdate = entityService.GetById<Defect>(workspaceContext, defect.Id, new string[] { Defect.NAME_FIELD, Defect.DETECTED_BY_FIELD, Defect.AUTHOR_FIELD });
-			Assert.AreEqual(defectForUpdate.DetectedBy.Id, defectAfterUpdate.DetectedBy.Id);
-		}
+            defectForUpdate.DetectedBy = defect.Author;
+            entityService.Update(workspaceContext, defectForUpdate);
 
-		[TestMethod]
+            Defect defectAfterUpdate = entityService.GetById<Defect>(workspaceContext, defect.Id, new string[] { Defect.NAME_FIELD, Defect.DETECTED_BY_FIELD, Defect.AUTHOR_FIELD });
+            Assert.AreEqual(defectForUpdate.DetectedBy.Id, defectAfterUpdate.DetectedBy.Id);
+        }
+
+        [TestMethod]
         public void GetNotDoneDefectsAssinedToReleaseTest()
         {
             Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.closed");
@@ -239,15 +239,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         }
 
-		public static Defect CreateDefect()
+        public static Defect CreateDefect(string customName = null)
         {
-            return CreateDefect(getPhaseNew());
+            return CreateDefect(getPhaseNew(), customName);
 
         }
 
-        public static Defect CreateDefect(Phase phase)
+        public static Defect CreateDefect(Phase phase, string customName = null)
         {
-            String name = "Defect" + Guid.NewGuid();
+            String name = customName ?? "Defect" + Guid.NewGuid();
             Defect defect = new Defect();
             defect.Name = name;
             defect.Phase = phase;
@@ -261,22 +261,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         }
 
 
-		private static Task CreateTask(WorkItem story)
-		{
-			String name = "Task" + Guid.NewGuid();
-			int estimatedHours = 5;
-			Task task = new Task();
-			task.Name = name;
-			task.Story = story;
-			task.EstimatedHours = estimatedHours;
+        private static Task CreateTask(WorkItem story)
+        {
+            String name = "Task" + Guid.NewGuid();
+            int estimatedHours = 5;
+            Task task = new Task();
+            task.Name = name;
+            task.Story = story;
+            task.EstimatedHours = estimatedHours;
 
-			string[] fieldsToFetch = new string[] {Task.STORY_FIELD,Task.NAME_FIELD,Task.ESTIMATED_HOURS_FIELD, Task.OWNER_FIELD, Task.PHASE_FIELD, Task.REMAINING_HOURS_FIELD };
-			Task created = entityService.Create<Task>(workspaceContext, task, fieldsToFetch);
-			Assert.AreEqual<String>(name, created.Name);
-			Assert.AreEqual<int?>(estimatedHours, created.EstimatedHours);
-			return created;
-		}
+            string[] fieldsToFetch = new string[] { Task.STORY_FIELD, Task.NAME_FIELD, Task.ESTIMATED_HOURS_FIELD, Task.OWNER_FIELD, Task.PHASE_FIELD, Task.REMAINING_HOURS_FIELD };
+            Task created = entityService.Create<Task>(workspaceContext, task, fieldsToFetch);
+            Assert.AreEqual<String>(name, created.Name);
+            Assert.AreEqual<int?>(estimatedHours, created.EstimatedHours);
+            return created;
+        }
 
-	}
+    }
 
 }

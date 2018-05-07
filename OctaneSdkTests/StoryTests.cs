@@ -82,9 +82,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         /// <summary>
         /// Create a new user story entity
         /// </summary>
-        public static Story CreateStory()
+        public static Story CreateStory(string customName = null)
         {
-            var name = "Story_" + Guid.NewGuid();
+            var name = customName ?? "Story_" + Guid.NewGuid();
             var story = new Story
             {
                 Name = name,
@@ -101,7 +101,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void SearchStories()
         {
-            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", WorkItem.SUBTYPE_STORY, 10).Result;
+            var searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "a", new List<string> { WorkItem.SUBTYPE_STORY }, 10).Result;
 
             Assert.IsTrue(searchResult.data.Count > 0);
             Assert.IsTrue(searchResult.data.Count <= 10);

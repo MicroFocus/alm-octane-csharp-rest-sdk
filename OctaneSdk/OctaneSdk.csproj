@@ -112,6 +112,7 @@
     <Compile Include="Services\ListResult.cs" />
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
+    <Compile Include="Services\Queries\InQueryPhrase.cs" />
     <Compile Include="Services\Queries\NegativeQueryPhrase.cs" />
     <Compile Include="Services\Queries\NullQueryPhrase.cs" />
     <Compile Include="Services\Queries\QueryBuilder.cs" />

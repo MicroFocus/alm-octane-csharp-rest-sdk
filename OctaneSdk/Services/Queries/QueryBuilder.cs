@@ -21,10 +21,10 @@ using System.Text;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 {
-	/// <summary>
-	/// Builder of query string for rest request , like this : query="id>1001"&order-by=end_date&fields=id,name,end_date&offset=1&limit=3
-	/// </summary>
-	internal static class QueryStringBuilder
+    /// <summary>
+    /// Builder of query string for rest request , like this : query="id>1001"&order-by=end_date&fields=id,name,end_date&offset=1&limit=3
+    /// </summary>
+    internal static class QueryStringBuilder
     {
 
         private static String BuildPhraseString(QueryPhrase phrase)
@@ -61,6 +61,26 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
                 NegativeQueryPhrase negativePhrase = (NegativeQueryPhrase)phrase;
                 String expStr = String.Format("!{0}", BuildPhraseString(negativePhrase.QueryPhrase));
                 output = expStr;
+            }
+            else if (phrase is InQueryPhrase)
+            {
+                InQueryPhrase inQueryPhrase = (InQueryPhrase)phrase;
+                StringBuilder sb = new StringBuilder("(");
+                sb.Append(inQueryPhrase.FieldName);
+                sb.Append("+IN+");
+
+                for (var i = 0; i < inQueryPhrase.Values.Count; i++)
+                {
+                    sb.Append(GetExpressionValueString(inQueryPhrase.Values[i]));
+
+                    if (i != inQueryPhrase.Values.Count - 1)
+                    {
+                        sb.Append(",");
+                    }
+                }
+
+                sb.Append(")");
+                output = sb.ToString();
             }
             else if (phrase is NullQueryPhrase)
             {
@@ -201,7 +221,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         /// <param name="limit"></param>
         /// <returns></returns>
         public static string BuildQueryString(IList<QueryPhrase> queryPhrases, IList<String> fields, String orderBy, int? offset, int? limit,
-            String groupBy, Dictionary<String,String> serviceArguments)
+            String groupBy, Dictionary<String, String> serviceArguments)
         {
             String str = String.Empty;
             str = ConcatNewQueryString(str, QueryStringBuilder.BuildGroupByString(groupBy));
