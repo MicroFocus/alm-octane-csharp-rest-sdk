@@ -15,26 +15,82 @@
 */
 
 
+using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
     /// Wrapper for manual test run entity.
     /// </summary>
+    [CustomCollectionPath("runs")]
     public class RunManual : Run
     {
         public const string SUBTYPE_RUN_MANUAL = "run_manual";
 
         public const string HAS_VISUAL_COVERAGE_FIELD = "has_visual_coverage";
+        public const string RUN_BY_FIELD = "run_by";
+        public const string RELEASE_FIELD = "release";
+        public const string TEST_FIELD = "test";
+        public const string NATIVE_STATUS_FIELD = "native_status";
 
         public RunManual()
             : base()
         {
+            SubType = SUBTYPE_RUN_MANUAL;
         }
 
         public RunManual(EntityId id)
             : base(id)
         {
+            SubType = SUBTYPE_RUN_MANUAL;
+        }
+
+        public WorkspaceUser RunBy
+        {
+            get
+            {
+                return (WorkspaceUser)GetValue(RUN_BY_FIELD);
+            }
+            set
+            {
+                SetValue(RUN_BY_FIELD, value);
+            }
+        }
+
+        public Release Release
+        {
+            get
+            {
+                return (Release)GetValue(RELEASE_FIELD);
+            }
+            set
+            {
+                SetValue(RELEASE_FIELD, value);
+            }
+        }
+
+        public TestManual Parent
+        {
+            get
+            {
+                return (TestManual)GetValue(TEST_FIELD);
+            }
+            set
+            {
+                SetValue(TEST_FIELD, value);
+            }
+        }
+
+        public BaseEntity NativeStatus
+        {
+            get
+            {
+                return (BaseEntity)GetValue(NATIVE_STATUS_FIELD);
+            }
+            set
+            {
+                SetValue(NATIVE_STATUS_FIELD, value);
+            }
         }
     }
 }

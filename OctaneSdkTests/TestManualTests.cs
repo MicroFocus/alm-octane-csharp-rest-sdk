@@ -27,13 +27,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
     [TestClass]
     public class TestManualTests : BaseTest
     {
-        private static Phase PHASE_NEW;
-
-        [ClassInitialize()]
-        public static void ClassInit(TestContext context)
-        {
-            PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, Test.SUBTYPE_MANUAL_TEST, "phase.test_manual.new");
-        }
+        private static Phase _phaseNew;
 
 
         [TestMethod]
@@ -79,18 +73,28 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         }
 
-        private static TestManual CreateManualTest()
+        public static TestManual CreateManualTest()
         {
             String name = "Test" + Guid.NewGuid();
             TestManual test = new TestManual();
             test.Name = name;
-            test.Phase = PHASE_NEW;
+            test.Phase = GetPhaseNew();
 
 
             TestManual created = entityService.Create<TestManual>(workspaceContext, test, TestHelper.NameSubtypeFields);
             Assert.AreEqual<String>(name, created.Name);
             Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
+        }
+
+        private static Phase GetPhaseNew()
+        {
+            if (_phaseNew == null)
+            {
+                _phaseNew = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, Test.SUBTYPE_MANUAL_TEST, "phase.test_manual.new");
+            }
+
+            return _phaseNew;
         }
     }
 }
