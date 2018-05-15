@@ -55,6 +55,8 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="ConnectionTests.cs" />
     <Compile Include="AttachmentTests.cs" />
+    <Compile Include="RunManualTests.cs" />
+    <Compile Include="RunSuiteTests.cs" />
     <Compile Include="TeamTests.cs" />
     <Compile Include="QueryBuilderTests.cs" />
     <Compile Include="EntityIdTests.cs" />
