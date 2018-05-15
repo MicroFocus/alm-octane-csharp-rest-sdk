@@ -15,8 +15,11 @@
 */
 
 using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Services;
+using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -29,6 +32,26 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         {
             var manualTest = TestManualTests.CreateManualTest();
             CreateManualRun(manualTest);
+        }
+
+        [TestMethod]
+        public void GetAllRunManualTest()
+        {
+            var manualTest = TestManualTests.CreateManualTest();
+            CreateManualRun(manualTest);
+
+            //get as runManual
+            EntityListResult<RunManual> runManuals = entityService.Get<RunManual>(workspaceContext, null, null);
+            Assert.IsTrue(runManuals.total_count > 0);
+
+
+            //get as run
+            List<QueryPhrase> queries = new List<QueryPhrase>();
+            LogicalQueryPhrase byRunManualSubType = new LogicalQueryPhrase(Test.SUBTYPE_FIELD, RunManual.SUBTYPE_RUN_MANUAL);
+            queries.Add(byRunManualSubType);
+
+            EntityListResult<Run> runManualsAsRuns = entityService.Get<Run>(workspaceContext, queries, null);
+            Assert.AreEqual<int?>(runManuals.total_count, runManualsAsRuns.total_count);
         }
 
         [TestMethod]

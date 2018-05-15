@@ -22,7 +22,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     /// <summary>
     /// Wrapper for manual test run entity.
     /// </summary>
-    [CustomCollectionPath("runs")]
+    [CustomCollectionPath("manual_runs")]
     public class RunManual : Run
     {
         public const string SUBTYPE_RUN_MANUAL = "run_manual";
@@ -36,13 +36,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public RunManual()
             : base()
         {
-            SubType = SUBTYPE_RUN_MANUAL;
         }
 
         public RunManual(EntityId id)
             : base(id)
         {
-            SubType = SUBTYPE_RUN_MANUAL;
         }
 
         public WorkspaceUser RunBy

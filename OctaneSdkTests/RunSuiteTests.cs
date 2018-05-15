@@ -15,8 +15,11 @@
 */
 
 using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Services;
+using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -27,6 +30,24 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void CreateRunSuiteTest()
         {
             CreateSuiteRun();
+        }
+
+        [TestMethod]
+        public void GetAllSuiteRunTest()
+        {
+            CreateSuiteRun();
+
+            //get as RunSuite
+            EntityListResult<RunSuite> runSuites = entityService.Get<RunSuite>(workspaceContext, null, null);
+            Assert.IsTrue(runSuites.total_count > 0);
+
+            //get as run
+            List<QueryPhrase> queries = new List<QueryPhrase>();
+            LogicalQueryPhrase byRunSuiteSubType = new LogicalQueryPhrase(Test.SUBTYPE_FIELD, RunSuite.SUBTYPE_RUN_SUITE);
+            queries.Add(byRunSuiteSubType);
+
+            EntityListResult<Run> runSuitesAsRuns = entityService.Get<Run>(workspaceContext, queries, null);
+            Assert.AreEqual<int?>(runSuites.total_count, runSuitesAsRuns.total_count);
         }
 
         [TestMethod]

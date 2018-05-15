@@ -22,7 +22,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     /// <summary>
     /// Wrapper for test suite run entity.
     /// </summary>
-    [CustomCollectionPath("runs")]
+    [CustomCollectionPath("suite_run")]
     public class RunSuite : Run
     {
         public const string SUBTYPE_RUN_SUITE = "run_suite";
@@ -35,13 +35,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public RunSuite()
             : base()
         {
-            SubType = SUBTYPE_RUN_SUITE;
         }
 
         public RunSuite(EntityId id)
             : base(id)
         {
-            SubType = SUBTYPE_RUN_SUITE;
         }
 
         public WorkspaceUser DefaultRunBy
