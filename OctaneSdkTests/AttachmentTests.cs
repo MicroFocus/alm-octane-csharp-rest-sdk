@@ -19,11 +19,12 @@ using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Entities.Base;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Text;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
-	[TestClass]
+    [TestClass]
     public class AttachmentTests : BaseTest
     {
 
@@ -34,12 +35,21 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             string fileName = "test.txt";
             string fileContents = "This is a test for attachments\r\nChecking that it's working";
             byte[] fileContentsBytes = Encoding.UTF8.GetBytes(fileContents);
-            
+
             Defect createdDefect = DefectTests.CreateDefect();
             Attachment attachment = entityService.AttachToEntity(workspaceContext, createdDefect, fileName, fileContentsBytes, "text/plain", new string[] { "owner_work_item" });
             Assert.IsNotNull(attachment.Id);
             Assert.AreEqual(attachment.owner_work_item.TypeName, "defect");
             Assert.AreEqual(attachment.owner_work_item.Id, createdDefect.Id);
-        }   
+
+            var relativeUrl = workspaceContext.GetPath() + "/attachments/" + attachment.Id + "/" + fileName;
+            var filePath = Path.GetTempPath() + "\\" + Guid.NewGuid() + ".txt";
+            entityService.DownloadAttachmentAsync(relativeUrl, filePath).Wait();
+
+            using (var sr = new StreamReader(filePath))
+            {
+                Assert.AreEqual(fileContents, sr.ReadToEnd(), "Mismatched file contents");
+            }
+        }
     }
 }

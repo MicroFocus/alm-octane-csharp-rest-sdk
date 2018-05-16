@@ -389,6 +389,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         /// </summary>
         public async Task DownloadAttachmentAsync(string relativeUrl, string destinationPath)
         {
+            if (string.IsNullOrEmpty(relativeUrl))
+            {
+                throw new ArgumentException("relativeUrl parameter is null or empty");
+            }
+            if (string.IsNullOrEmpty(destinationPath))
+            {
+                throw new ArgumentException("destinationPath parameter is null or empty");
+            }
+
             await rc.DownloadAttachmentAsync(relativeUrl, destinationPath).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
     }
