@@ -383,5 +383,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             }
             return result;
         }
+
+        /// <summary>
+        /// Download the attachment at the url and store it locally at the given location
+        /// </summary>
+        public async Task DownloadAttachmentAsync(string relativeUrl, string destinationPath)
+        {
+            await rc.DownloadAttachmentAsync(relativeUrl, destinationPath).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+        }
     }
 }
