@@ -30,7 +30,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string HAS_VISUAL_COVERAGE_FIELD = "has_visual_coverage";
         public const string RUN_BY_FIELD = "run_by";
         public const string RELEASE_FIELD = "release";
-        public const string TEST_FIELD = "test";
         public const string NATIVE_STATUS_FIELD = "native_status";
 
         public RunManual()

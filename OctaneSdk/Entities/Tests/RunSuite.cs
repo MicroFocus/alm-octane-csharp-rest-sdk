@@ -28,7 +28,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string SUBTYPE_RUN_SUITE = "run_suite";
 
         public const string DEFAULT_RUN_BY_FIELD = "default_run_by";
-        public const string TEST_FIELD = "test";
         public const string RELEASE_FIELD = "release";
         public const string NATIVE_STATUS_FIELD = "native_status";
 
