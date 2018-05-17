@@ -1,0 +1,2 @@
+# to disable automatic tests, because tesing requires availability of octane server
+test: off
