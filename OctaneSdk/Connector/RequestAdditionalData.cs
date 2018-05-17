@@ -28,6 +28,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         public Dictionary<string, string> Headers { get; set; }
 
+        /// <summary>
+        /// Local path for downloading attachment
+        /// </summary>
+        public string AttachmentDownloadPath { get; set; }
+
         public static RequestConfiguration Create()
         {
             return new RequestConfiguration();

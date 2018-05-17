@@ -18,5 +18,5 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
-	public enum RequestType { Get, Post, PostOctet, MultiPart, Update, Delete };
+    public enum RequestType { Get, GetOctet, Post, PostOctet, MultiPart, Update, Delete };
 }
