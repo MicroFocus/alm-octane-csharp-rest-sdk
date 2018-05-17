@@ -387,6 +387,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         /// <summary>
         /// Download the attachment at the url and store it locally at the given location
         /// </summary>
+        public void DownloadAttachment(string relativeUrl, string destinationPath)
+        {
+            DownloadAttachmentAsync(relativeUrl, destinationPath).Wait();
+        }
+
+        /// <summary>
+        /// Async operation for downloading the attachment at the url and store it locally at the given location
+        /// </summary>
         public async Task DownloadAttachmentAsync(string relativeUrl, string destinationPath)
         {
             if (string.IsNullOrEmpty(relativeUrl))
