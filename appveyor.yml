@@ -1,2 +1,5 @@
-# to disable automatic tests, because tesing requires availability of octane server
+version: 1.0.{build}
+image: Visual Studio 2017
+build:
+  verbosity: minimal
 test: off
