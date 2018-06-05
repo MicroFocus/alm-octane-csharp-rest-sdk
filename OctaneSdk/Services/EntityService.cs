@@ -408,5 +408,37 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             await rc.DownloadAttachmentAsync(relativeUrl, destinationPath).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
+
+        /// <summary>
+        /// Validate that the given commit message satisfies Octane's commit template
+        /// </summary>
+        public CommitPattern ValidateCommitMessage(IRequestContext context, string commitMessage)
+        {
+            return ValidateCommitMessageAsync(context, commitMessage).Result;
+        }
+
+        /// <summary>
+        /// Async operation for validating that the given commit message satisfies Octane's commit template
+        /// </summary>
+        public async Task<CommitPattern> ValidateCommitMessageAsync(IRequestContext context, string commitMessage)
+        {
+            if (context == null)
+            {
+                throw new ArgumentException("context parameter is null");
+            }
+            if (string.IsNullOrEmpty(commitMessage))
+            {
+                throw new ArgumentException("commitMessage parameter is null or empty");
+            }
+
+            string url = context.GetPath().Replace("/api", "/internal-api") + "/ali/validateCommitPattern";
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, "comment=" + commitMessage).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+            if (response.Data == null)
+            {
+                return null;
+            }
+
+            return jsonSerializer.Deserialize<CommitPattern>(response.Data);
+        }
     }
 }

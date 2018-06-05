@@ -17,27 +17,27 @@
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Base class for all WorkItem entities.
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary>
-	public class WorkItem : BaseEntity
+    /// <summary>
+    /// Base class for all WorkItem entities.
+    /// More fields might be supported by entity that still are not exposed in the class
+    /// </summary>
+    public class WorkItem : BaseEntity
     {
-        public static string SUBTYPE_FIELD = "subtype";
-        public static string RELEASE_FIELD = "release";
-        public static string PHASE_FIELD = "phase";
-        public static string SEVERITY_FIELD = "severity";
-        public static string PARENT_FIELD = "parent";
-        public static string DESCRIPTION_FIELD = "description";
-		public static string AUTHOR_FIELD = "author";
+        public const string SUBTYPE_FIELD = "subtype";
+        public const string RELEASE_FIELD = "release";
+        public const string PHASE_FIELD = "phase";
+        public const string SEVERITY_FIELD = "severity";
+        public const string PARENT_FIELD = "parent";
+        public const string DESCRIPTION_FIELD = "description";
+        public const string AUTHOR_FIELD = "author";
 
 
 
-		public static string SUBTYPE_DEFECT = "defect";
-        public static string SUBTYPE_STORY = "story";
-        public static string SUBTYPE_QUALITY_STORY = "quality_story";
-        public static string SUBTYPE_FEATURE = "feature";
-        public static string SUBTYPE_EPIC = "epic";
+        public const string SUBTYPE_DEFECT = "defect";
+        public const string SUBTYPE_STORY = "story";
+        public const string SUBTYPE_QUALITY_STORY = "quality_story";
+        public const string SUBTYPE_FEATURE = "feature";
+        public const string SUBTYPE_EPIC = "epic";
 
         public WorkItem()
         {
@@ -99,20 +99,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             }
         }
 
-		public WorkspaceUser Author
-		{
-			get
-			{
-				return (WorkspaceUser)GetValue(AUTHOR_FIELD);
-			}
-			set
-			{
-				SetValue(AUTHOR_FIELD, value);
-			}
-		}
+        public WorkspaceUser Author
+        {
+            get
+            {
+                return (WorkspaceUser)GetValue(AUTHOR_FIELD);
+            }
+            set
+            {
+                SetValue(AUTHOR_FIELD, value);
+            }
+        }
 
 
-		public Release Release
+        public Release Release
         {
             get
             {
