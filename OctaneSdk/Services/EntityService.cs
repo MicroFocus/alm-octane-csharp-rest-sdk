@@ -226,14 +226,24 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
              where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
-            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, serviceArguments);
+            return (T)await UpdateInternalAsync(context, entity, typeof(T), serviceArguments, fieldsToReturn);
+        }
 
+        public async Task<BaseEntity> UpdateAsync(IRequestContext context, BaseEntity entity, string type, Dictionary<string, string> serviceArguments = null, IList<string> fieldsToReturn = null)
+        {
+            Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(type);
+            return await UpdateInternalAsync(context, entity, entityType, serviceArguments, fieldsToReturn);
+        }
+
+        private async Task<BaseEntity> UpdateInternalAsync(IRequestContext context, BaseEntity entity, Type entityType, Dictionary<string, string> serviceArguments, IList<string> fieldsToReturn)
+        {
+            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
+            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, serviceArguments);
 
             string url = context.GetPath() + "/" + collectionName + "/" + entity.Id;
             String data = jsonSerializer.Serialize(entity);
             ResponseWrapper response = await rc.ExecutePutAsync(url, queryString, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
-            T result = jsonSerializer.Deserialize<T>(response.Data);
+            BaseEntity result = (BaseEntity)jsonSerializer.Deserialize(response.Data, entityType);
             return result;
         }
 
