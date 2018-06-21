@@ -116,5 +116,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Assert.IsTrue(searchResult.data.Count > 0);
             Assert.IsTrue(searchResult.data.Count <= 10);
         }
+
+        [TestMethod]
+        public void GetPossibleTransitionsForStoryEntity()
+        {
+            var result = entityService.GetPosibbleTransitionsForEntityType(workspaceContext, "story").Result;
+            Assert.IsTrue(result.data.Count > 0);
+        }
     }
 }

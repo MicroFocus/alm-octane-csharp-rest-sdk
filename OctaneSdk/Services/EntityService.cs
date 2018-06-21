@@ -450,5 +450,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             return jsonSerializer.Deserialize<CommitPattern>(response.Data);
         }
+
+        /// <summary>
+        /// Return all possible transitions for a given entity type
+        /// </summary>
+        public async Task<EntityListResult<Transition>> GetPosibbleTransitionsForEntityType(IRequestContext context, string entityType)
+        {
+            var query = new List<QueryPhrase>
+            {
+                new LogicalQueryPhrase("entity", entityType)
+            };
+
+            var result = await GetAsync<Transition>(context, query, new List<string> { "source_phase", "target_phase", "is_primary", "entity" });
+
+            return result;
+        }
     }
 }
