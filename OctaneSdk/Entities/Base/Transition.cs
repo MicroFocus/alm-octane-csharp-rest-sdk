@@ -34,7 +34,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities.Base
 
         public bool IsPrimary
         {
-            get { return (bool)GetValue(IS_PRIMARY_FIELD); }
+            get { return GetBooleanValue(IS_PRIMARY_FIELD, false); }
         }
     }
 }
