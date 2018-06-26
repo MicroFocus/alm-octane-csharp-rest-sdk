@@ -452,9 +452,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         }
 
         /// <summary>
-        /// Return all possible transitions for a given entity type
+        /// Return all transitions for a given entity type
         /// </summary>
-        public async Task<EntityListResult<Transition>> GetPosibbleTransitionsForEntityType(IRequestContext context, string entityType)
+        public async Task<EntityListResult<Transition>> GetTransitionsForEntityType(IRequestContext context, string entityType)
         {
             var query = new List<QueryPhrase>
             {
