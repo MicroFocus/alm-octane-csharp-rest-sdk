@@ -461,7 +461,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
                 new LogicalQueryPhrase("entity", entityType)
             };
 
-            var result = await GetAsync<Transition>(context, query, new List<string> { "source_phase", "target_phase", "is_primary", "entity" });
+            var result = await GetAsync<Transition>(context, query, new List<string> { Transition.SOURCE_PHASE_FIELD, Transition.TARGET_PHASE_FIELD, Transition.IS_PRIMARY_FIELD, Phase.ENTITY_FIELD });
 
             return result;
         }
