@@ -120,7 +120,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetPossibleTransitionsForStoryEntity()
         {
-            var result = entityService.GetPosibbleTransitionsForEntityType(workspaceContext, "story").Result;
+            var result = entityService.GetTransitionsForEntityType(workspaceContext, "story").Result;
             Assert.IsTrue(result.data.Count > 0);
         }
     }
