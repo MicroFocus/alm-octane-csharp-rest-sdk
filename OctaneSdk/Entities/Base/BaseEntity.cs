@@ -157,14 +157,5 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             String name = Name == null ? "No name" : Name.Substring(0, Math.Min(20, Name.Length)); //Show upto 20 characters in name
             return m_properties == null ? "No properties" : String.Format("{0} #{1} - {2} , {3} properties", TypeName, Id, name, m_properties.Count);
         }
-
-        public BaseEntity SimpleClone()
-        {
-            var result = new BaseEntity(Id);
-            result.AggregateType = AggregateType;
-            result.SetValue(TYPE_FIELD, TypeName);
-
-            return result;
-        }
     }
 }
