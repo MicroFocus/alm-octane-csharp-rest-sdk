@@ -1,0 +1,40 @@
+﻿/*!
+* (c) 2016-2018 EntIT Software LLC, a Micro Focus company
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+namespace MicroFocus.Adm.Octane.Api.Core.Entities.Base
+{
+    public class Transition : BaseEntity
+    {
+        public const string SOURCE_PHASE_FIELD = "source_phase";
+        public const string TARGET_PHASE_FIELD = "target_phase";
+        public const string IS_PRIMARY_FIELD = "is_primary";
+
+        public Phase SourcePhase
+        {
+            get { return (Phase)GetValue(SOURCE_PHASE_FIELD); }
+        }
+
+        public Phase TargetPhase
+        {
+            get { return (Phase)GetValue(TARGET_PHASE_FIELD); }
+        }
+
+        public bool IsPrimary
+        {
+            get { return GetBooleanValue(IS_PRIMARY_FIELD, false); }
+        }
+    }
+}
