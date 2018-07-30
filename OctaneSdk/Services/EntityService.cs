@@ -191,9 +191,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             string url = context.GetPath() + "/" + collectionName;
             String data = jsonSerializer.Serialize(entityList);
+
             ResponseWrapper response = await rc.ExecutePostAsync(url, queryParams, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
+
         }
 
         public T Create<T>(IRequestContext context, T entity, IList<string> fieldsToReturn = null) where T : BaseEntity

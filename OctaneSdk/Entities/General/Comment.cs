@@ -46,7 +46,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public BaseEntity OwnerWorkItem
         {
             get { return (BaseEntity)GetValue(OWNER_WORK_FIELD); }
+            set
+            {
+                SetValue(OWNER_WORK_FIELD, value);
+            }
         }
+
 
         public BaseEntity OwnerTest
         {
@@ -57,6 +62,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         {
             get { return (BaseEntity)GetValue(OWNER_RUN_FIELD); }
         }
+
 
         public BaseEntity OwnerRequirement
         {
@@ -71,6 +77,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public string Text
         {
             get { return GetStringValue(TEXT_FIELD); }
+            set
+            {
+                SetValue(TEXT_FIELD, value);
+            }
         }
     }
 }
