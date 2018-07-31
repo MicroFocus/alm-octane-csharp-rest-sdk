@@ -97,6 +97,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             {
                 return GetStringValue(TYPE_FIELD);
             }
+            set
+            {
+                SetValue(TYPE_FIELD, value);
+            }
 
         }
 
