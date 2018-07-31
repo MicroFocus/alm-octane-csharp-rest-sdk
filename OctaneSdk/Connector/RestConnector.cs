@@ -469,13 +469,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 }
                 else
                 {
-                    awaitContinueOnCapturedContext = false;
                     request.ContentLength = byteData.Length;
                     using (Stream postStream = await request.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
                     {
                         postStream.Write(byteData, 0, byteData.Length);
                     }
-                    awaitContinueOnCapturedContext = true;
                 }
             }
 
