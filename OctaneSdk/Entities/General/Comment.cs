@@ -56,17 +56,29 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public BaseEntity OwnerTest
         {
             get { return (BaseEntity)GetValue(OWNER_TEST_FIELD); }
+            set
+            {
+                SetValue(OWNER_TEST_FIELD, value);
+            }
         }
 
         public BaseEntity OwnerRun
         {
             get { return (BaseEntity)GetValue(OWNER_RUN_FIELD); }
+            set
+            {
+                SetValue(OWNER_RUN_FIELD, value);
+            }
         }
 
 
         public BaseEntity OwnerRequirement
         {
             get { return (BaseEntity)GetValue(OWNER_REQUIREMENT_FIELD); }
+            set
+            {
+                SetValue(OWNER_REQUIREMENT_FIELD, value);
+            }
         }
 
         public string CreationTime
