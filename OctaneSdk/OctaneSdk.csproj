@@ -62,6 +62,7 @@
     <Compile Include="Entities\Base\CommitPattern.cs" />
     <Compile Include="Entities\Base\EntityIdExtensions.cs" />
     <Compile Include="Entities\Base\EntityId.cs" />
+    <Compile Include="Entities\Base\EntityLabelMetadata.cs" />
     <Compile Include="Entities\Base\Transition.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
