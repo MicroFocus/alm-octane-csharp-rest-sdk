@@ -346,6 +346,30 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
         }
 
+
+        /// <summary>
+        /// Returns the label metadata for the entities
+        /// </summary>
+        public async Task<ListResult<EntityLabelMetadata>> GetLabelMetadataAsync(IRequestContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            string url = context.GetPath() + "/entity_labels";
+
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, "").ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+           
+            if (response.Data == null)
+            {
+                return null;
+            }
+
+            return jsonSerializer.Deserialize<ListResult<EntityLabelMetadata>>(response.Data);
+        }
+
+
         /// <summary>
         /// Search for all entities of given type that satify the search criteria
         /// </summary>
