@@ -108,9 +108,18 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public static EntityReference createEntityReferenceWithType(string type)
         {
-            string apiEntityName = ApiEntityNameTypePairs[type];
-            EntityReference entityReference = new EntityReference(apiEntityName, type);
-            return entityReference;
+            try
+            {
+                string apiEntityName = ApiEntityNameTypePairs[type];
+                EntityReference entityReference = new EntityReference(apiEntityName, type);
+                return entityReference;
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Reference entity type not supported: " + type);
+            }
+            return null;
         }
 
         public bool IsSubType()
