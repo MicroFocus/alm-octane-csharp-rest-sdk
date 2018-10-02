@@ -203,21 +203,29 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         public Task<ResponseWrapper> DisconnectAsync()
         {
-            var resp = ExecutePostAsync(DISCONNECT_URL, null, null, null);
+            Task<ResponseWrapper> response = null;
+            try
+            {
+               response = ExecutePostAsync(DISCONNECT_URL, null, null, null);
+
+            }
+            catch (Exception)
+            {
+                // Do nothing
+            }
             
             // Reset cookies container to erase any existing cookies of the previous session.
             lwSsoCookie = null;
             octaneUserCookie = null;
 
-            return resp;
+            return response;
         }
 
         public void Disconnect()
         {
             try
             {
-                ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
-
+                ResponseWrapper wrapper = DisconnectAsync().Result;
             }
             catch (Exception)
             {
