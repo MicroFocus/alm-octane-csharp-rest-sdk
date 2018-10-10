@@ -22,6 +22,7 @@ using MicroFocus.Adm.Octane.Api.Core.Services.Core;
 using MicroFocus.Adm.Octane.Api.Core.Services.GroupBy;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
+using MicroFocus.Adm.Octane.Api.Core.Services.Version;
 using System;
 using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
@@ -39,9 +40,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
     {
         private RestConnector rc;
         private JavaScriptSerializer jsonSerializer;
-
-
-
 
         public EntityService(RestConnector rc)
         {
@@ -482,5 +480,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
             return result;
         }
+
+
+        /// <summary>
+        /// Return the octane version
+        /// </summary>
+        public async Task<OctaneVersion> GetOctaneVersion()
+        {
+            string url = "/admin/server/version";
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, null).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+            if (response.Data == null)
+            {
+                return null;
+            }
+
+            return new OctaneVersion(jsonSerializer.Deserialize<OctaneVersionMetadata>(response.Data).display_version);
+        }
+
     }
 }
