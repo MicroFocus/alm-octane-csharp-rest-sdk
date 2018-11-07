@@ -135,6 +135,8 @@
     <Compile Include="Services\EntityListResult.cs" />
     <Compile Include="Services\Core\EntityTypeRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Version\OctaneVersion.cs" />
+    <Compile Include="Services\Version\OctaneVersionMetadata.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
