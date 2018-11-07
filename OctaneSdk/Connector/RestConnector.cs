@@ -127,9 +127,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 streamWriter.Write(json);
             }
 
-            var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
-
-            SaveCookies(httpResponse);
+            using (var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
+            {
+                SaveCookies(httpResponse);
+            }
 
             return IsConnected();
         }
@@ -200,12 +201,31 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return cookie.Value;
         }
 
+        public Task<ResponseWrapper> DisconnectAsync()
+        {
+            Task<ResponseWrapper> response = null;
+            try
+            {
+               response = ExecutePostAsync(DISCONNECT_URL, null, null, null);
+
+            }
+            catch (Exception)
+            {
+                // Do nothing
+            }
+            
+            // Reset cookies container to erase any existing cookies of the previous session.
+            lwSsoCookie = null;
+            octaneUserCookie = null;
+
+            return response;
+        }
+
         public void Disconnect()
         {
             try
             {
-                ResponseWrapper wrapper = ExecutePost(DISCONNECT_URL, null, null);
-
+                ResponseWrapper wrapper = DisconnectAsync().Result;
             }
             catch (Exception)
             {
@@ -225,12 +245,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
         {
             String url = host + restRelativeUri;
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             //add cookies
             String cookieDomain = request.Address.Host;
             String cookiePath = "/";
-
+        
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
             request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));

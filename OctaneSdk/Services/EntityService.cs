@@ -1,3 +1,4 @@
+
 ﻿/*!
 * (c) 2016-2018 EntIT Software LLC, a Micro Focus company
 *
@@ -90,7 +91,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         }
 
         public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit)
-        { 
+        {
             string url = context.GetPath() + "/" + apiEntityName;
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
@@ -357,6 +358,28 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             }
 
             return jsonSerializer.Deserialize<ListResult<FieldMetadata>>(response.Data);
+        }
+
+        /// <summary>
+        /// Returns the label metadata for the entities
+        /// </summary>
+        public async Task<ListResult<EntityLabelMetadata>> GetLabelMetadataAsync(IRequestContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            string url = context.GetPath() + "/entity_labels";
+
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, "").ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
+
+            if (response.Data == null)
+            {
+                return null;
+            }
+
+            return jsonSerializer.Deserialize<ListResult<EntityLabelMetadata>>(response.Data);
         }
 
         /// <summary>
