@@ -11,8 +11,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
 
         public static readonly OctaneVersion FENER_P3 = new OctaneVersion("12.55.7");
 
-        private string almVersion { get; }
-        private int octaneVersion { get; }
+        private string almVersion { get; set; }
+        private int octaneVersion { get; set; }
         private int buildNumber;
 
         public OctaneVersion(String versionString)
