@@ -141,7 +141,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
             QueryPhrase releaseIdPhrase = new LogicalQueryPhrase(Release.ID_FIELD, release.Id);
-            QueryPhrase byReleasePhrase = new CrossQueryPhrase(Milestone.RELEASES_FIELD, releaseIdPhrase);
+            QueryPhrase byReleasePhrase = new CrossQueryPhrase(Milestone.RELEASE_FIELD, releaseIdPhrase);
 
             queryPhrases.Add(byReleasePhrase);
             EntityListResult<Milestone> result = entityService.Get<Milestone>(workspaceContext, queryPhrases, null);
@@ -210,7 +210,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Milestone milestone = new Milestone();
             milestone.Name = name;
             milestone.Date = DateTime.Now.AddDays(7);
-            milestone.SetRelease(new EntityList<Release>(release));
+            milestone.SetRelease(release);
 
 
             Milestone created = entityService.Create<Milestone>(workspaceContext, milestone, TestHelper.NameFields);

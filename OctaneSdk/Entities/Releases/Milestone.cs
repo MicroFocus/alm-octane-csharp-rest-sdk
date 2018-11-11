@@ -20,15 +20,15 @@ using System;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-	/// <summary>
-	/// Wrapper for Milestone entity
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary>
-	public class Milestone : BaseEntity
+    /// <summary>
+    /// Wrapper for Milestone entity
+    /// More fields might be supported by entity that still are not exposed in the class
+    /// </summary>
+    public class Milestone : BaseEntity
     {
         public static string DATE_FIELD = "date";
         public static string DESCRIPTION_FIELD = "description";
-        public static string RELEASES_FIELD = "releases";
+        public static string RELEASE_FIELD = "release";
 
         public Milestone()
         {
@@ -66,21 +66,21 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         }
 
-        public void SetRelease(EntityList<Release> releases)
+        public void SetRelease(Release release)
         {
-            SetValue(RELEASES_FIELD, releases);
+            SetValue(RELEASE_FIELD, release);
 
         }
 
-        public EntityList<Release> Releases
+        public Release Release
         {
             get
             {
-                return GetEntityList<Release>(RELEASES_FIELD);
+                return (Release)GetValue(RELEASE_FIELD);
             }
             set
             {
-                SetValue(RELEASES_FIELD, value);
+                SetValue(RELEASE_FIELD, value);
             }
 
         }
