@@ -26,6 +26,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public static string ENTITY_TYPE_FIELD = "entity_type";
         public static string USER_FIELD = "user";
         public static string REASON_FIELD = "reason";
+        public static string ORIGIN = "origin";
         public static string WORK_ITEM_REFERENCE = "my_follow_items_work_item";
         public static string TASK_REFERENCE = "my_follow_items_task";
         public static string TEST_REFERENCE = "my_follow_items_test";
