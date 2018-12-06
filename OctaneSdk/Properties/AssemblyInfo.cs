@@ -48,8 +48,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("12.60.4.0")]
-[assembly: AssemblyFileVersion("12.60.4.0")]
+[assembly: AssemblyVersion("12.60.27.0")]
+[assembly: AssemblyFileVersion("12.60.27.0")]
 
 // The following allows the testing assembly to access internal classes such as QueryStringBuilder.
 [assembly: InternalsVisibleTo("MicroFocus.Adm.Octane.Api.Core.Tests")]
