@@ -38,7 +38,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 		[TestMethod]
 		public void ReConnectionTest()
 		{
-			restConnector.SetLwSsoToken(" ");
+			lwssoAuthenticationStrategy.SetLwSsoToken(" ");
 			StoryTests.CreateStory();			
 			Assert.IsTrue(restConnector.IsConnected());
 		}

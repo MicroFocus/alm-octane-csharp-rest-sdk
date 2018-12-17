@@ -15,6 +15,7 @@
 */
 
 
+using MicroFocus.Adm.Octane.Api.Core.Connector.Authentication;
 using MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions;
 using MicroFocus.Adm.Octane.Api.Core.Services;
 using System;
@@ -24,7 +25,6 @@ using System.IO.Compression;
 using System.Net;
 using System.Security.Authentication;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
@@ -32,33 +32,25 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
     /// <summary>
     /// Low-level class for communication with NGA server.
-    /// Used as singelton.
     /// The login should be executed first by calling to <see cref="Connect"/> method.
     /// For OO wrapper class <see cref="EntityService" class/>
     /// </summary>
     public class RestConnector
     {
-        private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
-
-        private static string CONTENT_TYPE_JSON = "application/json";
+        public static string CONTENT_TYPE_JSON = "application/json";
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
         private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
 
-        public static string AUTHENTICATION_URL = "/authentication/sign_in";
-        public static string DISCONNECT_URL = "/authentication/sign_out";
         public static string SHARED_SPACES_URL = "/api/shared_spaces";
 
-        private static string METHOD_POST = "POST";
-        private static string METHOD_GET = "GET";
-        private static string METHOD_PUT = "PUT";
-        private static string METHOD_DELETE = "DELETE";
+        public static string METHOD_POST = "POST";
+        public static string METHOD_GET = "GET";
+        public static string METHOD_PUT = "PUT";
+        public static string METHOD_DELETE = "DELETE";
         private string host;
-        private ConnectionInfo connectionInfo;
+        private AuthenticationStrategy authenticationStrategy;
 
-        private string lwSsoCookie;
-        private string octaneUserCookie;
         private static bool awaitContinueOnCapturedContext = true;
 
         public String Host
@@ -86,11 +78,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             return ConnectAsync(host, connectionInfo).Result;
         }
 
+        public bool Connect(string host, AuthenticationStrategy authenticationStrategy)
+        {
+            return ConnectAsync(host, authenticationStrategy).Result;
+        }
+
         private async Task<bool> Reconnect()
         {
             try
             {
-                return await ConnectAsync(host, connectionInfo);
+                return await ConnectAsync(host, authenticationStrategy);
             }
             catch (Exception)
             {
@@ -100,146 +97,40 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         public async Task<bool> ConnectAsync(string host, ConnectionInfo connectionInfo)
         {
+            return await ConnectAsync(host, new LwssoAuthenticationStrategy(connectionInfo)).ConfigureAwait(AwaitContinueOnCapturedContext);
+        }
+
+        public async Task<bool> ConnectAsync(string host, AuthenticationStrategy authenticationStrategy)
+        {
             if (host == null)
             {
                 throw new ArgumentNullException("host");
             }
 
-            if (connectionInfo == null)
+            if (authenticationStrategy == null)
             {
-                throw new ArgumentNullException("connectionInfo");
+                throw new ArgumentNullException("authenticationStrategy");
             }
 
-            this.connectionInfo = connectionInfo;
+            this.authenticationStrategy = authenticationStrategy;
             this.host = host.TrimEnd('/');
 
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-
-            httpWebRequest.Method = METHOD_POST;
-            httpWebRequest.ContentType = CONTENT_TYPE_JSON;
-            httpWebRequest.CookieContainer = new CookieContainer();
-
-            Stream stream = await httpWebRequest.GetRequestStreamAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
-            using (var streamWriter = new StreamWriter(stream))
-            {
-                JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                String json = jsSerializer.Serialize(connectionInfo);
-                streamWriter.Write(json);
-            }
-
-            using (var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext))
-            {
-                SaveCookies(httpResponse);
-            }
-
-            return IsConnected();
+            return await authenticationStrategy.ConnectAsync(this.host).ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
-        private string GetLwSsoToken()
+        public async Task<bool> DisconnectAsync()
         {
-            return lwSsoCookie;
-        }
-
-        /// <summary>
-        ///DON'T USE DIRECTLY. Only Testing API
-        /// </summary>
-        internal void SetLwSsoToken(string token)
-        {
-            lwSsoCookie = token;
-        }
-
-
-        private void SaveCookies(HttpWebResponse httpResponse)
-        {
-            lwSsoCookie = ExtractValueFromCookie(httpResponse, LWSSO_COOKIE_NAME, lwSsoCookie);
-            octaneUserCookie = ExtractValueFromCookie(httpResponse, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
-
-            string[] setCookies = httpResponse.Headers.GetValues("Set-Cookie");
-            lwSsoCookie = ExtractValueFromSetCookie(setCookies, LWSSO_COOKIE_NAME, lwSsoCookie);
-            octaneUserCookie = ExtractValueFromSetCookie(setCookies, OCTANE_USER_COOKIE_NAME, octaneUserCookie);
-        }
-
-        private static string ExtractValueFromCookie(HttpWebResponse httpResponse, string key, string defaultValue)
-        {
-            if (httpResponse.Cookies[key] != null)
-            {
-                return httpResponse.Cookies[key].Value;
-            }
-            return defaultValue;
-        }
-
-        private static string ExtractValueFromSetCookie(string[] setCookieValues, string key, string defaultValue)
-        {
-            if (setCookieValues != null)
-            {
-                foreach (string setValue in setCookieValues)
-                {
-                    if (setValue.StartsWith(key))
-                    {
-                        //OCTANE_USER=workspace.admin;Version=1;Domain=212.83.136.98;Path=/;Max-Age=86400;Secure;HttpOnly
-                        Regex regex = new Regex(key + "=(.*?);");
-                        Match match = regex.Match(setValue);
-                        if (match.Success)
-                        {
-                            return match.Groups[1].Value;
-                        }
-                    }
-                }
-            }
-
-            return defaultValue;
-        }
-
-        private string GetCookieValue(HttpWebResponse httpResponse, string cookieName)
-        {
-            Cookie cookie = httpResponse.Cookies[cookieName];
-            if (cookie == null)
-            {
-                return string.Empty;
-            }
-
-            return cookie.Value;
-        }
-
-        public Task<ResponseWrapper> DisconnectAsync()
-        {
-            Task<ResponseWrapper> response = null;
-            try
-            {
-               response = ExecutePostAsync(DISCONNECT_URL, null, null, null);
-
-            }
-            catch (Exception)
-            {
-                // Do nothing
-            }
-            
-            // Reset cookies container to erase any existing cookies of the previous session.
-            lwSsoCookie = null;
-            octaneUserCookie = null;
-
-            return response;
+            return await authenticationStrategy.DisconnectAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
         public void Disconnect()
         {
-            try
-            {
-                ResponseWrapper wrapper = DisconnectAsync().Result;
-            }
-            catch (Exception)
-            {
-                //do nothing
-            }
-
-            // Reset cookies container to erase any existing cookies of the previous session.
-            lwSsoCookie = null;
-            octaneUserCookie = null;
+            bool disconnected = DisconnectAsync().Result;
         }
 
         public bool IsConnected()
         {
-            return GetLwSsoToken() != null;
+            return authenticationStrategy != null && authenticationStrategy.IsConnected();
         }
 
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
@@ -247,13 +138,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             String url = host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-            //add cookies
-            String cookieDomain = request.Address.Host;
-            String cookiePath = "/";
-        
-            request.CookieContainer = new CookieContainer();
-            request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
-            request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));
+            //Add authentication cookies/headers
+            authenticationStrategy.PrepareRequest(request);
+
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
@@ -391,7 +278,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 }
 
                 responseWrapper.StatusCode = response.StatusCode;
-                SaveCookies(response);
+                authenticationStrategy.OnResponse(response);
 
             }
             catch (WebException ex)
