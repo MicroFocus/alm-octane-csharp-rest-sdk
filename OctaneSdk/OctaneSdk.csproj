@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connector\Authentication\SsoAuthenticationStrategy.cs" />
     <Compile Include="Connector\Credentials\APIKeyConnectionInfo.cs" />
     <Compile Include="Connector\Authentication\AuthenticationStrategy.cs" />
     <Compile Include="Connector\Authentication\LwssoAuthenticationStrategy.cs" />
