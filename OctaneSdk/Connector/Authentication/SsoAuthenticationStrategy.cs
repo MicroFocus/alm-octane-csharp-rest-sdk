@@ -10,7 +10,7 @@ using System.Web.Script.Serialization;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 {
-    class SsoAuthenticationStrategy : AuthenticationStrategy
+    public class SsoAuthenticationStrategy : AuthenticationStrategy
     {
 
         private string cookieName;
