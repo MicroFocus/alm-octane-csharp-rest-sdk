@@ -31,5 +31,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// </summary>
         /// <param name="response"></param>
         void OnResponse(HttpWebResponse response);
+
+        /// <summary>
+        /// Retrieve the workspace user
+        /// </summary>
+        Task<String> GetWorkspaceUser();
+
     }
 }

@@ -152,5 +152,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
             request.CookieContainer.Add(new Cookie(cookieName, cookieValue, cookiePath, cookieDomain));
             
         }
+
+        public async Task<String> GetWorkspaceUser()
+        {
+            return null;
+        }
     }
 }
