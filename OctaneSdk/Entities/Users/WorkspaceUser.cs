@@ -23,6 +23,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 	/// </summary>
 	public class WorkspaceUser : BaseUserEntity
     {
-        
+        public bool is_api_key { get; set; }
     }
 }

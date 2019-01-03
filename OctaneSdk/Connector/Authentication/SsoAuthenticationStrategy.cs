@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MicroFocus.Adm.Octane.Api.Core.Entities;
+using MicroFocus.Adm.Octane.Api.Core.Services.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 {
     public class SsoAuthenticationStrategy : AuthenticationStrategy
     {
-
+        private Object authenticationLock = new Object();
         private string cookieName;
         private string cookieValue;
         private string DEFAULT_OCTANE_SESSION_COOKIE_NAME = "LWSSO_COOKIE_KEY";
@@ -22,6 +24,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         private string host;
         private APIKeyConnectionInfo connectionInfo;
         private long pollingTimeoutSeconds = 60 * 2; // 2 minutes
+        private ConnectionListener connectionListener;
+        private JavaScriptSerializer jSerialiser;
+
+        public SsoAuthenticationStrategy()
+        {
+            jSerialiser = new JavaScriptSerializer();
+            jSerialiser.RegisterConverters(new JavaScriptConverter[] { new EntityJsonConverter(), new EntityIdJsonConverter() });
+        }
 
         private void ClearSessionFields()
         {
@@ -33,78 +43,81 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         
         public async Task<bool> ConnectAsync(string host)
         {
-            // do not authenticate if lwssoValue is not empty
-            if (IsConnected())
+            lock (authenticationLock)
             {
-                return true;
-            }
-           
-            ClearSessionFields();
-
-            this.host = host;
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-
-            httpWebRequest.Method = RestConnector.METHOD_GET;
-            httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
-            httpWebRequest.CookieContainer = new CookieContainer();
-                
-            using (var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext))
-            {
-                using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                // do not authenticate if lwssoValue is not empty
+                if (IsConnected())
                 {
-                    JavaScriptSerializer js = new JavaScriptSerializer();
-                    var objText = reader.ReadToEnd();
-                    connectionInfo = (APIKeyConnectionInfo)js.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                    return true;
                 }
-            }
 
-            long pollingTimeoutTimestamp = 0;
-            APIKeyConnectionInfo accessTokenConnectionInfo = new APIKeyConnectionInfo();
+                ClearSessionFields();
 
-            while (pollingTimeoutTimestamp > pollingTimeoutSeconds)
-            {
-                    
-                try
+                this.host = host;
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
+
+                httpWebRequest.Method = RestConnector.METHOD_GET;
+                httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+                httpWebRequest.CookieContainer = new CookieContainer();
+
+                using (var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse())
                 {
-                    var pollRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-
-                    pollRequest.Method = RestConnector.METHOD_POST;
-                    pollRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
-                    pollRequest.CookieContainer = new CookieContainer();
-
-                    Stream stream = await pollRequest.GetRequestStreamAsync().ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
-                    using (var streamWriter = new StreamWriter(stream))
+                    using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                     {
-                        JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                        String json = jsSerializer.Serialize(connectionInfo.identifier);
-                        streamWriter.Write(json);
+                        var objText = reader.ReadToEnd();
+                        connectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
                     }
+                }
 
-                    using (var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext))
+                if (connectionListener != null)
+                {
+                    connectionListener.OpenBrowser(connectionInfo.authentication_url);
+                }
+
+                long pollingTimeoutTimestamp = 0;
+                APIKeyConnectionInfo accessTokenConnectionInfo = new APIKeyConnectionInfo();
+
+                while (pollingTimeoutTimestamp < pollingTimeoutSeconds)
+                {
+
+                    try
                     {
+                        var pollRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
+
+                        pollRequest.Method = RestConnector.METHOD_POST;
+                        pollRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+                        pollRequest.CookieContainer = new CookieContainer();
+
+                        Stream stream = pollRequest.GetRequestStream();
+                        using (var streamWriter = new StreamWriter(stream))
+                        {
+                            String json = jSerialiser.Serialize(connectionInfo);
+                            streamWriter.Write(json);
+                        }
+
+                        using (var httpResponse = (HttpWebResponse)pollRequest.GetResponse())                        
                         using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                         {
-                            JavaScriptSerializer js = new JavaScriptSerializer();
                             var objText = reader.ReadToEnd();
-                            accessTokenConnectionInfo = (APIKeyConnectionInfo)js.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                            accessTokenConnectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
                         }
+                        
+                        
+                    }
+                    catch (Exception)
+                    {
+                        Thread.Sleep(1000); // Do not DOS the server, not cool    
+                        continue;
                     }
 
+                    cookieValue = accessTokenConnectionInfo.access_token;
+                    cookieName = accessTokenConnectionInfo.cookie_name;
 
-                }
-                catch (Exception ex)
-                {
-                    Thread.Sleep(1000); // Do not DOS the server, not cool    
-                    continue;
+                    return true;
                 }
 
-                cookieValue = accessTokenConnectionInfo.access_token;
-                cookieName = accessTokenConnectionInfo.cookie_name;
-                   
-                return true;
+                return false;
             }
-                
-            return false;
         }
 
     
@@ -155,7 +168,44 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 
         public async Task<String> GetWorkspaceUser()
         {
-            return null;
+            if(octaneUserValue != null && !octaneUserValue.Equals(""))
+            {
+                return octaneUserValue;
+            }
+
+            try
+            {
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(host + "/api/current_user/");
+
+                httpWebRequest.Method = RestConnector.METHOD_GET;
+                httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+
+                PrepareRequest(httpWebRequest);
+
+                httpWebRequest.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
+
+                ResponseWrapper responseWrapper = new ResponseWrapper();
+
+                using (var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse())
+                {
+                    using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        responseWrapper.Data = reader.ReadToEnd();
+                    }
+                }
+                WorkspaceUser result = jSerialiser.Deserialize<WorkspaceUser>(responseWrapper.Data);
+                octaneUserValue = result.Name;
+                return result.Name;
+            }
+            catch (Exception)
+            {
+                return null; 
+            }
+        }
+
+        public void SetConnectionListener(ConnectionListener connectionListener)
+        {
+            this.connectionListener = connectionListener;
         }
     }
 }
