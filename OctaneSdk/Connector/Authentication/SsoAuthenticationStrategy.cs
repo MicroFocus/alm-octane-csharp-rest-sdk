@@ -27,10 +27,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         private ConnectionListener connectionListener;
         private JavaScriptSerializer jSerialiser;
 
+        private readonly Mutex mutex;
+
         public SsoAuthenticationStrategy()
         {
             jSerialiser = new JavaScriptSerializer();
             jSerialiser.RegisterConverters(new JavaScriptConverter[] { new EntityJsonConverter(), new EntityIdJsonConverter() });
+
+            mutex = new Mutex();
         }
 
         private void ClearSessionFields()
@@ -43,81 +47,94 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         
         public async Task<bool> ConnectAsync(string host)
         {
-            lock (authenticationLock)
-            {
-                // do not authenticate if lwssoValue is not empty
-                if (IsConnected())
-                {
-                    return true;
-                }
 
-                ClearSessionFields();
-
-                this.host = host;
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-
-                httpWebRequest.Method = RestConnector.METHOD_GET;
-                httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
-                httpWebRequest.CookieContainer = new CookieContainer();
-
-                using (var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse())
-                {
-                    using (var reader = new StreamReader(httpResponse.GetResponseStream()))
-                    {
-                        var objText = reader.ReadToEnd();
-                        connectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
-                    }
-                }
-
-                if (connectionListener != null)
-                {
-                    connectionListener.OpenBrowser(connectionInfo.authentication_url);
-                }
-
-                long pollingTimeoutTimestamp = 0;
-                APIKeyConnectionInfo accessTokenConnectionInfo = new APIKeyConnectionInfo();
-
-                while (pollingTimeoutTimestamp < pollingTimeoutSeconds)
-                {
-
+            return await System.Threading.Tasks.Task.Run(() =>
+                { 
+                    mutex.WaitOne();
                     try
                     {
-                        var pollRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-
-                        pollRequest.Method = RestConnector.METHOD_POST;
-                        pollRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
-                        pollRequest.CookieContainer = new CookieContainer();
-
-                        Stream stream = pollRequest.GetRequestStream();
-                        using (var streamWriter = new StreamWriter(stream))
+                        // do not authenticate if lwssoValue is not empty
+                        if (IsConnected())
                         {
-                            String json = jSerialiser.Serialize(connectionInfo);
-                            streamWriter.Write(json);
+                            return true;
                         }
 
-                        using (var httpResponse = (HttpWebResponse)pollRequest.GetResponse())                        
-                        using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                        ClearSessionFields();
+
+                        this.host = host;
+                        var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
+
+                        httpWebRequest.Method = RestConnector.METHOD_GET;
+                        httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+                        httpWebRequest.CookieContainer = new CookieContainer();
+
+                        using (var httpResponse = httpWebRequest.GetResponse())
                         {
-                            var objText = reader.ReadToEnd();
-                            accessTokenConnectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                            using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                            {
+                                var objText = reader.ReadToEnd();
+                                connectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                            }
                         }
+
+                        if (connectionListener != null)
+                        {
+                            connectionListener.OpenBrowser(connectionInfo.authentication_url);
+                        }
+
+                        long pollingTimeoutTimestamp = 0;
+                        APIKeyConnectionInfo accessTokenConnectionInfo = new APIKeyConnectionInfo();
+
+                        while (pollingTimeoutTimestamp < pollingTimeoutSeconds)
+                        {
+
+                            try
+                            {
+                                var pollRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
+
+                                pollRequest.Method = RestConnector.METHOD_POST;
+                                pollRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+                                pollRequest.CookieContainer = new CookieContainer();
+
+                                Stream stream = pollRequest.GetRequestStream();
+                                using (var streamWriter = new StreamWriter(stream))
+                                {
+                                    String json = jSerialiser.Serialize(connectionInfo);
+                                    streamWriter.Write(json);
+                                }
+
+                                using (var httpResponse = pollRequest.GetResponse())                        
+                                using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                                {
+                                    var objText = reader.ReadToEnd();
+                                    accessTokenConnectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                                }
                         
                         
-                    }
-                    catch (Exception)
-                    {
-                        Thread.Sleep(1000); // Do not DOS the server, not cool    
-                        continue;
-                    }
+                            }
+                            catch (Exception)
+                            {
+                                Thread.Sleep(1000); // Do not DOS the server, not cool    
+                                continue;
+                            }
 
-                    cookieValue = accessTokenConnectionInfo.access_token;
-                    cookieName = accessTokenConnectionInfo.cookie_name;
+                            cookieValue = accessTokenConnectionInfo.access_token;
+                            cookieName = accessTokenConnectionInfo.cookie_name;
 
-                    return true;
+                            if (connectionListener != null)
+                            {
+                                connectionListener.CloseBrowser();
+                            }
+                            return true;
+                        }
+
+                        return false;
+                    }
+                finally
+                {
+                    mutex.ReleaseMutex();
                 }
-
-                return false;
-            }
+                });
         }
 
     
