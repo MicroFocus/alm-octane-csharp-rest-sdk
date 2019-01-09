@@ -169,5 +169,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         {
             return credentials.user;
         }
+
+        public async Task<bool> TestConnection(string host)
+        {
+            try
+            {
+                return await ConnectAsync(host);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -37,5 +37,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// </summary>
         Task<String> GetWorkspaceUser();
 
+        /// <summary>
+        ///  Test the connection to the octane server
+        /// </summary>
+        /// <param name="host"></param>
+        /// <returns></returns>
+        Task<bool> TestConnection(string host);
+
     }
 }

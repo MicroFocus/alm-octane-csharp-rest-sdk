@@ -1,5 +1,6 @@
 ﻿using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services.Core;
+using MicroFocus.Adm.Octane.Api.Core.Services.Version;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -223,6 +224,39 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         public void SetConnectionListener(ConnectionListener connectionListener)
         {
             this.connectionListener = connectionListener;
+        }
+
+        public async Task<bool> TestConnection(string host)
+        {
+            // determine if sso is implemented in octane server
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(host + "/admin/server/version");
+
+            httpWebRequest.Method = RestConnector.METHOD_GET;
+            httpWebRequest.ContentType = RestConnector.CONTENT_TYPE_JSON;
+
+            httpWebRequest.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
+
+            ResponseWrapper responseWrapper = new ResponseWrapper();
+
+            using (var httpResponse = await httpWebRequest.GetResponseAsync().ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext))
+            {
+                using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    responseWrapper.Data = reader.ReadToEnd();
+                }
+            }
+
+            OctaneVersion octaneVersion = new OctaneVersion(jSerialiser.Deserialize<OctaneVersionMetadata>(responseWrapper.Data).display_version);
+
+            if(octaneVersion.CompareTo(OctaneVersion.INTER_P2) < 0)
+            {
+                throw new Exception("Login with browser is only supported starting from Octane server version: " + OctaneVersion.INTER_P2);
+            }
+            else
+            {
+                return true;
+            }
+            
         }
     }
 }
