@@ -15,5 +15,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// </summary>
         /// <param name="url"></param>
         void CloseBrowser();
+
+        /// <summary>
+        /// Returns whether the browser dialog is open or closed
+        /// </summary>
+        /// <returns>boolean representing if the dialog is closed</returns>
+        bool IsOpen();
     }
 }

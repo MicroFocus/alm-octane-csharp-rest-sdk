@@ -91,6 +91,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 
                             try
                             {
+                                // check whether the user closed the browser dialg
+                                if (connectionListener != null)
+                                {
+                                    if (!connectionListener.IsOpen())
+                                    {
+                                        break;
+                                    }
+                                }
                                 var pollRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
 
                                 pollRequest.Method = RestConnector.METHOD_POST;
