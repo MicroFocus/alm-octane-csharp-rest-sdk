@@ -30,9 +30,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         public string identifier { get; set; }
         public string cookie_name { get; set; }
 
+        public string client_id { get; set; }
+        public string client_secret { get; set; }
+
         public APIKeyConnectionInfo()
         {
         }
-        
+
+        public APIKeyConnectionInfo(String client_id, string client_secret)
+        {
+            this.client_id = client_id;
+            this.client_secret = client_secret;
+        }
     }
 }

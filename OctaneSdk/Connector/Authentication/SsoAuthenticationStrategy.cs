@@ -219,7 +219,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 
                 ResponseWrapper responseWrapper = new ResponseWrapper();
 
-                using (var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse())
+                using (var httpResponse = await httpWebRequest.GetResponseAsync().ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext))
                 {
                     using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                     {
