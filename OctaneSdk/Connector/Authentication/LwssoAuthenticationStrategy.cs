@@ -178,9 +178,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
             request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));
         }
 
-        public async Task<String> GetWorkspaceUser()
+        public Task<String> GetWorkspaceUser()
         {
-            return credentials.user;
+            return Task.FromResult(credentials.user);
         }
 
         public async Task<bool> TestConnection(string host)
