@@ -14,26 +14,20 @@
 * limitations under the License.
 */
 
-
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+namespace MicroFocus.Adm.Octane.Api.Core.Connector.Credentials
 {
-	/// <summary>
-	/// Wrapper for WorkspaceUser entity
-	/// More fields might be supported by entity that still are not exposed in the class
+    /// <summary>
+	/// POCO class for connection data that is received from the NGA server as response to sso connection method.
 	/// </summary>
-	public class WorkspaceUser : BaseUserEntity
+    public class SsoConnectionInfo : ConnectionInfo
     {
-        public static string IS_API_KEY = "is_api_key";
-        public string IsApiKey
+        public string access_token { get; set; }
+        public string authentication_url { get; set; }
+        public string identifier { get; set; }
+        public string cookie_name { get; set; }
+
+        public SsoConnectionInfo()
         {
-            get
-            {
-                return GetStringValue(IS_API_KEY);
-            }
-            set
-            {
-                SetValue(IS_API_KEY, value);
-            }
         }
     }
 }

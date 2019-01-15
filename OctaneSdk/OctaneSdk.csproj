@@ -45,8 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Connector\APIKeyConnectionInfo.cs" />
-    <Compile Include="Connector\ConnectionInfo.cs" />
+    <Compile Include="Connector\Authentication\ConnectionListener.cs" />
+    <Compile Include="Connector\Authentication\SsoAuthenticationStrategy.cs" />
+    <Compile Include="Connector\Credentials\APIKeyConnectionInfo.cs" />
+    <Compile Include="Connector\Authentication\AuthenticationStrategy.cs" />
+    <Compile Include="Connector\Authentication\LwssoAuthenticationStrategy.cs" />
+    <Compile Include="Connector\Credentials\ConnectionInfo.cs" />
+    <Compile Include="Connector\Credentials\SsoConnectionInfo.cs" />
     <Compile Include="Connector\Exceptions\GeneralHttpException.cs" />
     <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
     <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
@@ -57,7 +62,7 @@
     <Compile Include="Connector\ResponseWrapper.cs" />
     <Compile Include="Connector\RestConnector.cs" />
     <Compile Include="Connector\Exceptions\MqmRestException.cs" />
-    <Compile Include="Connector\UserPassConnectionInfo.cs" />
+    <Compile Include="Connector\Credentials\UserPassConnectionInfo.cs" />
     <Compile Include="Entities\Base\Attachment.cs" />
     <Compile Include="Entities\Base\CommitPattern.cs" />
     <Compile Include="Entities\Base\EntityIdExtensions.cs" />

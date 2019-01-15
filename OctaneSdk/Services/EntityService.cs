@@ -95,7 +95,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             string url = context.GetPath() + "/" + apiEntityName;
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
-
+            
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
             {

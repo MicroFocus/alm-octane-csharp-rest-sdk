@@ -14,26 +14,36 @@
 * limitations under the License.
 */
 
+using System;
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
 	/// <summary>
-	/// Wrapper for WorkspaceUser entity
-	/// More fields might be supported by entity that still are not exposed in the class
+	/// POCO class for connection data that is sent to NGA server during calling to <see cref="Connect"/> method.
+	/// Uses the user/password method
 	/// </summary>
-	public class WorkspaceUser : BaseUserEntity
+	public class UserPassConnectionInfo : ConnectionInfo
     {
-        public static string IS_API_KEY = "is_api_key";
-        public string IsApiKey
+        public string user { get; set; }
+        public string password { get; set; }
+
+       /* public string enable_csrf
         {
             get
             {
-                return GetStringValue(IS_API_KEY);
+                return "true";
             }
-            set
-            {
-                SetValue(IS_API_KEY, value);
-            }
+        }*/
+
+
+        public UserPassConnectionInfo()
+        {
+        }
+
+        public UserPassConnectionInfo(String user, string password)
+        {
+            this.user = user;
+            this.password = password;
         }
     }
 }

@@ -15,25 +15,11 @@
 */
 
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+
+namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
-	/// <summary>
-	/// Wrapper for WorkspaceUser entity
-	/// More fields might be supported by entity that still are not exposed in the class
-	/// </summary>
-	public class WorkspaceUser : BaseUserEntity
+	public interface ConnectionInfo
     {
-        public static string IS_API_KEY = "is_api_key";
-        public string IsApiKey
-        {
-            get
-            {
-                return GetStringValue(IS_API_KEY);
-            }
-            set
-            {
-                SetValue(IS_API_KEY, value);
-            }
-        }
+        
     }
 }

@@ -15,25 +15,23 @@
 */
 
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities
+using System;
+
+namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
 	/// <summary>
-	/// Wrapper for WorkspaceUser entity
-	/// More fields might be supported by entity that still are not exposed in the class
+	/// POCO class for connection data that is sent to NGA server during calling to <see cref="Connect"/> method.
+	/// Uses the client_id/client_secret method
 	/// </summary>
-	public class WorkspaceUser : BaseUserEntity
+	public class APIKeyConnectionInfo : ConnectionInfo
     {
-        public static string IS_API_KEY = "is_api_key";
-        public string IsApiKey
+        public string client_id { get; set; }
+        public string client_secret { get; set; }
+
+        public APIKeyConnectionInfo(String client_id, string client_secret)
         {
-            get
-            {
-                return GetStringValue(IS_API_KEY);
-            }
-            set
-            {
-                SetValue(IS_API_KEY, value);
-            }
+            this.client_id = client_id;
+            this.client_secret = client_secret;
         }
     }
 }

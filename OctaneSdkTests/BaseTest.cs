@@ -16,6 +16,7 @@
 
 
 using MicroFocus.Adm.Octane.Api.Core.Connector;
+using MicroFocus.Adm.Octane.Api.Core.Connector.Authentication;
 using MicroFocus.Adm.Octane.Api.Core.Services;
 using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,6 +35,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         protected static string userName;
         protected static string password;
         protected static string host;
+
+        protected static LwssoAuthenticationStrategy lwssoAuthenticationStrategy;
 
         protected string CurrentUserName
         {
@@ -75,7 +78,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
                     connectionInfo = new UserPassConnectionInfo(userName, password);
                 }
 
-                restConnector.Connect(host, connectionInfo);
+                lwssoAuthenticationStrategy = new LwssoAuthenticationStrategy(connectionInfo);
+                restConnector.Connect(host, lwssoAuthenticationStrategy);
 
 
                 var sharedSpaceId = int.Parse(ConfigurationManager.AppSettings["sharedSpaceId"]);
