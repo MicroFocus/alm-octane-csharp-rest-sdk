@@ -33,7 +33,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 		public static string LANGUAGE_FIELD = "language";
 		public static string PASSWORD_FIELD = "password";
 
-
 		public BaseUserEntity()
             : base()
         {
@@ -139,5 +138,5 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 				SetValue(PASSWORD_FIELD, value);
 			}
 		}
-	}
+    }
 }

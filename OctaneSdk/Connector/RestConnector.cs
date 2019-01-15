@@ -37,13 +37,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
     /// </summary>
     public class RestConnector
     {
-        public static string CONTENT_TYPE_JSON = "application/json";
+        
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
         private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
-
+        public static string CONTENT_TYPE_JSON = "application/json";
         public static string SHARED_SPACES_URL = "/api/shared_spaces";
-
         public static string METHOD_POST = "POST";
         public static string METHOD_GET = "GET";
         public static string METHOD_PUT = "PUT";

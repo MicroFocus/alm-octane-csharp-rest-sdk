@@ -28,19 +28,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         public string client_id { get; set; }
         public string client_secret { get; set; }
 
-       /* public string enable_csrf
-        {
-            get
-            {
-                return "true";
-            }
-        }*/
-
-
-        public APIKeyConnectionInfo()
-        {
-        }
-
         public APIKeyConnectionInfo(String client_id, string client_secret)
         {
             this.client_id = client_id;
