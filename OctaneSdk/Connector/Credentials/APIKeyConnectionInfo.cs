@@ -25,17 +25,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 	/// </summary>
 	public class APIKeyConnectionInfo : ConnectionInfo
     {
-        public string access_token { get; set; }
-        public string authentication_url { get; set; }
-        public string identifier { get; set; }
-        public string cookie_name { get; set; }
-
         public string client_id { get; set; }
         public string client_secret { get; set; }
-
-        public APIKeyConnectionInfo()
-        {
-        }
 
         public APIKeyConnectionInfo(String client_id, string client_secret)
         {

@@ -31,14 +31,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
         private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
-        private UserPassConnectionInfo credentials;
+        private ConnectionInfo credentials;
         private string lwSsoCookie;
         private string octaneUserCookie;
         private String host;
 
         public LwssoAuthenticationStrategy(ConnectionInfo credentials)
         {
-            this.credentials = credentials as UserPassConnectionInfo;
+            this.credentials = credentials;
         }
 
 
@@ -180,7 +180,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 
         public Task<String> GetWorkspaceUser()
         {
-            return Task.FromResult(credentials.user);
+            string user = string.Empty;
+            if(credentials is UserPassConnectionInfo)
+            {
+                user = ((UserPassConnectionInfo) credentials).user;
+            }
+            else
+            {
+                user = ((APIKeyConnectionInfo)credentials).client_id;
+            }
+            return Task.FromResult(user);
         }
 
         public async Task<bool> TestConnection(string host)

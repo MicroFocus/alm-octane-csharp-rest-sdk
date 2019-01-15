@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+using MicroFocus.Adm.Octane.Api.Core.Connector.Credentials;
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Services.Core;
 using MicroFocus.Adm.Octane.Api.Core.Services.Version;
@@ -36,7 +37,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         private string AUTHENTICATION_URL = "/authentication/grant_tool_token";
         private string octaneUserValue;
         private string host;
-        private APIKeyConnectionInfo connectionInfo;
+        private SsoConnectionInfo connectionInfo;
         private long pollingTimeoutSeconds = 60 * 2; // 2 minutes
         private ConnectionListener connectionListener;
         private JavaScriptSerializer jSerialiser;
@@ -81,7 +82,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                             using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                             {
                                 var objText = reader.ReadToEnd();
-                                connectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                                connectionInfo = (SsoConnectionInfo)jSerialiser.Deserialize(objText, typeof(SsoConnectionInfo));
                             }
                         }
 
@@ -91,7 +92,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                         }
 
                         long pollingTimeoutTimestamp = 0;
-                        APIKeyConnectionInfo accessTokenConnectionInfo = new APIKeyConnectionInfo();
+                        SsoConnectionInfo accessTokenConnectionInfo = new SsoConnectionInfo();
 
                         while (pollingTimeoutTimestamp < pollingTimeoutSeconds)
                         {
@@ -123,7 +124,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                                 using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                                 {
                                     var objText = reader.ReadToEnd();
-                                    accessTokenConnectionInfo = (APIKeyConnectionInfo)jSerialiser.Deserialize(objText, typeof(APIKeyConnectionInfo));
+                                    accessTokenConnectionInfo = (SsoConnectionInfo)jSerialiser.Deserialize(objText, typeof(SsoConnectionInfo));
                                 }
                         
                         

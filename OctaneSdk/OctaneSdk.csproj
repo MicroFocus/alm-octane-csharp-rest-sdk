@@ -51,6 +51,7 @@
     <Compile Include="Connector\Authentication\AuthenticationStrategy.cs" />
     <Compile Include="Connector\Authentication\LwssoAuthenticationStrategy.cs" />
     <Compile Include="Connector\Credentials\ConnectionInfo.cs" />
+    <Compile Include="Connector\Credentials\SsoConnectionInfo.cs" />
     <Compile Include="Connector\Exceptions\GeneralHttpException.cs" />
     <Compile Include="Connector\Exceptions\RestExceptionInfo.cs" />
     <Compile Include="Connector\Exceptions\NotConnectedException.cs" />
