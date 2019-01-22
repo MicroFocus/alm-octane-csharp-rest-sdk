@@ -127,11 +127,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
             return false;
         }
 
-       
-        public String toString()
+        public override String ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("OctaneVersion{");
             sb.Append(almVersion);
             sb.Append(".");
             sb.Append(octaneVersion);
@@ -140,7 +138,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
                 sb.Append(".");
                 sb.Append(buildNumber);
             }
-            sb.Append("}");
             return sb.ToString();
         }
 
