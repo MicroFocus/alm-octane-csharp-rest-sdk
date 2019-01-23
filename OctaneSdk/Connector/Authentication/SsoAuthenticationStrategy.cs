@@ -131,7 +131,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                             }
                             catch (Exception)
                             {
-                                Thread.Sleep(1000); // Do not DOS the server, not cool    
+                                Thread.Sleep(1000); // Do not DOS the server, not cool  
+                                pollingTimeoutTimestamp++;
                                 continue;
                             }
 
@@ -143,6 +144,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                                 connectionListener.CloseBrowser();
                             }
                             return true;
+                        }
+
+                        // check whether the user forgot about the browser dialg
+                        if (connectionListener != null)
+                        {
+                            if (connectionListener.IsOpen())
+                            {
+                                connectionListener.CloseBrowser();
+                            }
                         }
 
                         return false;
