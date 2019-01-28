@@ -91,10 +91,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                             connectionListener.OpenBrowser(connectionInfo.authentication_url);
                         }
 
-                        long pollingTimeoutTimestamp = 0;
+                        long pollingTimeoutTimestamp = pollingTimeoutSeconds;
                         SsoConnectionInfo accessTokenConnectionInfo = new SsoConnectionInfo();
 
-                        while (pollingTimeoutTimestamp < pollingTimeoutSeconds)
+                        while (pollingTimeoutTimestamp >= 0)
                         {
 
                             try
@@ -132,7 +132,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                             catch (Exception)
                             {
                                 Thread.Sleep(1000); // Do not DOS the server, not cool  
-                                pollingTimeoutTimestamp++;
+                                pollingTimeoutTimestamp--;
+                                // update connection listener on timeout progress
+                                if (connectionListener != null)
+                                {
+                                    connectionListener.UpdateTimeout((int) pollingTimeoutTimestamp);
+                                }
                                 continue;
                             }
 

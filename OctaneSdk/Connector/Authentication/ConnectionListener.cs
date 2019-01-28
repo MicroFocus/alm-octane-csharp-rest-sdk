@@ -37,5 +37,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// </summary>
         /// <returns>boolean representing if the dialog is closed</returns>
         bool IsOpen();
+        
+        /// <summary>
+        /// Updates the timeout on the connection listener
+        /// </summary>
+        /// <param name="timeout"></param>
+        void UpdateTimeout(int timeout);
     }
 }
