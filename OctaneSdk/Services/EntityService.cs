@@ -242,13 +242,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
              where T : BaseEntity
         {
-            return (T)await UpdateInternalAsync(context, entity, typeof(T), serviceArguments, fieldsToReturn);
+            return (T)await UpdateInternalAsync(context, entity, typeof(T), serviceArguments, fieldsToReturn).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
         public async Task<BaseEntity> UpdateAsync(IRequestContext context, BaseEntity entity, string type, Dictionary<string, string> serviceArguments = null, IList<string> fieldsToReturn = null)
         {
             Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(type);
-            return await UpdateInternalAsync(context, entity, entityType, serviceArguments, fieldsToReturn);
+            return await UpdateInternalAsync(context, entity, entityType, serviceArguments, fieldsToReturn).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
         private async Task<BaseEntity> UpdateInternalAsync(IRequestContext context, BaseEntity entity, Type entityType, Dictionary<string, string> serviceArguments, IList<string> fieldsToReturn)
