@@ -1,5 +1,5 @@
 
-﻿/*!
+/*!
 * (c) 2016-2018 EntIT Software LLC, a Micro Focus company
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -95,7 +95,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             string url = context.GetPath() + "/" + apiEntityName;
 
             String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
-            
+
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
             {
@@ -166,14 +166,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<T> GetByIdAsync<T>(IRequestContext context, EntityId id, IList<String> fields) where T : BaseEntity
         {
-            var entity = (T)await GetByIdInternalAsync(context, id, typeof(T), fields);
+            var entity = (T)await GetByIdInternalAsync(context, id, typeof(T), fields).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             return entity;
         }
 
         public async Task<BaseEntity> GetByIdAsync(IRequestContext context, EntityId id, string type, IList<String> fields)
         {
             Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(type);
-            return await GetByIdInternalAsync(context, id, entityType, fields);
+            return await GetByIdInternalAsync(context, id, entityType, fields).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
         private async Task<BaseEntity> GetByIdInternalAsync(IRequestContext context, EntityId id, Type entityType, IList<String> fields)
@@ -499,7 +499,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
                 new LogicalQueryPhrase("entity", entityType)
             };
 
-            var result = await GetAsync<Transition>(context, query, new List<string> { Transition.SOURCE_PHASE_FIELD, Transition.TARGET_PHASE_FIELD, Transition.IS_PRIMARY_FIELD, Phase.ENTITY_FIELD });
+            var result = await GetAsync<Transition>(context, query, new List<string> { Transition.SOURCE_PHASE_FIELD, Transition.TARGET_PHASE_FIELD, Transition.IS_PRIMARY_FIELD, Phase.ENTITY_FIELD }).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
 
             return result;
         }
