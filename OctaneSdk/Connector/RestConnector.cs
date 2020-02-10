@@ -61,7 +61,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             }
         }
 
-        public IWebProxy CustomProxy
+        public static IWebProxy CustomProxy
         {
             get
             {
