@@ -37,7 +37,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
     /// </summary>
     public class RestConnector
     {
-        
+
         private static string CONTENT_TYPE_STREAM = "application/octet-stream";
         private static string CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=";
 
@@ -47,43 +47,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         public static string METHOD_GET = "GET";
         public static string METHOD_PUT = "PUT";
         public static string METHOD_DELETE = "DELETE";
-        private string host;
         private AuthenticationStrategy authenticationStrategy;
 
-        private static bool awaitContinueOnCapturedContext = true;
-        private static IWebProxy customProxy;
 
-        public String Host
-        {
-            get
-            {
-                return host;
-            }
-        }
+        public String Host { get; private set; }
 
-        public static IWebProxy CustomProxy
-        {
-            get
-            {
-                return customProxy;
-            }
-            set
-            {
-                customProxy = value;
-            }
-        }
+        public static IWebProxy CustomProxy { get; set; }
 
-        public static bool AwaitContinueOnCapturedContext
-        {
-            get
-            {
-                return awaitContinueOnCapturedContext;
-            }
-            set
-            {
-                awaitContinueOnCapturedContext = value;
-            }
-        }
+        public static bool AwaitContinueOnCapturedContext { get; set; } = true;
 
         public bool Connect(string host, ConnectionInfo connectionInfo)
         {
@@ -99,7 +70,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         {
             try
             {
-                return await ConnectAsync(host, authenticationStrategy);
+                return await ConnectAsync(Host, authenticationStrategy);
             }
             catch (Exception)
             {
@@ -125,9 +96,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             }
 
             this.authenticationStrategy = authenticationStrategy;
-            this.host = host.TrimEnd('/');
+            this.Host = host.TrimEnd('/');
 
-            return await authenticationStrategy.ConnectAsync(this.host).ConfigureAwait(AwaitContinueOnCapturedContext);
+            return await authenticationStrategy.ConnectAsync(this.Host).ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
         public async Task<bool> DisconnectAsync()
@@ -147,7 +118,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
         {
-            String url = host + restRelativeUri;
+            String url = Host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             if (CustomProxy != null)
             {
@@ -160,7 +131,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
             //add internal API token
             request.Headers.Add("HPECLIENTTYPE", "HPE_CI_CLIENT");
-            //request.Headers.Add("ALM_OCTANE_TECH_PREVIEW", "true");
 
 
             //set content type/accept/method
