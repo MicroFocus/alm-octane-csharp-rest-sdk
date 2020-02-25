@@ -33,5 +33,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         }
 
+        /// <summary>
+        /// 
+        /// Custom proxy settings
+        /// </summary>
+        public static IWebProxy CustomProxy { get; set; }
+
     }
 }

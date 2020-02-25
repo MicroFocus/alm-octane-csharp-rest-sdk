@@ -52,7 +52,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         public String Host { get; private set; }
 
-        public static IWebProxy CustomProxy { get; set; }
 
         public static bool AwaitContinueOnCapturedContext { get; set; } = true;
 
@@ -120,9 +119,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         {
             String url = Host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            if (CustomProxy != null)
+            if (NetworkSettings.CustomProxy != null)
             {
-                request.Proxy = CustomProxy;
+                request.Proxy = NetworkSettings.CustomProxy;
             }
 
             //Add authentication cookies/headers

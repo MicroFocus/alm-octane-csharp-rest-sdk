@@ -46,9 +46,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         {
             this.host = host;
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
-            if (RestConnector.CustomProxy != null)
+            if (NetworkSettings.CustomProxy != null)
             {
-                httpWebRequest.Proxy = RestConnector.CustomProxy;
+                httpWebRequest.Proxy = NetworkSettings.CustomProxy;
             }
 
             httpWebRequest.Method = RestConnector.METHOD_POST;
@@ -81,9 +81,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
             try
             {
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + DISCONNECT_URL);
-                if (RestConnector.CustomProxy != null)
+                if (NetworkSettings.CustomProxy != null)
                 {
-                    httpWebRequest.Proxy = RestConnector.CustomProxy;
+                    httpWebRequest.Proxy = NetworkSettings.CustomProxy;
                 }
                 PrepareRequest(httpWebRequest);
                 httpWebRequest.Method = RestConnector.METHOD_POST;
