@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MicroFocus")]
 [assembly: AssemblyProduct("MicroFocus.Adm.Octane.Api.Core")]
-[assembly: AssemblyCopyright("Copyright © MicroFocus 2018")]
+[assembly: AssemblyCopyright("Copyright © MicroFocus 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -48,8 +48,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("12.60.35.0")]
-[assembly: AssemblyFileVersion("12.60.35.0")]
+[assembly: AssemblyVersion("15.0.20.0")]
+[assembly: AssemblyFileVersion("15.0.20.0")]
 
 // The following allows the testing assembly to access internal classes such as QueryStringBuilder.
 [assembly: InternalsVisibleTo("MicroFocus.Adm.Octane.Api.Core.Tests")]
