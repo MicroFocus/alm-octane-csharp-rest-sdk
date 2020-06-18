@@ -12,8 +12,8 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
+*
 */
-
 
 using MicroFocus.Adm.Octane.Api.Core.Connector.Authentication;
 using MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions;
@@ -49,6 +49,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         public static string METHOD_DELETE = "DELETE";
         private AuthenticationStrategy authenticationStrategy;
 
+        private Dictionary<HttpWebRequest, OngoingRequest> ongoingRequests = new Dictionary<HttpWebRequest, OngoingRequest>();
 
         public String Host { get; private set; }
 
@@ -102,6 +103,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         public async Task<bool> DisconnectAsync()
         {
+            CloseAllOngoing();
             return await authenticationStrategy.DisconnectAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
@@ -256,6 +258,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
             try
             {
+                AddToOngoing(request);
                 var response = (HttpWebResponse)await request.GetResponseAsync().ConfigureAwait(AwaitContinueOnCapturedContext);
                 using (var streamReader = new StreamReader(response.GetResponseStream()))
                 {
@@ -325,6 +328,10 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                         }
                     }
                 }
+            }
+            finally
+            {
+                RemoveFromOngoing(request);
             }
 
             return responseWrapper;
@@ -495,6 +502,43 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             responseWrapper.StatusCode = response.StatusCode;
 
             return responseWrapper;
+        }
+
+
+
+        private void AddToOngoing(HttpWebRequest request)
+        {
+            lock (this)
+            {
+                ongoingRequests.Add(request, OngoingRequest.Create(request));
+            }
+        }
+
+        private void RemoveFromOngoing(HttpWebRequest request)
+        {
+            lock (this)
+            {
+                ongoingRequests.Remove(request);
+            }
+        }
+
+        private void CloseAllOngoing()
+        {
+            lock (this)
+            {
+                foreach (KeyValuePair<HttpWebRequest, OngoingRequest> entry in ongoingRequests)
+                {
+                    entry.Value.Request.Abort();
+                }
+            }
+        }
+
+        public IList<OngoingRequest> GetOngoingRequests()
+        {
+            lock (this)
+            {
+                return new List<OngoingRequest>(ongoingRequests.Values);
+            }
         }
     }
 }

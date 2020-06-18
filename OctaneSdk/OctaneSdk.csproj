@@ -58,6 +58,7 @@
     <Compile Include="Connector\Exceptions\ServerUnavailableException.cs" />
     <Compile Include="Connector\NetworkSettings.cs" />
     <Compile Include="Connector\RequestAdditionalData.cs" />
+    <Compile Include="Connector\OngoingRequest.cs" />
     <Compile Include="Connector\RequestType.cs" />
     <Compile Include="Connector\ResponseWrapper.cs" />
     <Compile Include="Connector\RestConnector.cs" />
