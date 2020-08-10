@@ -141,6 +141,19 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         }
 
         [TestMethod]
+        public void CreateGetAndUpdateTest()
+        {
+            Defect defect = CreateDefect();
+            EntityListResult<Defect> list = entityService.Get<Defect>(workspaceContext);
+            Defect firstDefect = list.data[0];
+            Defect defectForUpdate = new Defect(firstDefect.Id);
+            defectForUpdate.SetValue("name", defectForUpdate.Name + " updated " + new Guid());
+            Defect updatedDefect = entityService.Update<Defect>(workspaceContext, defectForUpdate);
+            Defect updatedDefect2 = entityService.GetById<Defect>(workspaceContext, firstDefect.Id, null);
+            Assert.AreEqual(defectForUpdate.Name, updatedDefect2.Name);
+        }
+
+        [TestMethod]
         public void GetNotDoneDefectsAssinedToReleaseTest()
         {
             Phase PHASE_CLOSED = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.closed");
