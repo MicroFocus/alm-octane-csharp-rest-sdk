@@ -61,6 +61,7 @@
     <Compile Include="TeamTests.cs" />
     <Compile Include="QueryBuilderTests.cs" />
     <Compile Include="EntityIdTests.cs" />
+    <Compile Include="TestCoverageTest.cs" />
     <Compile Include="TestGherkinTests.cs" />
     <Compile Include="ValidateCommitMessageTests.cs" />
     <Compile Include="WorkItemTests.cs" />
