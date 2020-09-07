@@ -172,5 +172,22 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 			}
 			return workspaceAdminRole;
 		}
+
+        private static SharedspaceUser CreateLDAPUser()
+        {
+            SharedspaceUser user = new SharedspaceUser();
+            user.UID = Guid.NewGuid().ToString();//should be mapped value of uid field, for example ,entryUUID, will be updated on login
+            user.Name = "mail16@nga";
+            user.LastName = "a";//no matter , will be updated on login
+            user.FirstName = "a";//no matter, will be updated on login
+            user.Email = user.Name;
+            user.Phone1 = "";//no matter, will be updated on login
+            user.SetValue("ldap_dn", "cn=uid16@nga,ou=dummy_users,dc=maxcrc,dc=com");
+
+            var returnFields = new string[] { "name" };
+
+            SharedspaceUser createdUser = entityService.Create<SharedspaceUser>(sharedSpaceContext, user, returnFields);
+            return createdUser;
+        }
     }
 }
