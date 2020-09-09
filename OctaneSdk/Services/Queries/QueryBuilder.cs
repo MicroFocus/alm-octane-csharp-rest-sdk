@@ -139,7 +139,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         {
             if (!String.IsNullOrEmpty(orderBy))
             {
-                return "order-by=" + orderBy;
+                return "order_by=" + orderBy;
             }
             return null;
 
