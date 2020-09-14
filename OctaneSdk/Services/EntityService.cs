@@ -90,11 +90,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return null;
         }
 
-        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit)
+        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, string orderBy, int? limit)
         {
             string url = context.GetPath() + "/" + apiEntityName;
 
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
+            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, orderBy, null, limit, null, null);
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
@@ -103,6 +103,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
                 return result;
             }
             return null;
+        }
+
+        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit)
+        {
+            return await GetAsyncReferenceFields(context, apiEntityName, queryPhrases, fields, null, limit);
         }
 
         public GroupResult GetWithGroupBy<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity

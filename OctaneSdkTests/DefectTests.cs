@@ -23,6 +23,7 @@ using MicroFocus.Adm.Octane.Api.Core.Services.Query;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Tests
 {
@@ -250,6 +251,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
                 Assert.AreEqual<string>("platform.entity_not_found", e.ErrorCode);
             }
 
+        }
+
+        [TestMethod]
+        public void GetDefectsOrderedBy()
+        { 
+            Defect defect1 = CreateDefect();
+            Thread.Sleep(1000);
+            Defect defect2 = CreateDefect();
+            Thread.Sleep(1000);
+            Defect defect3 = CreateDefect();
+
+            var entitiesResult = entityService.GetAsyncReferenceFields(workspaceContext, "work_items", null, null, "-creation_time", null).Result;
+
+            Assert.IsTrue(entitiesResult.data[0].Id == defect3.Id && entitiesResult.data[1].Id == defect2.Id && entitiesResult.data[2].Id == defect1.Id);
         }
 
         public static Defect CreateDefect(string customName = null)
