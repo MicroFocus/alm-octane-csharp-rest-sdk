@@ -81,6 +81,7 @@
     <Compile Include="Entities\Tests\RunManual.cs" />
     <Compile Include="Entities\Tests\RunSuite.cs" />
     <Compile Include="Entities\Tests\TestAutomated.cs" />
+    <Compile Include="Entities\Tests\TestBDDScenario.cs" />
     <Compile Include="Entities\Tests\TestGherkin.cs" />
     <Compile Include="Entities\Tests\TestManual.cs" />
     <Compile Include="Entities\Tests\TestScript.cs" />

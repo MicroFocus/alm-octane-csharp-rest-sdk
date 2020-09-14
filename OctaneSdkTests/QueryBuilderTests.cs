@@ -33,5 +33,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             Assert.AreEqual("query=\"parent_suite={null}\"", raw);
         }
+
+        [TestMethod]
+        public void BuildQueryWithOrderBy()
+        {
+            var query = QueryStringBuilder.BuildQueryString(null, null, "-id", null, null, null, null);
+
+            Assert.IsTrue(query.Contains("order_by=-id"));
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string OWNER_TEST_FIELD = "owner_test";
         public const string OWNER_RUN_FIELD = "owner_run";
         public const string OWNER_REQUIREMENT_FIELD = "owner_requirement";
+        public const string OWNER_BDD_SPEC_FIELD = "owner_bdd_spec";
         public const string CREATION_TIME_FIELD = "creation_time";
         public const string TEXT_FIELD = "text";
 
@@ -78,6 +79,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             set
             {
                 SetValue(OWNER_REQUIREMENT_FIELD, value);
+            }
+        }
+
+        public BaseEntity OwnerBDDSpec
+        {
+            get { return (BaseEntity)GetValue(OWNER_BDD_SPEC_FIELD); }
+            set
+            {
+                SetValue(OWNER_BDD_SPEC_FIELD, value);
             }
         }
 
