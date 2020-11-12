@@ -53,7 +53,16 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
             {
                 //release={id=5002}
                 CrossQueryPhrase crossPhrase = (CrossQueryPhrase)phrase;
-                String expStr = String.Format("{0}={{{1}}}", crossPhrase.FieldName, BuildPhraseString(crossPhrase.QueryPhrase));
+                List<String> crossPhraseStrings = new List<String>();
+                foreach (QueryPhrase tempPhrase in crossPhrase.QueryPhrases)
+                {
+                    String phraseString = BuildPhraseString(tempPhrase);
+                    crossPhraseStrings.Add(phraseString);
+
+                }
+                String crossJoin = String.Join(";", crossPhraseStrings);
+
+                String expStr = String.Format("{0}={{{1}}}", crossPhrase.FieldName, crossJoin);
                 output = expStr;
             }
             else if (phrase is NegativeQueryPhrase)

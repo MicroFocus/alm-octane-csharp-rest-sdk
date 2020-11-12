@@ -16,6 +16,7 @@
 
 
 using System;
+using System.Collections.Generic;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 
@@ -27,13 +28,18 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
     {
         public String FieldName { get; set; }
 
-        public QueryPhrase QueryPhrase { get; set; }
+        public IList<QueryPhrase> QueryPhrases { get; set; }
 
         public CrossQueryPhrase(String fieldName, QueryPhrase queryPhrase)
-           
         {
             this.FieldName = fieldName;
-            this.QueryPhrase = queryPhrase;
+            this.QueryPhrases = new List<QueryPhrase>() { queryPhrase  };
+        }
+
+        public CrossQueryPhrase(String fieldName, IList<QueryPhrase> queryPhrases)
+        {
+            this.FieldName = fieldName;
+            this.QueryPhrases = queryPhrases;
         }
     }
 }
