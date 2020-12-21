@@ -57,7 +57,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             //CREATE
             Phase DEFECT_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_DEFECT, "phase.defect.new");
             ListNode SEVERITY_HIGH = TestHelper.GetSeverityByName(entityService, workspaceContext, "High");
-            String name = "Defect" + Guid.NewGuid();
+            string name = "Defect" + Guid.NewGuid();
             Defect workItem = new Defect();
             workItem.Name = name;
             workItem.Phase = DEFECT_PHASE_NEW;
@@ -85,7 +85,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void CrudStory()
         {
             Phase STORY_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_STORY, "phase.story.new");
-            String name = "Story" + Guid.NewGuid();
+            string name = "Story" + Guid.NewGuid();
             Story workItem = new Story();
             workItem.Name = name;
             workItem.Phase = STORY_PHASE_NEW;
@@ -94,14 +94,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             WorkItem created = entityService.Create<Story>(workspaceContext, workItem, TestHelper.NameSubtypeFields);
             //Assert.AreEqual<String>(WorkItem.SUBTYPE_STORY, created.SubType);
-            Assert.AreEqual<String>(name, created.Name);
+            Assert.AreEqual<string>(name, created.Name);
 
 
             //UPDATE
             Story workItemForUpdate = new Story(created.Id);
             workItemForUpdate.Name = created.Name + "_updated";
             Story updated = entityService.Update<Story>(workspaceContext, workItemForUpdate, TestHelper.NameFields);
-            Assert.AreEqual<String>(workItemForUpdate.Name, updated.Name);
+            Assert.AreEqual<string>(workItemForUpdate.Name, updated.Name);
 
 
             //DELETE BY FILTER
@@ -118,7 +118,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         private static Epic CreateEpic(string customName = null)
         {
             Phase EPIC_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_EPIC, "phase.epic.new");
-            String epicName = customName ?? "Epic" + Guid.NewGuid();
+            string epicName = customName ?? "Epic" + Guid.NewGuid();
             Epic epicToCreate = new Epic();
             epicToCreate.Name = epicName;
             epicToCreate.Phase = EPIC_PHASE_NEW;
@@ -136,7 +136,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         {
             //parent of feature can be only epic, workItemRoot cannot be parent of feature
             Phase FEATURE_PHASE_NEW = TestHelper.GetPhaseForEntityByLogicalName(entityService, workspaceContext, WorkItem.SUBTYPE_FEATURE, "phase.feature.new");
-            String featureName = customName ?? "Feature" + Guid.NewGuid();
+            string featureName = customName ?? "Feature" + Guid.NewGuid();
             Feature featureToCreate = new Feature();
             featureToCreate.Name = featureName;
             featureToCreate.Phase = FEATURE_PHASE_NEW;
@@ -146,7 +146,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             Feature createdFeature = entityService.Create<Feature>(workspaceContext, featureToCreate, fields);
             //Assert.AreEqual<String>(WorkItem.SUBTYPE_FEATURE, createdFeature.SubType);
-            Assert.AreEqual<String>(featureName, createdFeature.Name);
+            Assert.AreEqual<string>(featureName, createdFeature.Name);
 
             return createdFeature;
         }
@@ -154,7 +154,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetOnlyDefectsWithLimit1()
         {
-            List<String> fields = new List<string>();
+            List<string> fields = new List<string>();
             fields.Add(WorkItem.NAME_FIELD);
             fields.Add(WorkItem.SUBTYPE_FIELD);
 
@@ -170,7 +170,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void GetOnlyDefectWithGroupSeverityTest()
         {
-            List<String> fields = new List<string>();
+            List<string> fields = new List<string>();
             fields.Add(WorkItem.NAME_FIELD);
             fields.Add(WorkItem.SUBTYPE_FIELD);
 

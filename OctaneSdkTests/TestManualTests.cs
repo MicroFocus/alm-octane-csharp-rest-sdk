@@ -75,14 +75,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         public static TestManual CreateManualTest()
         {
-            String name = "Test" + Guid.NewGuid();
+            string name = "Test" + Guid.NewGuid();
             TestManual test = new TestManual();
             test.Name = name;
             test.Phase = GetPhaseNew();
 
 
             TestManual created = entityService.Create<TestManual>(workspaceContext, test, TestHelper.NameSubtypeFields);
-            Assert.AreEqual<String>(name, created.Name);
+            Assert.AreEqual<string>(name, created.Name);
             Assert.IsTrue(!string.IsNullOrEmpty(created.Id));
             return created;
         }

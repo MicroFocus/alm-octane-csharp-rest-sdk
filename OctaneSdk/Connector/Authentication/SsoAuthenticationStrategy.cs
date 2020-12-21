@@ -29,12 +29,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 {
     public class SsoAuthenticationStrategy : AuthenticationStrategy
     {
-        private Object authenticationLock = new Object();
         private string cookieName;
         private string cookieValue;
-        private string DEFAULT_OCTANE_SESSION_COOKIE_NAME = "LWSSO_COOKIE_KEY";
+        private readonly string DEFAULT_OCTANE_SESSION_COOKIE_NAME = "LWSSO_COOKIE_KEY";
         private string DISCONNECT_URL = "/authentication/sign_out";
-        private string AUTHENTICATION_URL = "/authentication/grant_tool_token";
+        private readonly string AUTHENTICATION_URL = "/authentication/grant_tool_token";
         private string octaneUserValue;
         private string host;
         private SsoConnectionInfo connectionInfo;
@@ -116,7 +115,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
                                 Stream stream = pollRequest.GetRequestStream();
                                 using (var streamWriter = new StreamWriter(stream))
                                 {
-                                    String json = jSerialiser.Serialize(connectionInfo);
+                                    string json = jSerialiser.Serialize(connectionInfo);
                                     streamWriter.Write(json);
                                 }
 
@@ -207,15 +206,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         public void PrepareRequest(HttpWebRequest request)
         {
             //add cookies
-            String cookieDomain = request.Address.Host;
-            String cookiePath = "/";
+            string cookieDomain = request.Address.Host;
+            string cookiePath = "/";
 
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie(cookieName, cookieValue, cookiePath, cookieDomain));
             
         }
 
-        public async Task<String> GetWorkspaceUser()
+        public async Task<string> GetWorkspaceUser()
         {
             if(octaneUserValue != null && !octaneUserValue.Equals(""))
             {

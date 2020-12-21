@@ -23,9 +23,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
     {
         private string op = "=";
 
-        public String FieldName { get; set; }
-        public Object Expression { get; set; }
-        public String Operator
+        public string FieldName { get; set; }
+        public object Expression { get; set; }
+        public string Operator
         {
             get
             {
@@ -41,13 +41,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         {
         }
 
-        public QueryCondition(String fieldName, Object expression)
+        public QueryCondition(string fieldName, object expression)
         {
             FieldName = fieldName;
             Expression = expression;
         }
 
-        public QueryCondition(String fieldName, Object expression, String op)
+        public QueryCondition(string fieldName, object expression, string op)
         {
             FieldName = fieldName;
             Expression = expression;

@@ -51,7 +51,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         private Dictionary<HttpWebRequest, OngoingRequest> ongoingRequests = new Dictionary<HttpWebRequest, OngoingRequest>();
 
-        public String Host { get; private set; }
+        public string Host { get; private set; }
 
 
         public static bool AwaitContinueOnCapturedContext { get; set; } = true;
@@ -119,7 +119,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
         private HttpWebRequest CreateRequest(string restRelativeUri, RequestType requestType, RequestConfiguration additionalRequestConfiguration)
         {
-            String url = Host + restRelativeUri;
+            string url = Host + restRelativeUri;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             if (NetworkSettings.CustomProxy != null)
             {
@@ -287,7 +287,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                         throw new WebException(ex.Message, WebExceptionStatus.Timeout);
                     }
 
-                    String body = string.Empty;
+                    string body = string.Empty;
                     try
                     {
                         using (var streamReader = new StreamReader(response.GetResponseStream()))
@@ -352,7 +352,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
             restRelativeUri = string.IsNullOrWhiteSpace(queryParams) ? restRelativeUri : restRelativeUri + (restRelativeUri.Contains("?") ? "&" : "?") + queryParams;
             HttpWebRequest request = CreateRequest(restRelativeUri, requestType, additionalRequestConfiguration);
 
-            if ((requestType == RequestType.Post || requestType == RequestType.Update) && !String.IsNullOrEmpty(data))
+            if ((requestType == RequestType.Post || requestType == RequestType.Update) && !string.IsNullOrEmpty(data))
             {
                 byte[] byteData = Encoding.UTF8.GetBytes(data);
                 bool gzip = additionalRequestConfiguration != null && additionalRequestConfiguration.GZipCompression;
@@ -421,15 +421,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                    .ConfigureAwait(AwaitContinueOnCapturedContext);
         }
 
-        public ResponseWrapper SendMultiPart(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        public ResponseWrapper SendMultiPart(string restRelativeUrl, byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
             return SendMultiPartAsync(restRelativeUrl, binaryContent, binaryContentType, fileName, entityData).Result;
         }
 
-        public async Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, Byte[] binaryContent, string binaryContentType, string fileName, string entityData)
+        public async Task<ResponseWrapper> SendMultiPartAsync(string restRelativeUrl, byte[] binaryContent, string binaryContentType, string fileName, string entityData)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
-            byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+            byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
             HttpWebRequest wr = CreateRequest(restRelativeUrl, RequestType.MultiPart, null);
             wr.ContentType += boundary;
@@ -440,14 +440,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 
             rs.Write(boundarybytes, 0, boundarybytes.Length);
             string formItem = string.Format(formdataTemplate, "entity", entityData);
-            byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formItem);
+            byte[] formitembytes = Encoding.UTF8.GetBytes(formItem);
             rs.Write(formitembytes, 0, formitembytes.Length);
 
             rs.Write(boundarybytes, 0, boundarybytes.Length);
 
             string headerTemplate = "Content-Disposition: form-data; name=\"content\"; filename=\"{0}\"\r\nContent-Type: {1}\r\n\r\n";
             string header = string.Format(headerTemplate, fileName, binaryContentType);
-            byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
+            byte[] headerbytes = Encoding.UTF8.GetBytes(header);
             rs.Write(headerbytes, 0, headerbytes.Length);
 
             byte[] buffer = new byte[4096];
@@ -460,7 +460,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
                 }
             }
 
-            byte[] trailer = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
+            byte[] trailer = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
             rs.Write(trailer, 0, trailer.Length);
             rs.Close();
 

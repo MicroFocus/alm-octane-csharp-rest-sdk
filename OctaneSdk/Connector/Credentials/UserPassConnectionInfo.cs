@@ -40,7 +40,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
         {
         }
 
-        public UserPassConnectionInfo(String user, string password)
+        public UserPassConnectionInfo(string user, string password)
         {
             this.user = user;
             this.password = password;

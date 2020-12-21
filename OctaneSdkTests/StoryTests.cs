@@ -94,7 +94,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             };
 
             var createdStory = entityService.Create(workspaceContext, story, TestHelper.NameSubtypeFields);
-            Assert.AreEqual<String>(name, createdStory.Name, "Newly created story doesn't have the expected name");
+            Assert.AreEqual<string>(name, createdStory.Name, "Newly created story doesn't have the expected name");
             Assert.IsFalse(string.IsNullOrEmpty(createdStory.Id), "Newly created story should have a valid ID");
             return createdStory;
         }

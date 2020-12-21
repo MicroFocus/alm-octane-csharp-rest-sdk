@@ -120,7 +120,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         {
             Defect defect = CreateDefect();
             Defect defectForUpdate = new Defect(defect.Id);
-            String newName = defect.Name + "_updated";
+            string newName = defect.Name + "_updated";
             defectForUpdate.Name = newName;
             entityService.Update<Defect>(workspaceContext, defectForUpdate);
 
@@ -224,9 +224,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             }
 
             Assert.AreEqual<int>(2, group1.count);
-            Assert.AreEqual<String>("list_node.severity.high", group1.value.logical_name);
+            Assert.AreEqual<string>("list_node.severity.high", group1.value.logical_name);
             Assert.AreEqual<int>(1, group2.count);
-            Assert.AreEqual<String>("list_node.severity.urgent", group2.value.logical_name);
+            Assert.AreEqual<string>("list_node.severity.urgent", group2.value.logical_name);
         }
 
         [TestMethod]
@@ -275,7 +275,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         public static Defect CreateDefect(Phase phase, string customName = null)
         {
-            String name = customName ?? "Defect" + Guid.NewGuid();
+            string name = customName ?? "Defect" + Guid.NewGuid();
             Defect defect = new Defect();
             defect.Name = name;
             defect.Phase = phase;
@@ -291,7 +291,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         private static Task CreateTask(WorkItem story)
         {
-            String name = "Task" + Guid.NewGuid();
+            string name = "Task" + Guid.NewGuid();
             int estimatedHours = 5;
             Task task = new Task();
             task.Name = name;

@@ -22,29 +22,29 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 {
 	public class LogicalQueryPhrase : QueryPhrase
     {
-        public String FieldName { get; set; }
+        public string FieldName { get; set; }
         public bool NegativeCondition { get; set; }
         public List<QueryExpression> Expressions { get; set; }
 
-        public LogicalQueryPhrase(String fieldName)
+        public LogicalQueryPhrase(string fieldName)
         {
             FieldName = fieldName;
             Expressions = new List<QueryExpression>();
         }
 
-        public LogicalQueryPhrase(String fieldName, Object queryValue)
+        public LogicalQueryPhrase(string fieldName, object queryValue)
             : this(fieldName)
         {
             Expressions.Add(new QueryExpression(queryValue));
         }
 
-        public LogicalQueryPhrase(String fieldName, Object queryValue, ComparisonOperator op)
+        public LogicalQueryPhrase(string fieldName, object queryValue, ComparisonOperator op)
             : this(fieldName)
         {
             AddExpression(queryValue, op);
         }
 
-        public void AddExpression(Object queryValue, ComparisonOperator op)
+        public void AddExpression(object queryValue, ComparisonOperator op)
         {
             AddExpression(new QueryExpression(queryValue, op));
 

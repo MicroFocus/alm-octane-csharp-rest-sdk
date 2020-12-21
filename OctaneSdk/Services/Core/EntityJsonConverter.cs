@@ -60,20 +60,20 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 
         private static void OverrideReferenceFields(DictionaryBasedEntity entity)
         {
-            ICollection<String> keys = new List<String>(entity.GetProperties().Keys);
-            foreach (String key in keys)
+            ICollection<string> keys = new List<string>(entity.GetProperties().Keys);
+            foreach (string key in keys)
             {
                 object value = entity.GetValue(key);
-                if (value is Dictionary<String, Object>)
+                if (value is Dictionary<string, object>)
                 {
-                    Dictionary<String, Object> pairValue = (Dictionary<String, Object>)value;
+                    Dictionary<string, object> pairValue = (Dictionary<string, object>)value;
                     if (pairValue.ContainsKey("total_count"))//list of entities
                     {
                         EntityList<BaseEntity> entityList = new EntityList<BaseEntity>();
-                        IList data = (IList)((Dictionary<String, Object>)value)["data"];
+                        IList data = (IList)((Dictionary<string, object>)value)["data"];
                         for (int i = 0; i < data.Count; i++)
                         {
-                            Dictionary<String, Object> rawEntity = (Dictionary<String, Object>)data[i];
+                            Dictionary<string, object> rawEntity = (Dictionary<string, object>)data[i];
                             BaseEntity baseEntity = ConvertToBaseEntity(rawEntity);
                             OverrideReferenceFields(baseEntity);
                             entityList.data.Add(baseEntity);
@@ -90,12 +90,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             }
         }
 
-        private static BaseEntity ConvertToBaseEntity(Dictionary<String, Object> rawEntity)
+        private static BaseEntity ConvertToBaseEntity(Dictionary<string, object> rawEntity)
         {
             BaseEntity baseEntity = null;
             if (rawEntity.ContainsKey("type"))
             {
-                String entityTypeName = (String)rawEntity["type"];
+                string entityTypeName = (string)rawEntity["type"];
                 if (entityTypeName != null)
                 {
                     Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(entityTypeName);

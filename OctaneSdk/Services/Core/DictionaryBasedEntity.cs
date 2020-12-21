@@ -42,12 +42,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 
         #endregion
 
-        public void SetValue(String propertyName, Object value)
+        public void SetValue(string propertyName, object value)
         {
             m_properties[propertyName] = value; ;
         }
 
-        public Object GetValue(String propertyName)
+        public object GetValue(string propertyName)
         {
             if (Contains(propertyName))
             {
@@ -83,9 +83,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             }
         }
 
-        public int? GetIntValue(String propertyName)
+        public int? GetIntValue(string propertyName)
         {
-            Object obj = GetValue(propertyName);
+            object obj = GetValue(propertyName);
             if (obj == null)
             {
                 return null;
@@ -96,15 +96,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             }
             else
             {
-                return int.Parse((String)obj);
+                return int.Parse((string)obj);
             }
         }
 
         #region Types handling Properties
 
-        public long? GetLongValue(String propertyName)
+        public long? GetLongValue(string propertyName)
         {
-            Object obj = GetValue(propertyName);
+            object obj = GetValue(propertyName);
             if (obj == null)
             {
                 return null;
@@ -119,19 +119,19 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             }
             else
             {
-                return long.Parse((String)obj);
+                return long.Parse((string)obj);
             }
         }
 
-        public long GetLongValue(String propertyName, long defaultValue)
+        public long GetLongValue(string propertyName, long defaultValue)
         {
             long? value = GetLongValue(propertyName);
             return (value.HasValue) ? value.Value : defaultValue;
         }
 
-        public bool? GetBooleanValue(String propertyName)
+        public bool? GetBooleanValue(string propertyName)
         {
-            Object obj = GetValue(propertyName);
+            object obj = GetValue(propertyName);
             if (obj == null)
             {
                 return null;
@@ -142,35 +142,35 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             }
             else
             {
-                return bool.Parse((String)obj);
+                return bool.Parse((string)obj);
             }
         }
 
-        public bool GetBooleanValue(String propertyName, bool defaultValue)
+        public bool GetBooleanValue(string propertyName, bool defaultValue)
         {
             bool? value = GetBooleanValue(propertyName);
             return (value.HasValue) ? value.Value : defaultValue;
         }
 
-        public void SetLongValue(String propertyName, long value)
+        public void SetLongValue(string propertyName, long value)
         {
             SetValue(propertyName, value);
         }
 
-        public int GetIntValue(String propertyName, int defaultValue)
+        public int GetIntValue(string propertyName, int defaultValue)
         {
             int? value = GetIntValue(propertyName);
             return (value.HasValue) ? value.Value : defaultValue;
         }
 
-        public void SetIntValue(String propertyName, int value)
+        public void SetIntValue(string propertyName, int value)
         {
             SetValue(propertyName, value);
         }
 
-        public EntityList<T> GetEntityList<T>(String propertyName) where T : BaseEntity
+        public EntityList<T> GetEntityList<T>(string propertyName) where T : BaseEntity
         {
-            Object value = GetValue(propertyName);
+            object value = GetValue(propertyName);
             if (value == null)
             {
                 return null;

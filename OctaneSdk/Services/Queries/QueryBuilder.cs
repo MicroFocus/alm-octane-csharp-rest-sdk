@@ -24,26 +24,107 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
     /// <summary>
     /// Builder of query string for rest request , like this : query="id>1001"&order-by=end_date&fields=id,name,end_date&offset=1&limit=3
     /// </summary>
-    internal static class QueryStringBuilder
+    public class QueryBuilder
     {
+        private IList<QueryPhrase> queryPhrases;
+        private IList<string> fields;
+        private IList<ExpandField> expandFields;
 
-        private static String BuildPhraseString(QueryPhrase phrase)
+        public string orderBy;
+        private int? offset;
+        private int? limit;
+        private string groupBy;
+        private Dictionary<string, string> serviceArguments;
+
+        public QueryBuilder SetQueryPhrases(IList<QueryPhrase> queryPhrases)
         {
-            String output = null;
+            this.queryPhrases = queryPhrases;
+            return this;
+        }
+
+        public QueryBuilder SetFields(IList<string> fields)
+        {
+            this.fields = fields;
+            return this;
+        }
+
+        public QueryBuilder SetExpandFields(IList<ExpandField> expandFields)
+        {
+            this.expandFields = expandFields;
+            return this;
+        }
+
+        public QueryBuilder SetOrderBy(string orderBy)
+        {
+            this.orderBy = orderBy;
+            return this;
+        }
+
+        public QueryBuilder SetOffset(int? offset)
+        {
+            this.offset = offset;
+            return this;
+        }
+
+        public QueryBuilder SetLimit(int? limit)
+        {
+            this.limit = limit;
+            return this;
+        }
+
+        public QueryBuilder SetGroupBy(string groupBy)
+        {
+            this.groupBy = groupBy;
+            return this;
+        }
+
+        public QueryBuilder SetServiceArguments(Dictionary<string, string> serviceArguments)
+        {
+            this.serviceArguments = serviceArguments;
+            return this;
+        }
+
+        public static QueryBuilder Create()
+        {
+            return new QueryBuilder();
+
+        }
+
+        /// <summary>
+        /// 
+        /// build full query string like this : query="id>1001"&order-by=end_date&fields=id,name,end_date&offset=1&limit=3
+        /// </summary>
+        /// <returns></returns>
+        public string Build()
+        {
+            string str = string.Empty;
+            str = ConcatNewQueryString(str, BuildGroupByString(groupBy));
+            str = ConcatNewQueryString(str, BuildQueryString(queryPhrases));
+            str = ConcatNewQueryString(str, BuildOrderByString(orderBy));
+            str = ConcatNewQueryString(str, BuildFieldsString(fields, expandFields));
+            str = ConcatNewQueryString(str, BuildOffsetString(offset));
+            str = ConcatNewQueryString(str, BuildLimitString(limit));
+            str = ConcatNewQueryString(str, BuildServiceArguments(serviceArguments));
+            return str;
+        }
+
+        private static string BuildPhraseString(QueryPhrase phrase)
+        {
+            string output = null;
             if (phrase is LogicalQueryPhrase)
             {
                 LogicalQueryPhrase logicalPhrase = (LogicalQueryPhrase)phrase;
 
-                List<String> expStrings = new List<string>();
+                List<string> expStrings = new List<string>();
                 foreach (QueryExpression exp in logicalPhrase.Expressions)
                 {
-                    String comparisonOperator = GetComparisonOperatorString(exp.Operator);
-                    String valueStr = GetExpressionValueString(exp.Value);
-                    String expStr = String.Format("{0}{1}{2}", logicalPhrase.FieldName, comparisonOperator, valueStr);
+                    string comparisonOperator = GetComparisonOperatorString(exp.Operator);
+                    string valueStr = GetExpressionValueString(exp.Value);
+                    string expStr = string.Format("{0}{1}{2}", logicalPhrase.FieldName, comparisonOperator, valueStr);
                     expStrings.Add(expStr);
                 }
 
-                output = String.Join("||", expStrings);
+                output = string.Join("||", expStrings);
                 if (expStrings.Count > 1)
                 {
                     output = "(" + output + ")";
@@ -56,19 +137,19 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
                 List<String> crossPhraseStrings = new List<String>();
                 foreach (QueryPhrase tempPhrase in crossPhrase.QueryPhrases)
                 {
-                    String phraseString = BuildPhraseString(tempPhrase);
+                    string phraseString = BuildPhraseString(tempPhrase);
                     crossPhraseStrings.Add(phraseString);
 
                 }
-                String crossJoin = String.Join(";", crossPhraseStrings);
+                string crossJoin = string.Join(";", crossPhraseStrings);
 
-                String expStr = String.Format("{0}={{{1}}}", crossPhrase.FieldName, crossJoin);
+                string expStr = string.Format("{0}={{{1}}}", crossPhrase.FieldName, crossJoin);
                 output = expStr;
             }
             else if (phrase is NegativeQueryPhrase)
             {
                 NegativeQueryPhrase negativePhrase = (NegativeQueryPhrase)phrase;
-                String expStr = String.Format("!{0}", BuildPhraseString(negativePhrase.QueryPhrase));
+                string expStr = string.Format("!{0}", BuildPhraseString(negativePhrase.QueryPhrase));
                 output = expStr;
             }
             else if (phrase is InQueryPhrase)
@@ -102,7 +183,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
             return output;
         }
 
-        private static String GetExpressionValueString(object value)
+        private static string GetExpressionValueString(object value)
         {
             if (value is int || value is long)
             {
@@ -110,14 +191,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
             }
             else
             {
-                String str = value == null ? "null" : value.ToString();
+                string str = value == null ? "null" : value.ToString();
                 str = str.Replace("\'", "*").Replace("\"", "\\\"");
                 str = "'" + str + "'";
                 return str;
             }
         }
 
-        private static String GetComparisonOperatorString(ComparisonOperator op)
+        private static string GetComparisonOperatorString(ComparisonOperator op)
         {
             switch (op)
             {
@@ -134,11 +215,23 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
             }
         }
 
-        private static string BuildFieldsString(IList<string> fields)
+        private static string BuildFieldsString(IList<string> fields, IList<ExpandField> expandFields)
         {
             if (fields != null && fields.Count > 0)
             {
-                return "fields=" + String.Join(",", fields);
+                if (expandFields != null)
+                {
+                    //replace field by  expansion
+                    foreach (ExpandField expand in expandFields)
+                    {
+                       int i =  fields.IndexOf(expand.Field);
+                        if (i != -1)
+                        {
+                            fields[i] = expand.Field + "{" + string.Join("," , expand.ExpandFields) + "}";
+                        }
+                    }
+                }
+                return "fields=" + string.Join(",", fields);
             }
 
             return null;
@@ -146,7 +239,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 
         private static string BuildOrderByString(string orderBy)
         {
-            if (!String.IsNullOrEmpty(orderBy))
+            if (!string.IsNullOrEmpty(orderBy))
             {
                 return "order_by=" + orderBy;
             }
@@ -192,7 +285,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         private static string BuildGroupByString(string groupBy)
         {
             //group_by=severity
-            if (!String.IsNullOrEmpty(groupBy))
+            if (!string.IsNullOrEmpty(groupBy))
             {
                 return "group_by=" + groupBy;
             }
@@ -203,51 +296,28 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         {
             if (phrases == null || phrases.Count == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
 
             //query="id>100;status='open';(rank>10||rank<20)"
-            List<String> phraseStrings = new List<string>();
+            List<string> phraseStrings = new List<string>();
             foreach (QueryPhrase phrase in phrases)
             {
-                String phraseString = BuildPhraseString(phrase);
+                string phraseString = BuildPhraseString(phrase);
                 phraseStrings.Add(phraseString);
 
             }
-            String join = String.Join(";", phraseStrings);
-            String output = String.Format("query=\"{0}\"", join);
+            string join = string.Join(";", phraseStrings);
+            string output = string.Format("query=\"{0}\"", join);
             return output;
         }
 
-        /// <summary>
-        /// build full query string like this : query="id>1001"&order-by=end_date&fields=id,name,end_date&offset=1&limit=3
-        /// </summary>
-        /// <param name="queryPhrases"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="fields"></param>
-        /// <param name="offset"></param>
-        /// <param name="limit"></param>
-        /// <returns></returns>
-        public static string BuildQueryString(IList<QueryPhrase> queryPhrases, IList<String> fields, String orderBy, int? offset, int? limit,
-            String groupBy, Dictionary<String, String> serviceArguments)
+        private static string ConcatNewQueryString(string baseString, string newString)
         {
-            String str = String.Empty;
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildGroupByString(groupBy));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildQueryString(queryPhrases));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildOrderByString(orderBy));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildFieldsString(fields));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildOffsetString(offset));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildLimitString(limit));
-            str = ConcatNewQueryString(str, QueryStringBuilder.BuildServiceArguments(serviceArguments));
-            return str;
-        }
-
-        private static String ConcatNewQueryString(String baseString, String newString)
-        {
-            if (!String.IsNullOrEmpty(newString))
+            if (!string.IsNullOrEmpty(newString))
             {
-                if (!String.IsNullOrEmpty(newString))
+                if (!string.IsNullOrEmpty(newString))
                 {
                     baseString += "&";
                 }

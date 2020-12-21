@@ -24,7 +24,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// Open the system browser redirecting to the given url
         /// </summary>
         /// <param name="url"></param>
-        void OpenBrowser(String url);
+        void OpenBrowser(string url);
 
         /// <summary>
         /// Closes the browser after connection succeeded or time to connect elapsed

@@ -32,18 +32,18 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 
         }
 
-        public QueryExpression(Object value)
+        public QueryExpression(object value)
         {
             Value = value;
         }
 
-        public QueryExpression(Object value, ComparisonOperator op)
+        public QueryExpression(object value, ComparisonOperator op)
         {
             Value = value;
             Operator = op;
         }
 
-        public Object Value { get; set; }
+        public object Value { get; set; }
         public ComparisonOperator Operator
         {
             get

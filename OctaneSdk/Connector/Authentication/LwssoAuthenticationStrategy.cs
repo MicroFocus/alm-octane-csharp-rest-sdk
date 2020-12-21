@@ -28,13 +28,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         public static string AUTHENTICATION_URL = "/authentication/sign_in";
         public static string DISCONNECT_URL = "/authentication/sign_out";
 
-        private static string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
-        private static string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
+        private static readonly string LWSSO_COOKIE_NAME = "LWSSO_COOKIE_KEY";
+        private static readonly string OCTANE_USER_COOKIE_NAME = "OCTANE_USER";
 
         private ConnectionInfo credentials;
         private string lwSsoCookie;
         private string octaneUserCookie;
-        private String host;
+        private string host;
 
         public LwssoAuthenticationStrategy(ConnectionInfo credentials)
         {
@@ -42,7 +42,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         }
 
 
-        public async Task<bool> ConnectAsync(String host)
+        public async Task<bool> ConnectAsync(string host)
         {
             this.host = host;
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(this.host + AUTHENTICATION_URL);
@@ -59,7 +59,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
             using (var streamWriter = new StreamWriter(stream))
             {
                 JavaScriptSerializer jsSerializer = new JavaScriptSerializer();
-                String json = jsSerializer.Serialize(credentials);
+                string json = jsSerializer.Serialize(credentials);
                 streamWriter.Write(json);
             }
 
@@ -178,15 +178,15 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         public void PrepareRequest(HttpWebRequest request)
         {
             //add cookies
-            String cookieDomain = request.Address.Host;
-            String cookiePath = "/";
+            string cookieDomain = request.Address.Host;
+            string cookiePath = "/";
 
             request.CookieContainer = new CookieContainer();
             request.CookieContainer.Add(new Cookie(LWSSO_COOKIE_NAME, lwSsoCookie, cookiePath, cookieDomain));
             request.CookieContainer.Add(new Cookie(OCTANE_USER_COOKIE_NAME, octaneUserCookie, cookiePath, cookieDomain));
         }
 
-        public Task<String> GetWorkspaceUser()
+        public Task<string> GetWorkspaceUser()
         {
             string user = string.Empty;
             if(credentials is UserPassConnectionInfo)

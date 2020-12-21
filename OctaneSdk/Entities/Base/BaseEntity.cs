@@ -78,7 +78,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         }
 
-        public String Name
+        public string Name
         {
             get
             {
@@ -113,7 +113,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public DateTime? GetDateTimeValue(string propertyName)
         {
-            Object obj = GetValue(propertyName);
+            object obj = GetValue(propertyName);
             if (obj == null)
             {
                 return null;
@@ -124,19 +124,19 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             }
             else
             {
-                return DateTime.ParseExact((String)obj, DATE_TIME_FORMAT, null);
+                return DateTime.ParseExact((string)obj, DATE_TIME_FORMAT, null);
             }
         }
 
         public void SetDateTimeValue(string propertyName, DateTime date)
         {
-            String value = date.ToString(DATE_TIME_FORMAT);
+            string value = date.ToString(DATE_TIME_FORMAT);
             SetValue(propertyName, value);
         }
 
         public DateTime? GetDateTimeUTCValue(string propertyName)
         {
-            Object obj = GetValue(propertyName);
+            object obj = GetValue(propertyName);
             if (obj == null)
             {
                 return null;
@@ -147,7 +147,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             }
             else
             {
-                return DateTime.ParseExact((String)obj, DATE_TIME_FORMAT, null).ToUniversalTime();
+                return DateTime.ParseExact((string)obj, DATE_TIME_FORMAT, null).ToUniversalTime();
             }
         }
 
@@ -158,8 +158,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         public override string ToString()
         {
-            String name = Name == null ? "No name" : Name.Substring(0, Math.Min(20, Name.Length)); //Show upto 20 characters in name
-            return m_properties == null ? "No properties" : String.Format("{0} #{1} - {2} , {3} properties", TypeName, Id, name, m_properties.Count);
+            string name = Name == null ? "No name" : Name.Substring(0, Math.Min(20, Name.Length)); //Show upto 20 characters in name
+            return m_properties == null ? "No properties" : string.Format("{0} #{1} - {2} , {3} properties", TypeName, Id, name, m_properties.Count);
         }
     }
 }

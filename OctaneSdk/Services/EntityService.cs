@@ -59,27 +59,27 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return GetAsync<T>(context, null, null);
         }
 
-        public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields) where T : BaseEntity
+        public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<string> fields) where T : BaseEntity
         {
             return GetResultOrThrowInnerException(GetAsync<T>(context, queryPhrases, fields));
         }
 
-        public Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields) where T : BaseEntity
+        public Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<string> fields) where T : BaseEntity
         {
             return GetAsync<T>(context, queryPhrases, fields, null);
         }
 
-        public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit) where T : BaseEntity
+        public EntityListResult<T> Get<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<string> fields, int? limit) where T : BaseEntity
         {
             return GetResultOrThrowInnerException(GetAsync<T>(context, queryPhrases, fields, limit));
         }
 
-        public async Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit) where T : BaseEntity
+        public async Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<string> fields, int? limit) where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName;
 
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, null, null, limit, null, null);
+            string queryString = QueryBuilder.Create().SetQueryPhrases(queryPhrases).SetFields(fields).SetLimit(limit).Build(); 
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
@@ -90,11 +90,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return null;
         }
 
-        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, string orderBy, int? limit)
+        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, string apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, string orderBy, int? limit)
         {
             string url = context.GetPath() + "/" + apiEntityName;
 
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, fields, orderBy, null, limit, null, null);
+            string queryString = QueryBuilder.Create().SetQueryPhrases(queryPhrases).SetFields(fields).SetOrderBy(orderBy).SetLimit(limit).Build();
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
@@ -105,19 +105,19 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return null;
         }
 
-        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, String apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, int? limit)
+        public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, string apiEntityName, IList<QueryPhrase> queryPhrases, List<string> fields, int? limit)
         {
             return await GetAsyncReferenceFields(context, apiEntityName, queryPhrases, fields, null, limit);
         }
 
-        public GroupResult GetWithGroupBy<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
+        public GroupResult GetWithGroupBy<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, string groupBy) where T : BaseEntity
         {
             return GetResultOrThrowInnerException(GetWithGroupByAsync<T>(context, queryPhrases, groupBy));
         }
 
-        public async Task<GroupResult> GetWithGroupByAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, String groupBy) where T : BaseEntity
+        public async Task<GroupResult> GetWithGroupByAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, string groupBy) where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName + "/groups";
 
             // Octane group API now return logical name by default as ID field,
@@ -125,7 +125,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             var serviceArgs = new Dictionary<string, string>();
             serviceArgs.Add("use_numeric_id", "true");
 
-            string queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, groupBy, serviceArgs);
+            string queryString = QueryBuilder.Create().SetQueryPhrases(queryPhrases).SetGroupBy(groupBy).SetServiceArguments(serviceArgs).Build();
+
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
@@ -169,23 +170,23 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             }
         }
 
-        public async Task<T> GetByIdAsync<T>(IRequestContext context, EntityId id, IList<String> fields) where T : BaseEntity
+        public async Task<T> GetByIdAsync<T>(IRequestContext context, EntityId id, IList<string> fields) where T : BaseEntity
         {
             var entity = (T)await GetByIdInternalAsync(context, id, typeof(T), fields).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             return entity;
         }
 
-        public async Task<BaseEntity> GetByIdAsync(IRequestContext context, EntityId id, string type, IList<String> fields)
+        public async Task<BaseEntity> GetByIdAsync(IRequestContext context, EntityId id, string type, IList<string> fields)
         {
             Type entityType = EntityTypeRegistry.GetInstance().GetTypeByEntityTypeName(type);
             return await GetByIdInternalAsync(context, id, entityType, fields).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
 
-        private async Task<BaseEntity> GetByIdInternalAsync(IRequestContext context, EntityId id, Type entityType, IList<String> fields)
+        private async Task<BaseEntity> GetByIdInternalAsync(IRequestContext context, EntityId id, Type entityType, IList<string> fields)
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
             string url = context.GetPath() + "/" + collectionName + "/" + id;
-            String queryString = QueryStringBuilder.BuildQueryString(null, fields, null, null, null, null, null);
+            string queryString = QueryBuilder.Create().SetFields(fields).Build();
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             BaseEntity result = (BaseEntity)jsonSerializer.Deserialize(response.Data, entityType);
@@ -199,7 +200,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<EntityListResult<T>> CreateAsync<T>(IRequestContext context, EntityList<T> entityList, IList<string> fieldsToReturn = null) where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
             string queryParams = "";
 
@@ -209,7 +210,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             }
 
             string url = context.GetPath() + "/" + collectionName;
-            String data = jsonSerializer.Serialize(entityList);
+            string data = jsonSerializer.Serialize(entityList);
 
             ResponseWrapper response = await rc.ExecutePostAsync(url, queryParams, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
@@ -238,13 +239,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return UpdateAsync<T>(context, entity, null, fieldsToReturn);
         }
 
-        public T Update<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
+        public T Update<T>(IRequestContext context, T entity, Dictionary<string, string> serviceArguments, IList<string> fieldsToReturn)
             where T : BaseEntity
         {
             return GetResultOrThrowInnerException(UpdateAsync<T>(context, entity, serviceArguments, fieldsToReturn));
         }
 
-        public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<String, String> serviceArguments, IList<string> fieldsToReturn)
+        public async Task<T> UpdateAsync<T>(IRequestContext context, T entity, Dictionary<string, string> serviceArguments, IList<string> fieldsToReturn)
              where T : BaseEntity
         {
             return (T)await UpdateInternalAsync(context, entity, typeof(T), serviceArguments, fieldsToReturn).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
@@ -258,11 +259,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         private async Task<BaseEntity> UpdateInternalAsync(IRequestContext context, BaseEntity entity, Type entityType, Dictionary<string, string> serviceArguments, IList<string> fieldsToReturn)
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
-            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, serviceArguments);
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(entityType);
+            string queryString = QueryBuilder.Create().SetFields(fieldsToReturn).SetServiceArguments(serviceArguments).Build();
 
             string url = context.GetPath() + "/" + collectionName + "/" + entity.Id;
-            String data = jsonSerializer.Serialize(entity);
+            string data = jsonSerializer.Serialize(entity);
             ResponseWrapper response = await rc.ExecutePutAsync(url, queryString, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             BaseEntity result = (BaseEntity)jsonSerializer.Deserialize(response.Data, entityType);
             return result;
@@ -277,9 +278,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task<EntityListResult<T>> UpdateEntitiesAsync<T>(IRequestContext context, EntityList<T> entities)
             where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName;
-            String data = jsonSerializer.Serialize(entities);
+            string data = jsonSerializer.Serialize(entities);
             ResponseWrapper response = await rc.ExecutePutAsync(url, null, data).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
             return result;
@@ -294,7 +295,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task DeleteByIdAsync<T>(IRequestContext context, EntityId entityId)
              where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
             string url = context.GetPath() + "/" + collectionName + "/" + entityId;
             ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
@@ -308,8 +309,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
         public async Task DeleteByFilterAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases)
             where T : BaseEntity
         {
-            String collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
-            String queryString = QueryStringBuilder.BuildQueryString(queryPhrases, null, null, null, null, null, null);
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string queryString = QueryBuilder.Create().SetQueryPhrases(queryPhrases).Build();
             string url = context.GetPath() + "/" + collectionName + "?" + queryString;
             ResponseWrapper response = await rc.ExecuteDeleteAsync(url).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
         }
@@ -321,7 +322,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
 
         public async Task<Attachment> AttachToEntityAsync(IRequestContext context, BaseEntity entity, string fileName, byte[] content, string contentType, string[] fieldsToReturn)
         {
-            String queryString = QueryStringBuilder.BuildQueryString(null, fieldsToReturn, null, null, null, null, null);
+            string queryString = QueryBuilder.Create().SetFields(fieldsToReturn).Build();
             string url = context.GetPath() + "/attachments?" + queryString;
             string attachmentEntity = null;
             if (entity != null)
@@ -331,7 +332,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             }
             ResponseWrapper response = await rc.SendMultiPartAsync(url, content, contentType, fileName, attachmentEntity).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<Attachment> result = jsonSerializer.Deserialize<EntityListResult<Attachment>>(response.Data);
-            return (Attachment)result.data[0];
+            return result.data[0];
         }
 
         /// <summary>
@@ -354,7 +355,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             {
                 new LogicalQueryPhrase(FieldMetadata.ENTITY_NAME_FIELD, entityType)
             };
-            var queryString = QueryStringBuilder.BuildQueryString(query);
+            var queryString = QueryBuilder.BuildQueryString(query);
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data == null)
@@ -418,7 +419,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             {
                 { "text_search", "{\"type\":\"global\",\"text\":\"" + searchString + "\"}" }
             };
-            var queryString = QueryStringBuilder.BuildQueryString(query, null, "id", null, limit, null, serviceArguments);
+            var queryString = QueryBuilder.Create().SetQueryPhrases(query).SetOrderBy("id").SetLimit(limit).SetServiceArguments(serviceArguments).Build();
 
             ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);

@@ -25,6 +25,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.RequestContext
 	/// </summary>
 	public interface IRequestContext
     {
-        String GetPath();
+        string GetPath();
     }
 }

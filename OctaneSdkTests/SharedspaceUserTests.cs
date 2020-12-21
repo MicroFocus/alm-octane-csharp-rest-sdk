@@ -78,7 +78,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             entityService.Update(sharedSpaceContext, userForUpdate);
 
             //READ USER
-            List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
+            List<string> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
             SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
 
             List<EntityId> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList();
@@ -105,13 +105,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             SharedspaceUser userForUpdate = new SharedspaceUser(createdUser.Id);
             userForUpdate.WorkspaceRoles = new EntityList<WorkspaceRole>();
             userForUpdate.WorkspaceRoles.data.Add(sharedSpaceAdminRole);
-            Dictionary<String, String> serviceArgs = new Dictionary<string, string>();
+            Dictionary<string, string> serviceArgs = new Dictionary<string, string>();
             serviceArgs.Add("reference_update_mode", "append");
 
             entityService.Update(sharedSpaceContext, userForUpdate, serviceArgs, null);
 
             //READ USER
-            List<String> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
+            List<string> fields = new List<string> { SharedspaceUser.NAME_FIELD, SharedspaceUser.WORKSPACE_ROLES_FIELD };
             SharedspaceUser updatedUser = entityService.GetById<SharedspaceUser>(sharedSpaceContext, createdUser.Id, fields);
 
             List<EntityId> assignedWorkspaceRoles = updatedUser.WorkspaceRoles.data.Select(p => p.Id).ToList();

@@ -29,8 +29,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
     /// </summary>
     public class EntityTypeRegistry
     {
-        private Dictionary<Type, String> type2collectionNameMap = new Dictionary<Type, String>();
-        private Dictionary<String, Type> entityTypeName2Type = new Dictionary<String, Type>();
+        private Dictionary<Type, string> type2collectionNameMap = new Dictionary<Type, string>();
+        private Dictionary<string, Type> entityTypeName2Type = new Dictionary<string, Type>();
 
         #region Singelton
 
@@ -70,7 +70,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
 
         private string ExtractEntityTypeName(Type type)
         {
-            String className = type.Name;
+            string className = type.Name;
             StringBuilder sb = new StringBuilder();
             sb.Append(className[0]);
             for (int i = 1; i < className.Length; i++)
@@ -82,7 +82,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
                 sb.Append(className[i]);
             }
 
-            String result = sb.ToString().ToLower();
+            string result = sb.ToString().ToLower();
             return result;
 
         }
@@ -99,12 +99,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
             return type2collectionNameMap.Keys.ToList<Type>();
         }
 
-        public String GetCollectionName(Type type)
+        public string GetCollectionName(Type type)
         {
             return type2collectionNameMap[type];
         }
 
-        public Type GetTypeByEntityTypeName(String entityTypeName)
+        public Type GetTypeByEntityTypeName(string entityTypeName)
         {
             if (entityTypeName2Type.ContainsKey(entityTypeName))
             {

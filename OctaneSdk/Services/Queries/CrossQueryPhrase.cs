@@ -26,17 +26,17 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
 	/// </summary>
 	public class CrossQueryPhrase : QueryPhrase
     {
-        public String FieldName { get; set; }
+        public string FieldName { get; set; }
 
         public IList<QueryPhrase> QueryPhrases { get; set; }
 
-        public CrossQueryPhrase(String fieldName, QueryPhrase queryPhrase)
+        public CrossQueryPhrase(string fieldName, QueryPhrase queryPhrase)
         {
             this.FieldName = fieldName;
             this.QueryPhrases = new List<QueryPhrase>() { queryPhrase  };
         }
 
-        public CrossQueryPhrase(String fieldName, IList<QueryPhrase> queryPhrases)
+        public CrossQueryPhrase(string fieldName, IList<QueryPhrase> queryPhrases)
         {
             this.FieldName = fieldName;
             this.QueryPhrases = queryPhrases;

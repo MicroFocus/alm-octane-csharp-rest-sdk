@@ -23,7 +23,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
 {
     public interface AuthenticationStrategy
     {
-        Task<bool> ConnectAsync(String host);
+        Task<bool> ConnectAsync(string host);
 
         bool IsConnected();
 
@@ -49,7 +49,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Authentication
         /// <summary>
         /// Retrieve the workspace user
         /// </summary>
-        Task<String> GetWorkspaceUser();
+        Task<string> GetWorkspaceUser();
 
         /// <summary>
         ///  Test the connection to the octane server

@@ -48,7 +48,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
         }
 
        
-        public override bool Equals(Object o)
+        public override bool Equals(object o)
         {
             if (this == o) return true;
             if (o == null || this.GetType() != o.GetType()) return false;
@@ -127,7 +127,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
             return false;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(almVersion);
@@ -141,7 +141,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Version
             return sb.ToString();
         }
 
-        public String getVersionString()
+        public string getVersionString()
         {
             return almVersion + "." + octaneVersion;
         }

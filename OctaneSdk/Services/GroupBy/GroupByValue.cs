@@ -28,11 +28,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.GroupBy
 
         public int id { get; set; }
 
-        public String name { get; set; }
+        public string name { get; set; }
 
-        public String type { get; set; }
+        public string type { get; set; }
 
-        public String logical_name { get; set; }
+        public string logical_name { get; set; }
 
     }
 }

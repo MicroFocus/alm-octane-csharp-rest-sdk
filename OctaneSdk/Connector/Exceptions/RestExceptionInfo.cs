@@ -26,6 +26,6 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
         public string correlation_id { get; set; }
         public string description { get; set; }
         public string description_translated { get; set; }
-        public Dictionary<String,String> properties { get; set; }
+        public Dictionary<string,string> properties { get; set; }
     }
 }

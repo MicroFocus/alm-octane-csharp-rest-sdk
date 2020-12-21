@@ -22,7 +22,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector
 {
 	public class ResponseWrapper
     {
-        public String Data { get; set; }
+        public string Data { get; set; }
 
         public HttpStatusCode StatusCode { get; set; }
     }

@@ -48,7 +48,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void GetReleaseByIdTest()
         {
             Release created = CreateRelease();
-            List<String> fields = new List<string>();
+            List<string> fields = new List<string>();
             fields.Add(Release.NAME_FIELD);
             Release release = entityService.GetById<Release>(workspaceContext, created.Id, fields);
             Assert.AreEqual(release.Id, created.Id);
@@ -78,7 +78,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         {
             Release created = CreateRelease();
 
-            List<String> fields = new List<string>();
+            List<string> fields = new List<string>();
             fields.Add(Release.NAME_FIELD);
             fields.Add(Release.START_DATE_FIELD);
             fields.Add(Release.END_DATE_FIELD);
@@ -95,12 +95,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             Release created = CreateRelease();
 
             //Prepare for update
-            String name = "ReleaseUpdated_" + Guid.NewGuid();
+            string name = "ReleaseUpdated_" + Guid.NewGuid();
             Release release = new Release(created.Id);
             release.Name = name;
 
-            Release updated = entityService.Update<Release>(workspaceContext, release, TestHelper.NameFields);
-            Assert.AreEqual<String>(updated.Name, name);
+            Release updated = entityService.Update(workspaceContext, release, TestHelper.NameFields);
+            Assert.AreEqual<string>(updated.Name, name);
         }
 
         [TestMethod]
@@ -153,7 +153,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         {
             Release release = CreateRelease();
 
-            List<String> fields = new List<string>();
+            List<string> fields = new List<string>();
             fields.Add(Sprint.NAME_FIELD);
             fields.Add(Sprint.START_DATE_FIELD);
             fields.Add(Sprint.END_DATE_FIELD);
@@ -191,7 +191,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         public static Release CreateRelease()
         {
-            String name = "Release_" + Guid.NewGuid();
+            string name = "Release_" + Guid.NewGuid();
             Release release = new Release();
             release.Name = name;
             release.StartDate = DateTime.Now;
@@ -200,13 +200,13 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
 
             Release created = entityService.Create<Release>(workspaceContext, release, TestHelper.NameFields);
-            Assert.AreEqual<String>(name, created.Name);
+            Assert.AreEqual<string>(name, created.Name);
             return created;
         }
 
         private static Milestone CreateMilestone(Release release)
         {
-            String name = "Milestone_" + Guid.NewGuid();
+            string name = "Milestone_" + Guid.NewGuid();
             Milestone milestone = new Milestone();
             milestone.Name = name;
             milestone.Date = DateTime.Now.AddDays(7);
@@ -214,7 +214,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
 
             Milestone created = entityService.Create<Milestone>(workspaceContext, milestone, TestHelper.NameFields);
-            Assert.AreEqual<String>(name, created.Name);
+            Assert.AreEqual<string>(name, created.Name);
             return created;
         }
     }

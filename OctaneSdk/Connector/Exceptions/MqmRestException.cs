@@ -31,7 +31,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
 			this.exceptionInfo = exceptionInfo;
 		}
 
-		public String ErrorCode
+		public string ErrorCode
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
 			}
 		}
 
-		public String CorrelationInfo
+		public string CorrelationInfo
 		{
 			get
 			{
@@ -47,7 +47,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
 			}
 		}
 
-		public String Description
+		public string Description
 		{
 			get
 			{
@@ -55,7 +55,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Connector.Exceptions
 			}
 		}
 
-		public String DescriptionTranslated
+		public string DescriptionTranslated
 		{
 			get
 			{

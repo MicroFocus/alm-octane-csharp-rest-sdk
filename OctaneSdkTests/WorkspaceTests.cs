@@ -33,7 +33,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
             Workspace created = entityService.Create<Workspace>(sharedSpaceContext, workspace, TestHelper.NameFields);
 
-            Assert.AreEqual<String>(workspace.Name, created.Name);
+            Assert.AreEqual<string>(workspace.Name, created.Name);
 
         }
 

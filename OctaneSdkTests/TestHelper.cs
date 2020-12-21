@@ -28,7 +28,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 	public static class TestHelper
     {
 
-        public static Phase GetPhaseForEntityByLogicalName(EntityService entityService, WorkspaceContext workspaceContext, String entityTypeName, String logicalName)
+        public static Phase GetPhaseForEntityByLogicalName(EntityService entityService, WorkspaceContext workspaceContext, string entityTypeName, string logicalName)
         {
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
             LogicalQueryPhrase byEntityPhrase = new LogicalQueryPhrase(Phase.ENTITY_FIELD, entityTypeName);
@@ -43,7 +43,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         public static WorkItemRoot GetWorkItemRoot(EntityService entityService, WorkspaceContext workspaceContext)
         {
-            List<String> fields = new List<String>() { Phase.NAME_FIELD };
+            List<string> fields = new List<string>() { Phase.NAME_FIELD };
             EntityListResult<WorkItemRoot> result = entityService.Get<WorkItemRoot>(workspaceContext, null, fields);
             Assert.AreEqual(1, result.total_count);
             WorkItemRoot root = result.data[0];
@@ -52,8 +52,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
 
         public static ListNode GetSeverityByName(EntityService entityService, WorkspaceContext workspaceContext, String name)
         {
-            String suffix = name.ToLower().Replace(" ", "_");
-            String logicalName = "list_node.severity." + suffix;
+            string suffix = name.ToLower().Replace(" ", "_");
+            string logicalName = "list_node.severity." + suffix;
             List<QueryPhrase> queryPhrases = new List<QueryPhrase>();
             LogicalQueryPhrase byLogicalName = new LogicalQueryPhrase(ListNode.LOGICAL_NAME_FIELD, logicalName);
             queryPhrases.Add(byLogicalName);
@@ -61,7 +61,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
            // LogicalQueryPhrase byName = new LogicalQueryPhrase(ListNode.NAME_FIELD, name);
             //queryPhrases.Add(byName);
 
-            List<String> fields = new List<String>() { Phase.NAME_FIELD, Phase.LOGICAL_NAME_FIELD };
+            List<string> fields = new List<string>() { Phase.NAME_FIELD, Phase.LOGICAL_NAME_FIELD };
 
             EntityListResult<ListNode> result = entityService.Get<ListNode>(workspaceContext, queryPhrases, fields);
             Assert.AreEqual(1, result.total_count);

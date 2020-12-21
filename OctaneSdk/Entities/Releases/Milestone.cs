@@ -53,7 +53,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 
         }
 
-        public String Description
+        public string Description
         {
             get
             {
