@@ -21,6 +21,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
     /// </summary>
     public class Comment : BaseEntity
     {
+        public const string TYPE_COMMENT = "comment";
+
         public const string AUTHOR_FIELD = "author";
         public const string OWNER_WORK_FIELD = "owner_work_item";
         public const string OWNER_TEST_FIELD = "owner_test";
