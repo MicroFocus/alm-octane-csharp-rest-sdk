@@ -70,8 +70,10 @@
     <Compile Include="Entities\Base\EntityId.cs" />
     <Compile Include="Entities\Base\EntityLabelMetadata.cs" />
     <Compile Include="Entities\Base\Transition.cs" />
+    <Compile Include="Entities\General\BDDSpecification.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
+    <Compile Include="Entities\Requirements\RequirementFolder.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
     <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Teams\TeamMember.cs" />

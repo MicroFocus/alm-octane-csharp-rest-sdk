@@ -18,37 +18,19 @@
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
-    /// Wrapper for Run entity
-    /// More fields might be supported by entity that still are not exposed in the class
+    /// Wrapper for Requirement Document entity.
     /// </summary>
-    public class Requirement : BaseEntity
+    public class RequirementFolder: Requirement
     {
-        public static string SUBTYPE_FIELD = "subtype";
-        public static string SUBTYPE_DOCUMENT = "requirement_document";
-        public static string SUBTYPE_FOLDER = "requirement_folder";
 
-        public Requirement()
+        public RequirementFolder()
+            : base()
         {
-            AggregateType = "requirement";
         }
 
-        public Requirement(EntityId id)
+        public RequirementFolder(EntityId id)
             : base(id)
         {
-            AggregateType = "requirement";
-        }
-
-        public string SubType
-        {
-            get
-            {
-                return GetStringValue(SUBTYPE_FIELD);
-            }
-            set
-            {
-                SetValue(SUBTYPE_FIELD, value);
-            }
-
         }
 
     }
