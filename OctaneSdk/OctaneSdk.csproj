@@ -123,6 +123,7 @@
     <Compile Include="Services\GroupBy\GroupByValue.cs" />
     <Compile Include="Connector\Exceptions\RestExceptionInfos.cs" />
     <Compile Include="Services\ListResult.cs" />
+    <Compile Include="Services\NonGenericsEntityService.cs" />
     <Compile Include="Services\Queries\ComparisonOperator.cs" />
     <Compile Include="Services\Queries\CrossQueryPhrase.cs" />
     <Compile Include="Services\Queries\ExpandField.cs" />
