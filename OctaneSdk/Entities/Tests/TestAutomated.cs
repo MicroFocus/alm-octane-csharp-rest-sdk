@@ -15,12 +15,14 @@
 */
 
 
+using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
     /// Wrapper for automated test entity.
     /// </summary>
+    [CustomCollectionPath("automated_tests")]
     public class TestAutomated : Test
     {
         public const string SUBTYPE_TEST_AUTOMATED = "test_automated";

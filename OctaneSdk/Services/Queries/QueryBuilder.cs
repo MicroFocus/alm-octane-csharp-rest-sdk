@@ -27,6 +27,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
     public class QueryBuilder
     {
         private IList<QueryPhrase> queryPhrases;
+        private string queryStringValue;
         private IList<string> fields;
         private IList<ExpandField> expandFields;
 
@@ -39,6 +40,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         public QueryBuilder SetQueryPhrases(IList<QueryPhrase> queryPhrases)
         {
             this.queryPhrases = queryPhrases;
+            return this;
+        }
+
+        public QueryBuilder SetQueryStringValue(string queryStringValue)
+        {
+            this.queryStringValue = queryStringValue;
             return this;
         }
 
@@ -98,8 +105,9 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Query
         public string Build()
         {
             string str = string.Empty;
+            string query = String.IsNullOrEmpty(queryStringValue) ? BuildQueryString(queryPhrases) : string.Format("query=\"{0}\"", queryStringValue);
             str = ConcatNewQueryString(str, BuildGroupByString(groupBy));
-            str = ConcatNewQueryString(str, BuildQueryString(queryPhrases));
+            str = ConcatNewQueryString(str, query);
             str = ConcatNewQueryString(str, BuildOrderByString(orderBy));
             str = ConcatNewQueryString(str, BuildFieldsString(fields, expandFields));
             str = ConcatNewQueryString(str, BuildOffsetString(offset));
