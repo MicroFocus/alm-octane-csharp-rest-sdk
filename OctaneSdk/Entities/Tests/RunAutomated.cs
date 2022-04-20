@@ -14,13 +14,14 @@
 * limitations under the License.
 */
 
-
+using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     /// <summary>
     /// Wrapper for automated test run entity.
     /// </summary>
+    [CustomCollectionPath("automated_runs")]
     public class RunAutomated : Run
     {
         public const string SUBTYPE_RUN_AUTOMATED = "run_automated";
