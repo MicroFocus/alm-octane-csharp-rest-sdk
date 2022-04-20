@@ -89,6 +89,7 @@
     <Compile Include="Entities\Tests\TestManual.cs" />
     <Compile Include="Entities\Tests\TestScript.cs" />
     <Compile Include="Entities\Tests\TestSuite.cs" />
+    <Compile Include="Entities\Tests\TestSuiteLinkToTest.cs" />
     <Compile Include="Entities\UserItems\UserItem.cs" />
     <Compile Include="Entities\Users\WorkspaceRole.cs" />
     <Compile Include="Entities\Users\Role.cs" />
