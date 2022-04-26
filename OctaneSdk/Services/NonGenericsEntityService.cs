@@ -81,6 +81,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return this.es.GetByIdAsync(context, id, type, fieldsCasted).Result;
         }
 
+        /// <summary>
+        /// Returns the latest test script content for the given test id.
+        /// </summary>
+        public TestScript GetTestScript(IRequestContext context, string testId)
+        {
+            return this.es.GetTestScriptAsync(context, new EntityId(testId)).Result;
+        }
+
         private async Task<EntityListResult<BaseEntity>> GetListAsync(IRequestContext context, string apiEntityName, string queryStringValue, Object[] fields, string orderBy, int? limit, int? offset)
         {
             string url = context.GetPath() + "/" + apiEntityName;
