@@ -37,9 +37,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MicroFocus.Adm.Octane.Api.Core.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Open Text")]
 [assembly: AssemblyProduct("MicroFocus.Adm.Octane.Api.Core.Tests")]
-[assembly: AssemblyCopyright("Copyright © MicroFocus 2020")]
+[assembly: AssemblyCopyright("Copyright © 2024 Open Text")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -61,5 +61,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("16.0.200.1")]
-[assembly: AssemblyFileVersion("16.0.200.1")]
+[assembly: AssemblyVersion("24.1")]
+[assembly: AssemblyFileVersion("CE 24.1")]
