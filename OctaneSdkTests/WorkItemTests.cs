@@ -201,10 +201,11 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void SearchWorkItems()
         {
             var guid = Guid.NewGuid();
-            var story = StoryTests.CreateStory("Story_WorkItem_CustomName_" + guid);
-            var epic = CreateEpic("Epic_WorkItem_CustomName_" + guid);
-            var feature = CreateFeature(epic, "Feature_WorkItem_CustomName_" + guid);
-            var defect = DefectTests.CreateDefect("Defect_WorkItem_CustomName_" + guid);
+            var nameSuffix = "CustomName_" + guid;
+            var story = StoryTests.CreateStory("Story " + nameSuffix);
+            var epic = CreateEpic("Epic " + nameSuffix);
+            var feature = CreateFeature(epic, "Feature " + nameSuffix);
+            var defect = DefectTests.CreateDefect("Defect " + nameSuffix);
 
             var expectedWorkItems = new List<WorkItem>
             {
@@ -216,7 +217,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             {
                 Thread.Sleep(1000);
 
-                searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, "_WorkItem_CustomName_" + guid,
+                searchResult = entityService.SearchAsync<WorkItem>(workspaceContext, nameSuffix,
                     new List<string> { WorkItem.SUBTYPE_STORY, WorkItem.SUBTYPE_EPIC, WorkItem.SUBTYPE_FEATURE }).Result;
 
                 return searchResult.data.Count == 3;
