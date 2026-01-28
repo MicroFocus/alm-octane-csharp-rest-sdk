@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MicroFocus.Adm.Octane.Api.Core</RootNamespace>
     <AssemblyName>MicroFocus.Adm.Octane.Api.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +36,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MicroFocus.Adm.Octane.Api.Core, Version=16.0.200.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\octane-visual-studio-plugin\packages\MicroFocus.Adm.Octane.Api.Core.16.0.200.1\lib\net45\MicroFocus.Adm.Octane.Api.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -72,13 +76,23 @@
     <Compile Include="Entities\Base\Transition.cs" />
     <Compile Include="Entities\General\BDDSpecification.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
+    <Compile Include="Entities\ModelItems\Model.cs" />
+    <Compile Include="Entities\ModelItems\ModelItem.cs" />
+    <Compile Include="Entities\ModelItems\Unit.cs" />
+    <Compile Include="Entities\ProcessItems\AutoAction.cs" />
+    <Compile Include="Entities\ProcessItems\ManualAction.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessItem.cs" />
+    <Compile Include="Entities\ProcessItems\QualityGate.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Requirements\RequirementFolder.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
+    <Compile Include="Entities\SuiteRuns\Schedule.cs" />
+    <Compile Include="Entities\SuiteRuns\ScheduleRun.cs" />
     <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Teams\TeamMember.cs" />
     <Compile Include="Entities\Teams\Team.cs" />
     <Compile Include="Entities\Tests\GherkinAutomatedRun.cs" />
+    <Compile Include="Entities\Tests\ModelBasedTest.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Tests\RunAutomated.cs" />
     <Compile Include="Entities\Tests\RunManual.cs" />
@@ -150,6 +164,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Version\OctaneVersion.cs" />
     <Compile Include="Services\Version\OctaneVersionMetadata.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
