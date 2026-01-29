@@ -18,7 +18,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string PARENT_FIELD = "parent";
         public const string RISK_FIELD = "risk";
 
-        public const string SUBTYPE_UNIT = "unit";
+        public const string SUBTYPE_UNIT = "unit"; 
         public const string SUBTYPE_MODEL = "model";
 
         public ModelItem()

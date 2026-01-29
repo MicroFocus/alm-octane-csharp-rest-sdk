@@ -32,7 +32,6 @@
 using MicroFocus.Adm.Octane.Api.Core.Connector;
 using MicroFocus.Adm.Octane.Api.Core.Entities;
 using MicroFocus.Adm.Octane.Api.Core.Entities.Base;
-using MicroFocus.Adm.Octane.Api.Core.Entities.ProcessItems;
 using MicroFocus.Adm.Octane.Api.Core.Services.Core;
 using MicroFocus.Adm.Octane.Api.Core.Services.GroupBy;
 using MicroFocus.Adm.Octane.Api.Core.Services.Query;
@@ -95,11 +94,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             List<string> fields,
             int? limit) where T : BaseEntity
         {
-            string collectionName =
-                typeof(T) == typeof(AutoAction) ? ProcessItem.SUBTYPE_AUTO_ACTION :
-                typeof(T) == typeof(ManualAction) ? ProcessItem.SUBTYPE_MANUAL_ACTION :
-                typeof(T) == typeof(QualityGate) ? ProcessItem.SUBTYPE_QUALITY_GATE :
-                EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
+            string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
 
             string url = context.GetPath() + "/" + collectionName;
 

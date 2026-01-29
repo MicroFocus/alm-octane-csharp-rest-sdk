@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-    public class Schedule : BaseEntity
+    public class SuiteRunScheduler : BaseEntity
     {
         public const string CREATION_TIME_FIELD = "creation_time";
         public const string LAST_MODIFIED_FIELD = "last_modified";
@@ -17,12 +17,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string MILESTONE_FIELD = "milestone";
         public const string STATUS_FIELD = "status";
 
-        public Schedule()
+        public SuiteRunScheduler()
         {
             AggregateType = "suite_run_scheduler";
         }
 
-        public Schedule(EntityId id) : base(id)
+        public SuiteRunScheduler(EntityId id) : base(id)
         {
             AggregateType = "suite_run_scheduler";
         }

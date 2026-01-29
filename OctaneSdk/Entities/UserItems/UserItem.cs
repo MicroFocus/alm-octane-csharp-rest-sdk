@@ -96,7 +96,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             }
         }
 
-        public BaseEntity ProcessItem
+        public BaseEntity Process
         {
             get
             {

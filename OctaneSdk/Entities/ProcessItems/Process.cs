@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
-    public class ProcessItem : BaseEntity
+    public class Process : BaseEntity
     {
         public const string SUBTYPE_FIELD = "subtype";
         public const string CREATION_TIME_FIELD = "creation_time";
@@ -17,19 +17,24 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string DURATION_FIELD = "duration";
         public const string START_TIME_FIELD = "start_time";
         public const string END_TIME_FIELD = "end_time";
-        public const string PHASE_FIELD = "phase";
 
         // known subtypes
         public const string SUBTYPE_AUTO_ACTION = "process_auto_action";
         public const string SUBTYPE_MANUAL_ACTION = "process_action";
         public const string SUBTYPE_QUALITY_GATE = "process_quality_gate";
 
-        public ProcessItem()
+        public Process(IDictionary<string, object> properties)
+        : base(properties)
+    {
+        AggregateType = "processes";
+    }
+
+        public Process()
         {
-            AggregateType = "process";
+            AggregateType = "processes";
         }
 
-        public ProcessItem(EntityId id)
+        public Process(EntityId id)
             : base(id)
         {
             AggregateType = "process";
@@ -84,21 +89,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         }
 
         /// <summary>
-        /// End time as returned by server (string representation)
+        /// End time as returned by server(string representation)
         /// </summary>
         public string EndTime
         {
             get { return GetStringValue(END_TIME_FIELD); }
             set { SetValue(END_TIME_FIELD, value); }
-        }
-
-        /// <summary>
-        /// Phase reference (if present)
-        /// </summary>
-        public BaseEntity Phase
-        {
-            get { return (BaseEntity)GetValue(PHASE_FIELD); }
-            set { SetValue(PHASE_FIELD, value); }
         }
     }
 }
