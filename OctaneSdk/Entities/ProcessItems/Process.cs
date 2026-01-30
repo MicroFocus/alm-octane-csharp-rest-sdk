@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MicroFocus.Adm.Octane.Api.Core.Services.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
+    [CustomCollectionPath("processes")]
     public class Process : BaseEntity
     {
         public const string SUBTYPE_FIELD = "subtype";
