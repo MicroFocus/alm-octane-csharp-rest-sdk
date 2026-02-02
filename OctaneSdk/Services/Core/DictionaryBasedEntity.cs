@@ -194,16 +194,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services.Core
                 EntityList<T> myList = new EntityList<T>();
                 foreach (var item in entities.data)
                 {
-                    if (typeof(T) == typeof(Process))
-                    {
-                        var process = ProcessFactory.Create(item.GetProperties());
-                        myList.data.Add((T)(BaseEntity)process);
-                    }
-                    else
-                    {
-                        myList.data.Add((T)item);
-                    }
-
+                    myList.data.Add((T)item);
                 }
                 return myList;
             }

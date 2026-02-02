@@ -39,7 +39,6 @@ using MicroFocus.Adm.Octane.Api.Core.Services.RequestContext;
 using MicroFocus.Adm.Octane.Api.Core.Services.Version;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -88,34 +87,21 @@ namespace MicroFocus.Adm.Octane.Api.Core.Services
             return GetResultOrThrowInnerException(GetAsync<T>(context, queryPhrases, fields, limit));
         }
 
-        public async Task<EntityListResult<T>> GetAsync<T>(
-            IRequestContext context,
-            IList<QueryPhrase> queryPhrases,
-            List<string> fields,
-            int? limit) where T : BaseEntity
+        public async Task<EntityListResult<T>> GetAsync<T>(IRequestContext context, IList<QueryPhrase> queryPhrases, List<string> fields, int? limit) where T : BaseEntity
         {
             string collectionName = EntityTypeRegistry.GetInstance().GetCollectionName(typeof(T));
-
             string url = context.GetPath() + "/" + collectionName;
 
-            string queryString = QueryBuilder.Create()
-                .SetQueryPhrases(queryPhrases)
-                .SetFields(fields)
-                .SetLimit(limit)
-                .Build();
+            string queryString = QueryBuilder.Create().SetQueryPhrases(queryPhrases).SetFields(fields).SetLimit(limit).Build(); 
 
-            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString)
-                .ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
-
-            Debug.WriteLine($"[GetAsync] T={typeof(T).FullName}, collection={collectionName}, url={url}");
-            Debug.WriteLine($"[GetAsync] queryString={queryString}");
-
+            ResponseWrapper response = await rc.ExecuteGetAsync(url, queryString).ConfigureAwait(RestConnector.AwaitContinueOnCapturedContext);
             if (response.Data != null)
-                return jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
-
+            {
+                EntityListResult<T> result = jsonSerializer.Deserialize<EntityListResult<T>>(response.Data);
+                return result;
+            }
             return null;
         }
-
 
         public async Task<EntityListResult<BaseEntity>> GetAsyncReferenceFields(IRequestContext context, string apiEntityName, IList<QueryPhrase> queryPhrases, List<String> fields, string orderBy, int? limit)
         {
