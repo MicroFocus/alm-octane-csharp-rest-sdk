@@ -36,6 +36,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MicroFocus.Adm.Octane.Api.Core, Version=16.0.200.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\octane-visual-studio-plugin\packages\MicroFocus.Adm.Octane.Api.Core.16.0.200.1\lib\net45\MicroFocus.Adm.Octane.Api.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -73,13 +76,23 @@
     <Compile Include="Entities\Base\Transition.cs" />
     <Compile Include="Entities\General\BDDSpecification.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
+    <Compile Include="Entities\ModelItems\Model.cs" />
+    <Compile Include="Entities\ModelItems\ModelItem.cs" />
+    <Compile Include="Entities\ModelItems\Unit.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessAutoAction.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessAction.cs" />
+    <Compile Include="Entities\ProcessItems\Process.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessQualityGate.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Requirements\RequirementFolder.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
+    <Compile Include="Entities\SuiteRuns\SuiteRunScheduler.cs" />
+    <Compile Include="Entities\SuiteRuns\SuiteRunSchedulerRun.cs" />
     <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Teams\TeamMember.cs" />
     <Compile Include="Entities\Teams\Team.cs" />
     <Compile Include="Entities\Tests\GherkinAutomatedRun.cs" />
+    <Compile Include="Entities\Tests\ModelBasedTest.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Tests\RunAutomated.cs" />
     <Compile Include="Entities\Tests\RunManual.cs" />

@@ -45,6 +45,8 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public const string OWNER_BDD_SPEC_FIELD = "owner_bdd_spec";
         public const string OWNER_MODEL_FIELD = "owner_model_item";
         public const string OWNER_PROCESS_FIELD = "owner_process";
+        public const string OWNER_SUITE_RUN_SCHEDULER_FIELD = "owner_suite_run_scheduler";
+        public const string OWNER_SUITE_RUN_SCHEDULER_RUN_FIELD = "owner_suite_run_scheduler_run";
         public const string CREATION_TIME_FIELD = "creation_time";
         public const string TEXT_FIELD = "text";
 
@@ -114,6 +116,24 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             set
             {
                 SetValue(OWNER_PROCESS_FIELD, value);
+            }
+        }
+
+        public BaseEntity OwnerSuiteRunScheduler
+        {
+            get { return (BaseEntity)GetValue(OWNER_SUITE_RUN_SCHEDULER_FIELD); }
+            set
+            {
+                SetValue(OWNER_SUITE_RUN_SCHEDULER_FIELD, value);
+            }
+        }
+
+        public BaseEntity OwnerSuiteRunSchedulerRun
+        {
+            get { return (BaseEntity)GetValue(OWNER_SUITE_RUN_SCHEDULER_RUN_FIELD); }
+            set
+            {
+                SetValue(OWNER_SUITE_RUN_SCHEDULER_RUN_FIELD, value);
             }
         }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MicroFocus.Adm.Octane.Api.Core.Entities.SuiteRuns
+namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     public class SuiteRunSchedulerRun : BaseEntity
     {
