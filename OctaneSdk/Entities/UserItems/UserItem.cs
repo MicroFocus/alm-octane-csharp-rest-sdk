@@ -41,10 +41,14 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public static string REASON_FIELD = "reason";
         public static string ORIGIN = "origin";
         public static string WORK_ITEM_REFERENCE = "my_follow_items_work_item";
+        public static string MODEL_ITEM_REFERENCE = "my_follow_items_model_item";
+        public static string PROCESS_REFERENCE = "my_follow_items_process";
         public static string TASK_REFERENCE = "my_follow_items_task";
         public static string TEST_REFERENCE = "my_follow_items_test";
         public static string RUN_REFERENCE = "my_follow_items_run";
         public static string REQUIREMENT_REFERENCE = "my_follow_items_requirement";
+        public static string SUITE_RUN_SCHEDULER_REFERENCE = "my_follow_items_suite_run_scheduler";
+        public static string SUITE_RUN_SCHEDULER_RUN_REFERENCE = "my_follow_items_suite_run_scheduler_run";
 
         public UserItem()
         {
@@ -77,6 +81,54 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
             set
             {
                 SetValue(WORK_ITEM_REFERENCE, value);
+            }
+        }
+
+        public BaseEntity ModelItem
+        {
+            get
+            {
+                return (BaseEntity)GetValue(MODEL_ITEM_REFERENCE);
+            }
+            set
+            {
+                SetValue(MODEL_ITEM_REFERENCE, value);
+            }
+        }
+
+        public BaseEntity Process
+        {
+            get
+            {
+                return (BaseEntity)GetValue(PROCESS_REFERENCE);
+            }
+            set
+            {
+                SetValue(PROCESS_REFERENCE, value);
+            }
+        }
+
+        public BaseEntity SuiteRunScheduler
+        {
+            get
+            {
+                return (BaseEntity)GetValue(SUITE_RUN_SCHEDULER_REFERENCE);
+            }
+            set 
+            {
+                SetValue(SUITE_RUN_SCHEDULER_REFERENCE, value); 
+            }
+        }
+
+        public BaseEntity SuiteRunSchedulerRun
+        {
+            get
+            {
+                return (BaseEntity)GetValue(SUITE_RUN_SCHEDULER_RUN_REFERENCE);
+            }
+            set 
+            { 
+                SetValue(SUITE_RUN_SCHEDULER_RUN_REFERENCE, value); 
             }
         }
 

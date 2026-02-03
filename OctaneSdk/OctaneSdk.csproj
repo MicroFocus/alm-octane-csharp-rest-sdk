@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MicroFocus.Adm.Octane.Api.Core</RootNamespace>
     <AssemblyName>MicroFocus.Adm.Octane.Api.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -72,13 +73,23 @@
     <Compile Include="Entities\Base\Transition.cs" />
     <Compile Include="Entities\General\BDDSpecification.cs" />
     <Compile Include="Entities\Helpers\EntityHelper.cs" />
+    <Compile Include="Entities\ModelItems\Model.cs" />
+    <Compile Include="Entities\ModelItems\ModelItem.cs" />
+    <Compile Include="Entities\ModelItems\Unit.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessAutoAction.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessAction.cs" />
+    <Compile Include="Entities\ProcessItems\Process.cs" />
+    <Compile Include="Entities\ProcessItems\ProcessQualityGate.cs" />
     <Compile Include="Entities\Requirements\Requirement.cs" />
     <Compile Include="Entities\Requirements\RequirementFolder.cs" />
     <Compile Include="Entities\Requirements\RequirementDocument.cs" />
+    <Compile Include="Entities\SuiteRuns\SuiteRunScheduler.cs" />
+    <Compile Include="Entities\SuiteRuns\SuiteRunSchedulerRun.cs" />
     <Compile Include="Entities\Tasks\Task.cs" />
     <Compile Include="Entities\Teams\TeamMember.cs" />
     <Compile Include="Entities\Teams\Team.cs" />
     <Compile Include="Entities\Tests\GherkinAutomatedRun.cs" />
+    <Compile Include="Entities\Tests\ModelBasedTest.cs" />
     <Compile Include="Entities\Tests\Run.cs" />
     <Compile Include="Entities\Tests\RunAutomated.cs" />
     <Compile Include="Entities\Tests\RunManual.cs" />
