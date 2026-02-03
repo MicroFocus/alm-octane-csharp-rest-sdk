@@ -36,9 +36,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MicroFocus.Adm.Octane.Api.Core, Version=16.0.200.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\octane-visual-studio-plugin\packages\MicroFocus.Adm.Octane.Api.Core.16.0.200.1\lib\net45\MicroFocus.Adm.Octane.Api.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
