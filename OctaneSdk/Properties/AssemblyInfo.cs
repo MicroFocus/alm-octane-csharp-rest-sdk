@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2016-2024 Open Text.
+ * Copyright 2016-2026 Open Text.
  *
  * The only warranties for products and services of Open Text and
  * its affiliates and licensors (“Open Text”) are as may be set forth
@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Open Text")]
 [assembly: AssemblyProduct("MicroFocus.Adm.Octane.Api.Core")]
-[assembly: AssemblyCopyright("Copyright © 2024 Open Text")]
+[assembly: AssemblyCopyright("Copyright © 2026 Open Text")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
