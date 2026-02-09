@@ -8,6 +8,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
 {
     public class SuiteRunScheduler : BaseEntity
     {
+        public const string TYPE_SUITE_RUN_SCHEDULER = "suite_run_scheduler";
         public const string CREATION_TIME_FIELD = "creation_time";
         public const string LAST_MODIFIED_FIELD = "last_modified";
         public const string AUTHOR_FIELD = "author";
