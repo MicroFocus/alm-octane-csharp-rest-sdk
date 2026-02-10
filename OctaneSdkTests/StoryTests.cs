@@ -116,6 +116,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         [TestMethod]
         public void SearchStories()
         {
+            CreateStory();
             EntityListResult<WorkItem> searchResult = null;
             SpinWait.SpinUntil(() =>
             {

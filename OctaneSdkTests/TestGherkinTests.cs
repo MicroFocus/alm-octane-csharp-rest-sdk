@@ -82,11 +82,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
         public void SearchGherkinTests()
         {
             var guid = Guid.NewGuid();
-            var gherkinTest1 = CreateGherkinTestInternal("GherkinTest1_CustomName_" + guid);
-            var gherkinTest2 = CreateGherkinTestInternal("GherkinTest2_CustomName_" + guid);
-            var gherkinTest3 = CreateGherkinTestInternal("GherkinTest3_CustomName_" + guid);
-            var gherkinTest4 = CreateGherkinTestInternal("GherkinTest4_CustomName_" + guid);
-            var gherkinTest5 = CreateGherkinTestInternal("GherkinTest5_CustomName_" + guid);
+            var nameSuffix = "CustomName_" + guid;
+            var gherkinTest1 = CreateGherkinTestInternal("GherkinTest1 " + nameSuffix);
+            var gherkinTest2 = CreateGherkinTestInternal("GherkinTest2 " + nameSuffix);
+            var gherkinTest3 = CreateGherkinTestInternal("GherkinTest3 " + nameSuffix);
+            var gherkinTest4 = CreateGherkinTestInternal("GherkinTest4 " + nameSuffix);
+            var gherkinTest5 = CreateGherkinTestInternal("GherkinTest5 " + nameSuffix);
 
             var possibleExpectedTests = new List<TestGherkin>
             {
@@ -97,7 +98,7 @@ namespace MicroFocus.Adm.Octane.Api.Core.Tests
             SpinWait.SpinUntil(() =>
             {
                 Thread.Sleep(1000);
-                searchResult = entityService.SearchAsync<Test>(workspaceContext, "_CustomName_" + guid,
+                searchResult = entityService.SearchAsync<Test>(workspaceContext, nameSuffix,
                     new List<string> { TestGherkin.SUBTYPE_GHERKIN_TEST }, 4).Result;
                 return searchResult.data.Count == 4;
             }, new TimeSpan(0, 2, 0));
