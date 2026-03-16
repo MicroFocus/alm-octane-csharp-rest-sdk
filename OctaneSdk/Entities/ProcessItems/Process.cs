@@ -28,12 +28,12 @@ namespace MicroFocus.Adm.Octane.Api.Core.Entities
         public Process(IDictionary<string, object> properties)
         : base(properties)
     {
-        AggregateType = "processes";
+        AggregateType = "process";
     }
 
         public Process()
         {
-            AggregateType = "processes";
+            AggregateType = "process";
         }
 
         public Process(EntityId id)
